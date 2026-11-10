@@ -1,6 +1,6 @@
 import java.time.Duration
 
-plugins { id("cleanyourtv.jvm") }
+plugins { id("tvclean.jvm") }
 
 // W9: the TV e2e harness (ARCHITECTURE 6.6, PRODUCT-SPEC 7.1). It drives the app's own
 // :adb:session, :core:probe, :core:planner and :core:engine against a real adbd on an Android TV
