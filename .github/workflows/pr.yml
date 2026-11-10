@@ -51,17 +51,17 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Pins (bundled launcher and TV curtain) and module graph rules
-        run: ./gradlew :core:trust:verifyLauncherPin :core:trust:verifyCurtainPin checkModuleGraph --console=plain
+        run: sh ./gradlew :core:trust:verifyLauncherPin :core:trust:verifyCurtainPin checkModuleGraph --console=plain
 
       # Roborazzi verify is skipped: the screenshot goldens in the repo are the
       # upstream app's (they show the old app name), so they fail against TV
       # Clean until the goldens are regenerated for our branding. Unit tests,
       # Lint and the builds below still run.
       - name: Unit tests and Android Lint
-        run: ./gradlew check --continue --console=plain
+        run: sh ./gradlew check --continue --console=plain
 
       - name: Debug builds, the release APK and AAB through R8, and the size gate (both flavours)
-        run: ./gradlew :app:assembleDebug :app:assembleFullRelease :app:bundlePlayRelease :app:checkApkSizeRelease --console=plain
+        run: sh ./gradlew :app:assembleDebug :app:assembleFullRelease :app:bundlePlayRelease :app:checkApkSizeRelease --console=plain
 
       - name: Script tests and the fixture redaction check
         run: |

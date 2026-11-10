@@ -129,7 +129,7 @@ jobs:
           NAME: ${{ steps.facts.outputs.name }}
           VERSION: ${{ steps.facts.outputs.version }}
         run: |
-          ./gradlew :app:dependencies --configuration fullReleaseRuntimeClasspath --console=plain > "$RUNNER_TEMP/deps.txt"
+          sh ./gradlew :app:dependencies --configuration fullReleaseRuntimeClasspath --console=plain > "$RUNNER_TEMP/deps.txt"
           python3 scripts/sbom.py "$RUNNER_TEMP/deps.txt" --version "$VERSION" \
             --apk-sha256 "$(cut -d' ' -f1 "$RUNNER_TEMP/out/$NAME-unsigned.apk.sha256")" -o "$RUNNER_TEMP/out/$NAME.cdx.json"
 
