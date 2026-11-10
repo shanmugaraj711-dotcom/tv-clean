@@ -29,6 +29,7 @@ import ai.promptstudio.tvclean.core.engine.StartResult
 import ai.promptstudio.tvclean.core.model.AdbError
 import ai.promptstudio.tvclean.core.model.AdbException
 import ai.promptstudio.tvclean.core.model.BlobRef
+import ai.promptstudio.tvclean.core.model.ChangeRecord
 import ai.promptstudio.tvclean.core.model.Component
 import ai.promptstudio.tvclean.core.model.ConnectionState
 import ai.promptstudio.tvclean.core.model.DebugState
