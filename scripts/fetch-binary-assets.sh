@@ -30,8 +30,8 @@ fetch() { # local_path upstream_path sha256 size
   echo "fetched: $local_path"
 }
 
-fetch "android/platform/src/main/assets/bundled/cleanyourtv-launcher.apk" "android/platform/src/main/assets/bundled/cleanyourtv-launcher.apk" "9fcc21c0eb81548c2432b3bf89c1d9c6b6ad17dcf7f7fc2e8d90d7ccbea7d60e" "540541"
-fetch "android/platform/src/main/assets/bundled/cleanyourtv-curtain.apk" "android/platform/src/main/assets/bundled/cleanyourtv-curtain.apk" "eb21e112c97121a3ed7f4db1c7fbf2169bc172a14bb3f8ca781079de4651662e" "65955"
+fetch "android/platform/src/main/assets/bundled/tvclean-launcher.apk" "android/platform/src/main/assets/bundled/cleanyourtv-launcher.apk" "9fcc21c0eb81548c2432b3bf89c1d9c6b6ad17dcf7f7fc2e8d90d7ccbea7d60e" "540541"
+fetch "android/platform/src/main/assets/bundled/tvclean-curtain.apk" "android/platform/src/main/assets/bundled/cleanyourtv-curtain.apk" "eb21e112c97121a3ed7f4db1c7fbf2169bc172a14bb3f8ca781079de4651662e" "65955"
 fetch "gradle/wrapper/gradle-wrapper.jar" "gradle/wrapper/gradle-wrapper.jar" "7a9ce74cff467ca1bf60a4fcd9f05185acceda4d0f382434d393e17864262c5d" "47505"
 fetch "core/spec/src/main/resources/ai/promptstudio/tvclean/core/spec/looks/arcade/wallpaper.jpg" "core/spec/src/main/resources/tv/cleanyour/core/spec/looks/arcade/wallpaper.jpg" "7373a817cf8d70b252cd8dfe91d8f0eff09061c6326cb3e7a89b1eaef0915892" "247428"
 fetch "core/spec/src/main/resources/ai/promptstudio/tvclean/core/spec/looks/cinema/wallpaper.jpg" "core/spec/src/main/resources/tv/cleanyour/core/spec/looks/cinema/wallpaper.jpg" "efda9690edd4d5eddb72f50001986d91fadd5c69d361206a700ea495fa43889f" "274408"
