@@ -1,0 +1,5 @@
+37335311974bda8b7edcc895b0996dc5adbe6612eed0e91c269e9f3305c20aa1  in-order (358560 inputs)
+582b77d6e1d35de46b6ea913a0803808718f5fd1a757f837d17c1e5bac939ebd  distinct (44790 distinct docs)
+# LookDraftBytesTest: SHA-256 over the LauncherConfigCodec.encode bytes of LookDrafts.docOf for every
+# look2 choice it builds, in input order and over the sorted distinct docs, each doc as a 4 byte big
+# endian length then its bytes. Taken on unmodified e42aaf2 (0.4.0). Never edit it.
