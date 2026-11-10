@@ -13,6 +13,11 @@ dependencies {
 val upstream = rootProject.layout.projectDirectory.dir("third_party/cleanyourtv")
 val upstreamCommit = "b06ab21"
 
+// The profile-meta.json group titles name the LAUNCHER that gets installed on the TV.
+// The app still bundles Gathin's launcher (com.gathin.tvhome), so the titles MUST say
+// com.gathin.tvhome / "Clean Your TV launcher" and match the upstream examples verbatim —
+// ProfileConverter fails the build on any mismatch (10 problems on 2026-11-10).
+// Rebrand these titles ONLY when our own launcher ships (PinnedLauncher swap).
 // D28: profiles are converted at build time from the pinned upstream examples and shipped as
 // data (profiles.json, with the D26 sure sets). The converter is this module's own code, run
 // from its compiled classes; profile-meta.json is passed as a file so the task does not depend

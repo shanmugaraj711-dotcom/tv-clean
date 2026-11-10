@@ -1111,7 +1111,7 @@
         "Google/partner attribution, feedback, auto-installs, setup leftovers": { "category": "tracking", "ask": false },
         "Preloaded apps (off by choice, per the owner; Prime Video and Disney+ kept)": { "category": "preloads", "ask": false },
         "Background services nobody needs on a TV": { "category": "preloads", "ask": false },
-        "Only safe once ai.promptstudio.tvclean.launcher owns Home and com.google.android.tvlauncher is disabled": { "category": "ads", "ask": false }
+        "Only safe once com.gathin.tvhome owns Home and com.google.android.tvlauncher is disabled": { "category": "ads", "ask": false }
       },
       "packages": {
         "com.google.android.onetimeinitializer": { "category": "other", "ask": false },
@@ -3519,7 +3519,7 @@
         "Preloaded apps and services": { "category": "preloads", "ask": false },
         "Unused Google apps (owner's choice)": { "category": "preloads", "ask": true },
         "Voice, casting and assistants (owner's choice; comment out what you use)": { "category": "voice", "ask": true },
-        "For the TV Clean launcher (see \"Replacing the launcher\" above). disable.sh skips it while it owns": { "category": "home", "ask": false }
+        "For the Clean Your TV launcher (see \"Replacing the launcher\" above). disable.sh skips it while it owns": { "category": "home", "ask": false }
       },
       "packages": {
         "com.tcl.channelplus": { "category": "ads", "ask": true },
@@ -4219,7 +4219,7 @@
         "Ad rows, promos and auto-installs": { "category": "ads", "ask": false },
         "Xiaomi update service, off by choice; re-enable to check for a firmware update": { "category": "updates", "ask": true },
         "Preloaded apps, off by choice": { "category": "preloads", "ask": false },
-        "ONLY AFTER ai.promptstudio.tvclean.launcher IS INSTALLED. Disabling launcherx alone hands Home to the setup wizard's": { "category": "home", "ask": false }
+        "ONLY AFTER com.gathin.tvhome IS INSTALLED. Disabling launcherx alone hands Home to the setup wizard's": { "category": "home", "ask": false }
       },
       "packages": {
         "com.amazon.amazonvideo.livingroom": { "category": "streaming", "ask": true },
@@ -4666,7 +4666,7 @@
         "Xiaomi nagware and dead weight": { "category": "brand", "ask": false },
         "Mi Cast / Miracast - Chromecast still works without them": { "category": "casting", "ask": false },
         "Preloaded apps, off by choice - re-enable any you use": { "category": "preloads", "ask": true },
-        "ONLY AFTER ai.promptstudio.tvclean.launcher IS INSTALLED. Do not apply this section on a fresh run, or the": { "category": "home", "ask": false }
+        "ONLY AFTER com.gathin.tvhome IS INSTALLED. Do not apply this section on a fresh run, or the": { "category": "home", "ask": false }
       },
       "packages": {
         "com.google.android.partnersetup": { "category": "tracking", "ask": false },
@@ -4693,7 +4693,7 @@
         "Mi Cast / Miracast - Chromecast built-in (mediashell) still works without them": { "category": "casting", "ask": true },
         "Preloaded apps, off by choice - re-enable any you use": { "category": "preloads", "ask": true },
         "Firmware updates off by request - re-enable com.xiaomi.mitv.updateservice to get OTA again": { "category": "updates", "ask": true },
-        "ONLY AFTER ai.promptstudio.tvclean.launcher IS INSTALLED. Do not apply this section on a fresh run, or the": { "category": "home", "ask": false }
+        "ONLY AFTER com.gathin.tvhome IS INSTALLED. Do not apply this section on a fresh run, or the": { "category": "home", "ask": false }
       },
       "packages": {
         "com.xiaomi.mitv.tvmanager": { "category": "brand", "ask": false },
