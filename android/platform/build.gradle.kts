@@ -7,6 +7,8 @@ dependencies {
     implementation(project(":adb:pairing"))
     implementation(project(":core:trust"))
     implementation(project(":core:registry"))
+    // RFC-PAIRING-1: AndroidPairingRunner implements :core:flows' PairingRunner seam.
+    implementation(project(":core:flows"))
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(project(":testing:fake-adbd"))
