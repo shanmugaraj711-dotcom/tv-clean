@@ -1,9 +1,9 @@
 # dumpsys of one package
-op: Read kind=PACKAGE_DUMP pkg=ai.promptstudio.tvclean.launcher
+op: Read kind=PACKAGE_DUMP pkg=com.gathin.tvhome
 privilege: READ
 timeout_ms: 20000
 stdout_cap: 1048576
-line: 'dumpsys' 'package' 'ai.promptstudio.tvclean.launcher'
+line: 'dumpsys' 'package' 'com.gathin.tvhome'
 transfer: none
 verify: none
 prior: none

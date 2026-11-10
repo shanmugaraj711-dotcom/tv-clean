@@ -20,7 +20,7 @@ import ai.promptstudio.tvclean.core.model.SnapshotReason
 object Issue036 {
     val launcherx = Component(PackageName("com.google.android.apps.tv.launcherx"), ".home.HomeActivity")
     val recovery = Component(PackageName("com.google.android.tungsten.setupwraith"), ".RecoveryActivity")
-    val ourHome = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+    val ourHome = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
     val fallbackHome = Component(PackageName("com.android.tv.settings"), ".system.FallbackHome")
     val wizard: PackageName get() = recovery.pkg
 

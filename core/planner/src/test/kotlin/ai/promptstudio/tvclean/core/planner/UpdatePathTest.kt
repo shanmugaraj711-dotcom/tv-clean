@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 class UpdatePathTest {
     private val ours = Samples.launcherArtifact()
     private val pin = LauncherArtifact(ours.pkg, 9, "3.0", ours.sha256, ours.signer, ours.blob)
-    private val helpers = "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.InputKeyService:com.example.reader/.Reader"
+    private val helpers = "com.gathin.tvhome/com.gathin.tvhome.InputKeyService:com.example.reader/.Reader"
     private fun ops(p: Plan) = p.steps.map { it.op }
     private fun names(p: Plan) = ops(p).map { it::class.simpleName }
 

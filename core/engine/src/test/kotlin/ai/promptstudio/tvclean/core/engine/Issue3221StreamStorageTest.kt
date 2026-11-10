@@ -11,7 +11,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 // Issues #3221 (Xiaomi MiTV-AXSO0, Android 9), #3101 (Xiaomi MiTV-MSSP1, Android 9) and #2851 (Sony
-// BRAVIA UR3, Android 10, low on storage): "home switch stopped at Install ai.promptstudio.tvclean.launcher: failed:
+// BRAVIA UR3, Android 10, low on storage): "home switch stopped at Install com.gathin.tvhome: failed:
 // streamed install failed, the TV is still connected: Protocol(detail=the TV closed the stream)". The
 // failure now says how much space /data has, from one read-only df after the hash check failed.
 class Issue3221StreamStorageTest {

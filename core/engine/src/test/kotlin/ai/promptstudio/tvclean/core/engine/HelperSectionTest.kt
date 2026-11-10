@@ -69,7 +69,7 @@ class HelperSectionTest {
         assertTrue(h.tv.watchdogs.isEmpty())
         assertEquals(service.flat, h.tv.settings[SettingKey.ENABLED_ACCESSIBILITY])
         assertEquals(h.stock, h.tv.home)
-        assertTrue(h.tv.files.containsKey("/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json"), "the look with the redirect went first")
+        assertTrue(h.tv.files.containsKey("/sdcard/Android/data/com.gathin.tvhome/files/config.json"), "the look with the redirect went first")
     }
 
     @Test fun noTakesOurEntryOutAndAccessibilityBackOff() = runTest(timeout = TEST_TIMEOUT) {

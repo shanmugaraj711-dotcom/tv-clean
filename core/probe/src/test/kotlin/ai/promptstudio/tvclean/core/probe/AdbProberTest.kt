@@ -126,8 +126,8 @@ class AdbProberTest {
         val path = RemotePath(RemoteDir.TMP, listOf("x.apk"))
         s.recording.on(ProbeScripts.fileSha256(path).text, "$hash  ${path.absolute}\n")
         assertEquals(Sha256(hash), prober.fileSha256(s, path))
-        s.recording.on(ProbeScripts.installedSha256(p("ai.promptstudio.tvclean.launcher")).text, "${hash.uppercase()}  /data/app/x/base.apk\n")
-        assertEquals(Sha256(hash), prober.installedSha256(s, p("ai.promptstudio.tvclean.launcher")))
+        s.recording.on(ProbeScripts.installedSha256(p("com.gathin.tvhome")).text, "${hash.uppercase()}  /data/app/x/base.apk\n")
+        assertEquals(Sha256(hash), prober.installedSha256(s, p("com.gathin.tvhome")))
         assertNull(prober.fileSha256(s, RemotePath(RemoteDir.TMP, listOf("missing.apk"))))   // unrecorded: exit 127
     }
 
@@ -171,11 +171,11 @@ class AdbProberTest {
         val s = ProbeFixtures.miTvSession()
         s.recording.on(ProbeScripts.SETTINGS.text, """
             accessibility_enabled=1
-            enabled_accessibility_services=ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.HomeKeyService
+            enabled_accessibility_services=com.gathin.tvhome/com.gathin.tvhome.HomeKeyService
             @@cyt@@ global
             accessibility_enabled=0
         """.trimIndent() + "\n")
-        assertEquals(AccessibilityNow("1", "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.HomeKeyService"), prober.accessibility(s))
+        assertEquals(AccessibilityNow("1", "com.gathin.tvhome/com.gathin.tvhome.HomeKeyService"), prober.accessibility(s))
         assertEquals(listOf(ProbeScripts.SETTINGS.text), s.execLines)
         s.recording.on(ProbeScripts.SETTINGS.text, "@@cyt@@ global\n")
         assertEquals(AccessibilityNow(null, null), prober.accessibility(s))

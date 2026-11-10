@@ -10,7 +10,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 // RFC-INSTALL-1, issues #2743 (Xiaomi jaws), #1918 (Hisense songshan), #1510 (Sony BRAVIA VH2) and 17
-// more, all Google TVs on Android 11 and 12: "Install ai.promptstudio.tvclean.launcher: failed: verify: installed apk
+// more, all Google TVs on Android 11 and 12: "Install com.gathin.tvhome: failed: verify: installed apk
 // sha256 <x>, got no readable apk", then home VERIFY_FAILED. The package dump showed versionCode 9,
 // but `pm path` named nothing: a launcher on the TV but not installed for user 0. The check stays
 // a hash check (SECURITY 3.2); a second read-only call says why, in the failure and in one line.
@@ -40,7 +40,7 @@ class Issue2743InstallCheckTest {
         assertEquals("verify: installed apk sha256 ${h.apkSha.hex}, got no readable apk (on the TV but not installed for user 0, installed for 1 other user)", failed.error)
         assertTrue("installedApk ${h.launcher.pkg.value}" in h.prober.calls)
         val line = lines.single { it.startsWith("engine: install check of ${h.launcher.pkg.value}: ") }
-        assertEquals("engine: install check of ai.promptstudio.tvclean.launcher: pm path base.apk lines 0, hash exit 1, current user 0, user 0 installed no, " +
+        assertEquals("engine: install check of com.gathin.tvhome: pm path base.apk lines 0, hash exit 1, current user 0, user 0 installed no, " +
             "hidden no, suspended no, stopped yes, enabled 0, 2 users listed, installed for 1 other", line)
         assertTrue(lines.none { "/data/app" in it || h.apkSha.hex in it }, "no path and no hash in the log")
     }

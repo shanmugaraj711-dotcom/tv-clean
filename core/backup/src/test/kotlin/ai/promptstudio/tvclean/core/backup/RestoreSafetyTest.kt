@@ -21,7 +21,7 @@ class RestoreSafetyTest {
     private val stock = Samples.stockLauncher
     private val launcher = Samples.launcherComponent
     private val chooser = Component(PackageName("android"), "com.android.internal.app.ResolverActivity")
-    private val helpers = "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.InputKeyService"
+    private val helpers = "com.gathin.tvhome/com.gathin.tvhome.InputKeyService"
     private fun rec(step: Int, op: Op, prior: Prior?) = ChangeRecord(PlanId("01SETUPPLAN000000000000001"), step, op, prior, Samples.NOW_MS + step)
 
     private val takeover = listOf(

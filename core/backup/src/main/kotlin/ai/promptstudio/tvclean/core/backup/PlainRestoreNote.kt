@@ -68,6 +68,6 @@ class PlainRestoreNote : RestoreNote {
 
     companion object {
         const val MAX_NAMES = 40
-        private val LAUNCHER = PackageName("ai.promptstudio.tvclean.launcher")
+        private val LAUNCHER = PackageName("com.gathin.tvhome")
     }
 }

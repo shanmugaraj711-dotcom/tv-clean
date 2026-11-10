@@ -117,7 +117,7 @@ class EngineTest {
     @Test fun aSetupWithTheCurtainRunsAndRemovesIt() = runTest(timeout = TEST_TIMEOUT) {
         val h = Harness(this)
         val engine = h.engine()
-        val curtainPkg = PackageName("ai.promptstudio.tvclean.curtain")
+        val curtainPkg = PackageName("tv.cleanyour.curtain")
         val bytes = "fake curtain apk".encodeToByteArray()
         val sha = h.tv.acceptApk(bytes, curtainPkg, 1, h.signer)
         val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(curtainPkg, 1, "0.1", sha, h.signer, ai.promptstudio.tvclean.core.model.BlobRef(sha, bytes.size.toLong(), "bundled:curtain.apk"))
@@ -132,8 +132,8 @@ class EngineTest {
         val fin = engine.runState(h.tv.tvId).value
         assertIs<RunState.Finished>(fin)
         assertEquals(RunStatus.COMPLETED, fin.status, h.types(plan).toString())
-        assertEquals(cues, h.tv.execs("am broadcast -n ai.promptstudio.tvclean.curtain/.CueReceiver"))
-        assertEquals(1, h.tv.execs("am start -n ai.promptstudio.tvclean.curtain/.CurtainActivity"))
+        assertEquals(cues, h.tv.execs("am broadcast -n tv.cleanyour.curtain/.CueReceiver"))
+        assertEquals(1, h.tv.execs("am start -n tv.cleanyour.curtain/.CurtainActivity"))
         assertTrue(curtainPkg !in h.tv.packages, "the curtain is gone at the end")
         for (p in h.debloat) assertEquals(EnabledState.DISABLED_USER, h.tv.state(p), p.value)
         assertEquals(base.steps.size + plan.steps.count { it.group == ai.promptstudio.tvclean.core.planner.DefaultPlanner.GROUP_CURTAIN }, plan.steps.size)
@@ -147,7 +147,7 @@ class EngineTest {
     @Test fun stopHereRemovesTheCurtainTheRunInstalled() = runTest(timeout = TEST_TIMEOUT) {
         val h = Harness(this)
         val engine = h.engine()
-        val curtainPkg = PackageName("ai.promptstudio.tvclean.curtain")
+        val curtainPkg = PackageName("tv.cleanyour.curtain")
         val bytes = "fake curtain apk".encodeToByteArray()
         val sha = h.tv.acceptApk(bytes, curtainPkg, 1, h.signer)
         val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(curtainPkg, 1, "0.1", sha, h.signer, ai.promptstudio.tvclean.core.model.BlobRef(sha, bytes.size.toLong(), "bundled:curtain.apk"))
@@ -170,7 +170,7 @@ class EngineTest {
         assertEquals(RunStatus.ABANDONED, fin.status)
         assertTrue(curtainPkg !in h.tv.packages, "the curtain is not left on the TV")
         val sent = h.tv.execLog.drop(before).map { ai.promptstudio.tvclean.testing.fixtures.Recording.normalize(it) }.filter { !it.startsWith("dumpsys") && !it.startsWith("pm list") && !it.startsWith("pm path") }   // reads
-        assertEquals(listOf("pm uninstall --user 0 ai.promptstudio.tvclean.curtain"), sent, "only the curtain's removal is sent")
+        assertEquals(listOf("pm uninstall --user 0 tv.cleanyour.curtain"), sent, "only the curtain's removal is sent")
         val off = plan.steps.filter { it.op is Op.Disable && it.index in h.records(plan).filterIsInstance<JournalRecord.Done>().map { d -> d.i } }
         assertTrue(off.isNotEmpty())
         for (s in off) assertEquals(EnabledState.DISABLED_USER, h.tv.state((s.op as Op.Disable).pkg), "kept off")
@@ -179,7 +179,7 @@ class EngineTest {
     // RF-CURTAIN-1 F1: a new group forces a thumbnail, but silent steps (the curtain's cues woven
     // after every switch-off) never force one and do not end a group, so the cues add no screenshots.
     @Test fun silentStepsForceNoThumbnail() {
-        val receiver = ai.promptstudio.tvclean.core.model.Component(PackageName("ai.promptstudio.tvclean.curtain"), ".CueReceiver")
+        val receiver = ai.promptstudio.tvclean.core.model.Component(PackageName("tv.cleanyour.curtain"), ".CueReceiver")
         val token = ai.promptstudio.tvclean.core.model.RunToken("fedcba9876543210")
         fun cue(k: Int) = Op.CurtainCue(receiver, token, ai.promptstudio.tvclean.core.model.CurtainStage.OFF, k, 3)
         fun forced(woven: Boolean): Int {
@@ -398,7 +398,7 @@ class EngineTest {
         assertEquals(cfgSha, h.transport.readDigest(h.tv))
         val log = h.tv.execLog.map { ai.promptstudio.tvclean.testing.fixtures.Recording.normalize(it) }
         assertTrue(log.indexOf("push ${FileOverlayTransport.CONFIG.absolute}") < log.indexOf("sha256sum ${FileOverlayTransport.CONFIG.absolute}"))
-        assertEquals(2, log.count { it.startsWith("am ") && it.contains("ai.promptstudio.tvclean.launcher") && !it.contains("-W") })
+        assertEquals(2, log.count { it.startsWith("am ") && it.contains("com.gathin.tvhome") && !it.contains("-W") })
         // Install ladder without cmd: push, sha256sum, pm install, rm; the model installs from the pushed bytes.
         val h2 = Harness(this, ScriptedTv(Samples.snapshot(facts = Samples.miTvFacts().copy(adbFeatures = setOf("shell_v2")), packages = Samples.miTvPackages(emptySet()))))
         val e2 = h2.engine()
@@ -517,7 +517,7 @@ class EngineTest {
     // rest of it, so the TV is never left with no accessibility services and accessibility off.
     @Test fun stopHereFinishesAnAccessibilityRestoreFirst() = runTest(timeout = TEST_TIMEOUT) {
         val h = Harness(this)
-        val list = "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.HomeKeyService:com.google.android.marvin.talkback/.TalkBackService"
+        val list = "com.gathin.tvhome/com.gathin.tvhome.HomeKeyService:com.google.android.marvin.talkback/.TalkBackService"
         h.tv.settings[SettingKey.ENABLED_ACCESSIBILITY] = list
         h.tv.settings[SettingKey.ACCESSIBILITY_ENABLED] = "1"
         val engine = h.engine()

@@ -119,7 +119,7 @@ class HomeScreen048Test {
         fun st(system: Boolean) = ai.promptstudio.tvclean.core.model.PackageState(ai.promptstudio.tvclean.core.model.EnabledState.ENABLED, system, 1, null, false, false, null, false)
         val store = PackageName("com.android.vending")
         val settings = PackageName("com.android.tv.settings")
-        val curtain = PackageName("ai.promptstudio.tvclean.curtain")
+        val curtain = PackageName("tv.cleanyour.curtain")
         val token = PackageName("com.example.tokenservice")
         val vlc = PackageName("org.videolan.vlc")
         val fallback = ai.promptstudio.tvclean.core.model.Component(settings, ".FallbackHome")

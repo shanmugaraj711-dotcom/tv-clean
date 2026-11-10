@@ -25,7 +25,7 @@ import ai.promptstudio.tvclean.core.model.Sha256
 data class GoldenCase(val name: String, val title: String, val op: Op, val prior: Prior?, val variant: WatchdogVariant = WatchdogVariant.NOHUP_SETSID)
 
 object GoldenCases {
-    val launcher = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+    val launcher = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
     val stock = Component(PackageName("com.google.android.tvlauncher"), ".MainActivity")
     val token = RunToken("0123456789abcdef")
     val apkSha = Sha256("a".repeat(64))
@@ -40,7 +40,7 @@ object GoldenCases {
     private fun p(s: String) = PackageName(s)
 
     // RFC-CURTAIN-1: the curtain's receiver and one cue per stage, as the Setup plan sends them.
-    val curtainReceiver = Component(PackageName("ai.promptstudio.tvclean.curtain"), ".CueReceiver")
+    val curtainReceiver = Component(PackageName("tv.cleanyour.curtain"), ".CueReceiver")
     val curtainToken = RunToken("fedcba9876543210")
     fun cue(stage: CurtainStage): Op.CurtainCue = when (stage) {
         CurtainStage.SCAN -> Op.CurtainCue(curtainReceiver, curtainToken, stage, 0, 12)

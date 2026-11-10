@@ -5,7 +5,7 @@ import ai.promptstudio.tvclean.core.model.RemotePath
 
 // RFC-THEME-1: the launcher's ThemeProvider (launcher 2.5, versionCode 6, and later; ThemeProvider.java and
 // ThemeFiles.java in third_party/tvclean/launcher), the way upstream's tools/theme.sh writes a theme. Exported,
-// authority ai.promptstudio.tvclean.launcher.theme, guarded by WRITE_SECURE_SETTINGS (the adb shell has it, ordinary apps do not);
+// authority com.gathin.tvhome.theme, guarded by WRITE_SECURE_SETTINGS (the adb shell has it, ordinary apps do not);
 // it opens config.json, wallpaper.jpg, theme_revision and wallpapers/<image> under the launcher's external files
 // folder as the launcher. This app sends only the first two.
 //
@@ -18,7 +18,7 @@ import ai.promptstudio.tvclean.core.model.RemotePath
 // constant with placeholders, filled from one validated value (a file name of the two-entry list, which admits no
 // quote, space or metacharacter), checked against its template again and covered by a golden file.
 object ThemeProviderLines {
-    const val AUTHORITY = "ai.promptstudio.tvclean.launcher.theme"
+    const val AUTHORITY = "com.gathin.tvhome.theme"
     // The launcher versionCode that first has the provider (v2.5.0).
     const val FIRST_VERSION_CODE = 6L
     // `content write` exists from Android 10; Android 8 and 9 print "Unsupported operation: write" and exit 0.
@@ -38,7 +38,7 @@ object ThemeProviderLines {
     const val READ_TEMPLATE = "content read --uri URI | sha256sum"
 
     init {
-        check(RemoteDir.OVERLAY.path == "/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files") { "the provider's folder differs from RemoteDir.OVERLAY" }
+        check(RemoteDir.OVERLAY.path == "/sdcard/Android/data/com.gathin.tvhome/files") { "the provider's folder differs from RemoteDir.OVERLAY" }
     }
 
     fun isThemeFile(path: RemotePath): Boolean = path.dir == RemoteDir.OVERLAY && path.segments.size == 1 && path.segments[0] in FILES

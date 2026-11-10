@@ -24,7 +24,7 @@ class ModelTest {
     private fun pkg(enabled: EnabledState) = PackageState(enabled, true, 3, null, false, false, "Label", false)
 
     @Test fun grammarsAcceptAndReject() {
-        PackageName("ai.promptstudio.tvclean.launcher")
+        PackageName("com.gathin.tvhome")
         assertFailsWith<IllegalArgumentException> { PackageName("nodots") }
         assertFailsWith<IllegalArgumentException> { PackageName("com.x;rm") }
         assertFailsWith<IllegalArgumentException> { TvId("0123") }

@@ -12,7 +12,7 @@ import ai.promptstudio.tvclean.core.model.Snapshot
 import ai.promptstudio.tvclean.core.model.SnapshotReason
 
 // The TVs of the 0.3.3 "plan refused" reports, as plain data from what their reports say (nothing
-// here came from a TV). All three: Home already answers to ai.promptstudio.tvclean.launcher/.MainActivity, the new
+// here came from a TV). All three: Home already answers to com.gathin.tvhome/.MainActivity, the new
 // home screen's package, and the only other claimant is FallbackHome; the TV's own home screen is
 // switched off. The app's own record of a home switch is empty ("Home switch: not recorded"), so the
 // launcher was put there another way (CleanYourTV's tool for computers installs its launcher under
@@ -20,7 +20,7 @@ import ai.promptstudio.tvclean.core.model.SnapshotReason
 // brand sure set. #187: Xiaomi MIBOX4 (oneday, Android 9), exact profile xiaomi-mi-box-s. #220:
 // Polytron POLYTRON4K (songshan, Google TV 11), no profile.
 object Issue034 {
-    val ourHome = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+    val ourHome = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
     val fallbackHome = Component(PackageName("com.android.tv.settings"), ".system.FallbackHome")
     val tvlauncher = PackageName("com.google.android.tvlauncher")
     val launcherx = PackageName("com.google.android.apps.tv.launcherx")

@@ -41,6 +41,6 @@ class HomePlaceholderTest {
 
     @Test fun aRealHomeScreenIsNot() {
         assertFalse(HomePlaceholder.isPlaceholder(c("com.google.android.apps.tv.launcherx", ".home.HomeActivity")))
-        assertFalse(HomePlaceholder.isPlaceholder(c("ai.promptstudio.tvclean.launcher", ".MainActivity")))
+        assertFalse(HomePlaceholder.isPlaceholder(c("com.gathin.tvhome", ".MainActivity")))
     }
 }

@@ -68,7 +68,7 @@ object Scenario {
         add(setupPlan, Op.KillWatchdog(token), Prior())
         add(setupPlan, Op.Disable(stock.pkg), Prior(packageState = EnabledState.ENABLED))
         add(setupPlan, Op.SettingsPut(SettingKey.SCREENSAVER_ENABLED, "0"), Prior(settingValue = "1"))
-        add(setupPlan, Op.SettingsPut(SettingKey.SCREENSAVER_COMPONENTS, "ai.promptstudio.tvclean.launcher/.ClockDream"), Prior(settingValue = null))
+        add(setupPlan, Op.SettingsPut(SettingKey.SCREENSAVER_COMPONENTS, "com.gathin.tvhome/.ClockDream"), Prior(settingValue = null))
         add(setupPlan, Op.Mkdir(RemoteDir.OVERLAY), Prior())
         val config = BlobRef(sha256Of("{}"), 2, "mem:config")
         add(setupPlan, Op.PushAsset(config, RemotePath(RemoteDir.OVERLAY, listOf("config.json")), config.sha256), Prior(present = false))

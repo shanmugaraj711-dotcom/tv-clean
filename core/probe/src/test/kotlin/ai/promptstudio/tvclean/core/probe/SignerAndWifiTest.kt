@@ -106,7 +106,7 @@ class SignerAndWifiTest {
     // The TV: the copy line (any per-copy name) answers with copyExit and, on success, puts `apk` at
     // its destination; `installedSha` answers the installed APK's hash read.
     private fun session(installed: Boolean, apk: ByteArray?, copyExit: Int = 0, installedSha: Sha256? = null): FakeTvSession {
-        val packages = Fixtures.miTv().packagesAllText + if (installed) "package:/data/app/ai.promptstudio.tvclean.launcher-1/base.apk=ai.promptstudio.tvclean.launcher\n" else ""
+        val packages = Fixtures.miTv().packagesAllText + if (installed) "package:/data/app/com.gathin.tvhome-1/base.apk=com.gathin.tvhome\n" else ""
         lateinit var s: FakeTvSession
         val rec = ProbeFixtures.miTvRecording()
             .on(ProbeScripts.PACKAGES.text, packages)
@@ -115,7 +115,7 @@ class SignerAndWifiTest {
                 ai.promptstudio.tvclean.core.session.ExecResult(copyExit, "", "", false, 1)
             }
             .on(Regex("^rm -f (/data/local/tmp/tvclean/signer-[0-9a-f]{16}\\.apk)$")) { m -> s.files.remove(m.groupValues[1]); ai.promptstudio.tvclean.core.session.ExecResult(0, "", "", false, 1) }
-            .on(ProbeScripts.installedSha256(p("ai.promptstudio.tvclean.launcher")).text, installedSha?.let { "${it.hex}  /data/app/ai.promptstudio.tvclean.launcher-1/base.apk\n" } ?: "", exit = if (installedSha == null) 1 else 0)
+            .on(ProbeScripts.installedSha256(p("com.gathin.tvhome")).text, installedSha?.let { "${it.hex}  /data/app/com.gathin.tvhome-1/base.apk\n" } ?: "", exit = if (installedSha == null) 1 else 0)
         s = FakeTvSession(recording = rec)
         return s
     }
@@ -126,8 +126,8 @@ class SignerAndWifiTest {
         val apk = File(bundled, "tvclean-launcher.apk").readBytes()
         val s = session(installed = true, apk = apk)
         val snap = prober.snapshot(s, SnapshotReason.BASELINE)
-        assertEquals(k1, snap.packages.getValue(p("ai.promptstudio.tvclean.launcher")).signer)
-        assertTrue(snap.packages.filterKeys { it != p("ai.promptstudio.tvclean.launcher") }.values.all { it.signer == null })
+        assertEquals(k1, snap.packages.getValue(p("com.gathin.tvhome")).signer)
+        assertTrue(snap.packages.filterKeys { it != p("com.gathin.tvhome") }.values.all { it.signer == null })
         // Copy (size checked first), pull, delete; the copy never stays on the TV.
         val copy = copies(s).single()
         assertTrue("stat -c %s" in copy && "-le 16777216" in copy, copy)
@@ -146,19 +146,19 @@ class SignerAndWifiTest {
         val pinned = Sha256("ab".repeat(32))
         val withPins = AdbProber(ProbeFixtures.clock(), known = mapOf(pinned to k1))
         val s = session(installed = true, apk = null, installedSha = pinned)
-        assertEquals(k1, withPins.snapshot(s, SnapshotReason.BASELINE).packages.getValue(p("ai.promptstudio.tvclean.launcher")).signer)
+        assertEquals(k1, withPins.snapshot(s, SnapshotReason.BASELINE).packages.getValue(p("com.gathin.tvhome")).signer)
         assertTrue(copies(s).isEmpty())
         // Another APK: copied and read as before.
         val other = session(installed = true, apk = File(bundled, "tvclean-launcher.apk").readBytes(), installedSha = Sha256("cd".repeat(32)))
-        assertEquals(k1, withPins.snapshot(other, SnapshotReason.BASELINE).packages.getValue(p("ai.promptstudio.tvclean.launcher")).signer)
+        assertEquals(k1, withPins.snapshot(other, SnapshotReason.BASELINE).packages.getValue(p("com.gathin.tvhome")).signer)
         assertEquals(1, copies(other).size)
     }
 
     @Test fun anUnreadableSignerIsUnknownAndTheSnapshotStillWorks() = runBlocking<Unit> {
         val failed = prober.snapshot(session(installed = true, apk = null, copyExit = 1), SnapshotReason.BASELINE)
-        assertNull(failed.packages.getValue(p("ai.promptstudio.tvclean.launcher")).signer)
+        assertNull(failed.packages.getValue(p("com.gathin.tvhome")).signer)
         val garbage = prober.snapshot(session(installed = true, apk = "junk".toByteArray()), SnapshotReason.BASELINE)
-        assertNull(garbage.packages.getValue(p("ai.promptstudio.tvclean.launcher")).signer)
+        assertNull(garbage.packages.getValue(p("com.gathin.tvhome")).signer)
         // Not installed: nothing is copied.
         val none = session(installed = false, apk = null)
         prober.snapshot(none, SnapshotReason.BASELINE)

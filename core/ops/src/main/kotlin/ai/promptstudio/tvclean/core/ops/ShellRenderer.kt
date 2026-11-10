@@ -378,8 +378,8 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
         private val SCREEN_PNG = RemotePath(RemoteDir.TMP, listOf("screen.png"))
         private val PID_RE = Regex("^[0-9]{1,10}$")
         // RFC-CURTAIN-1: the curtain's package, its cue action and the extra flags of am.
-        const val CURTAIN_PACKAGE = "ai.promptstudio.tvclean.curtain"
-        const val CUE_ACTION = "ai.promptstudio.tvclean.curtain.CUE"
+        const val CURTAIN_PACKAGE = "tv.cleanyour.curtain"
+        const val CUE_ACTION = "tv.cleanyour.curtain.CUE"
         const val CUE_MAX = 999
         private const val ES = "--es"
         private const val EI = "--ei"

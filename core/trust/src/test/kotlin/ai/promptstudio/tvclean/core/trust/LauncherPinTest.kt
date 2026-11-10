@@ -29,7 +29,7 @@ class LauncherPinTest {
     }
 
     @Test fun pinIsTheUpstreamPackage() {
-        assertEquals("ai.promptstudio.tvclean.launcher", PinnedLauncher.PACKAGE)
+        assertEquals("com.gathin.tvhome", PinnedLauncher.PACKAGE)
         assertEquals("b06ab21105c49900cb1ed76b24414dba1e21d0db", PinnedLauncher.UPSTREAM_COMMIT)
         val gitlink = File(Repo.root, "third_party/tvclean/.git")
         if (gitlink.exists()) {
@@ -43,7 +43,7 @@ class LauncherPinTest {
     @Test fun bundledLauncherPinServesThePinnedBlob() {
         val bytes = apk.readBytes()
         val artifact = BundledLauncherPin(OneBlob(PinnedLauncher.ASSET_NAME, bytes)).bundled()
-        assertEquals(PackageName("ai.promptstudio.tvclean.launcher"), artifact.pkg)
+        assertEquals(PackageName("com.gathin.tvhome"), artifact.pkg)
         assertEquals(9L, artifact.versionCode)
         assertEquals("3.0", artifact.versionName)
         assertEquals(Sha256(PinnedLauncher.SHA256), artifact.sha256)

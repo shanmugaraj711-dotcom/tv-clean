@@ -28,7 +28,9 @@ object SwitchOffRule {
     const val REASON_YOUR_LAUNCHER = "it is a home screen app you installed, and we never switch those off"
     // Our own new home screen, the planner's launcher package. The probe cannot tell who installed
     // a package (installedByUs always reads false), so it is named here: never the person's.
-    val OUR_LAUNCHER = PackageName("ai.promptstudio.tvclean.launcher")
+    // The bundled launcher's package (the manifest package of the pinned APK, com.gathin.tvhome)
+    // — it must match PinnedLauncher.PACKAGE; see the warning there.
+    val OUR_LAUNCHER = PackageName("com.gathin.tvhome")
 
     // The reason `pkg` may not be switched off, or null when it may. `state` is what the caller knows
     // of the package (the engine's live dump, the planner's snapshot); `snapshot` gives HOME, the

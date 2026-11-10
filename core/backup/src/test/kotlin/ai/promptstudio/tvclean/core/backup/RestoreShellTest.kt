@@ -123,7 +123,7 @@ class RestoreShellTest {
         assertEquals(0, r.exit, r.toString())
         val expected = before.copy(packages = before.packages + (Scenario.launcher.pkg.value to "ENABLED"))
         assertEquals(expected, tv.read())
-        assertTrue(r.out.contains("kept     Remove the app: ai.promptstudio.tvclean.launcher"), r.out)
+        assertTrue(r.out.contains("kept     Remove the app: com.gathin.tvhome"), r.out)
     }
 
     @Test fun refusesAnotherTvUnlessAllowed() {
@@ -188,7 +188,7 @@ class RestoreShellTest {
         assertTrue(tv.calls().isEmpty(), "a dry run must not call adb")
         val commands = b.entries.getValue(RestoreBundle.COMMANDS).decodeToString().lines().filter { it.isNotEmpty() && !it.startsWith("#") }
         assertEquals(commands, r.out.lines().filter { it.isNotEmpty() && !it.startsWith("#") })
-        assertTrue(r.out.contains("# kept (needs --remove-apps): 'pm' 'uninstall' '--user' '0' 'ai.promptstudio.tvclean.launcher'"), r.out)
+        assertTrue(r.out.contains("# kept (needs --remove-apps): 'pm' 'uninstall' '--user' '0' 'com.gathin.tvhome'"), r.out)
     }
 
     @Test fun aFailedStepIsReportedAndTheRestStillRun() {

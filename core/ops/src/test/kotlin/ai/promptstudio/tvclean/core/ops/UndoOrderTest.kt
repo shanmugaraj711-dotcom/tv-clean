@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class UndoOrderTest {
-    private val launcher = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+    private val launcher = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
     private val stock = Component(PackageName("com.google.android.tvlauncher"), ".MainActivity")
     private val a = PackageName("com.miui.tv.analytics")
     private val sha = Sha256("c".repeat(64))

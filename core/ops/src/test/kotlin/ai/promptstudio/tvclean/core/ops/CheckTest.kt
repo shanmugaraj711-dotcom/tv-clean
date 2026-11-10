@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
 class CheckTest {
     private val r = ShellRenderer()
     private val capture = Fixtures.miTv()
-    private val launcher = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+    private val launcher = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
     private val stock = Component(PackageName("com.google.android.tvlauncher"), ".MainActivity")
 
     private fun ok(v: VerifyResult) = assertEquals(VerifyResult.Ok, v)
@@ -41,9 +41,9 @@ class CheckTest {
         val home = capture.homeActivityText
         ok(r.check(Op.VerifyHome(stock), home, null))
         bad(r.check(Op.VerifyHome(launcher), home, null))
-        ok(r.check(Op.SetHome(launcher), "priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true\nai.promptstudio.tvclean.launcher/.MainActivity\n", null))
+        ok(r.check(Op.SetHome(launcher), "priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true\ncom.gathin.tvhome/.MainActivity\n", null))
         bad(r.check(Op.SetHome(launcher), "", null))
-        bad(r.check(Op.SetHome(launcher), "ai.promptstudio.tvclean.launcher/.MainActivity\nandroid/com.android.internal.app.ResolverActivity\n", null))
+        bad(r.check(Op.SetHome(launcher), "com.gathin.tvhome/.MainActivity\nandroid/com.android.internal.app.ResolverActivity\n", null))
     }
 
     @Test fun settingsReadTheNamespaceListing() {
@@ -64,9 +64,9 @@ class CheckTest {
     @Test fun installAndDefaultStateReadTheDump() {
         val dump = """
             Packages:
-              Package [ai.promptstudio.tvclean.launcher] (1a2b3c):
+              Package [com.gathin.tvhome] (1a2b3c):
                 userId=10123
-                pkg=Package{4d5e6f ai.promptstudio.tvclean.launcher}
+                pkg=Package{4d5e6f com.gathin.tvhome}
                 versionCode=7 minSdk=21 targetSdk=28
                 versionName=0.1.0
                 flags=[ HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
@@ -89,7 +89,7 @@ class CheckTest {
     @Test fun uninstallAndFilesAndTheRest() {
         val all = capture.packagesAllText
         bad(r.check(Op.Uninstall(PackageName("com.google.android.youtube.tv")), all, null))
-        ok(r.check(Op.Uninstall(PackageName("ai.promptstudio.tvclean.launcher")), all, null))
+        ok(r.check(Op.Uninstall(PackageName("com.gathin.tvhome")), all, null))
         val path = RemotePath(RemoteDir.OVERLAY, listOf("config.json"))
         val sha = Sha256("c".repeat(64))
         val blob = ai.promptstudio.tvclean.core.model.BlobRef(sha, 10, "p")
@@ -107,10 +107,10 @@ class CheckTest {
     // "Status: ok" and print no Error line, or the TV's own home screen is left alone.
     @Test fun startAndWaitNeedsStatusOk() {
         val start = Op.StartActivity(launcher, wait = true)
-        ok(r.check(start, "Starting: Intent { cmp=ai.promptstudio.tvclean.launcher/.MainActivity }\nStatus: ok\nLaunchState: COLD\nComplete\n", null))
+        ok(r.check(start, "Starting: Intent { cmp=com.gathin.tvhome/.MainActivity }\nStatus: ok\nLaunchState: COLD\nComplete\n", null))
         ok(r.check(start, "Warning: Activity not started, its current task has been brought to the front\nStatus: ok\nComplete\n", null))
-        bad(r.check(start, "Starting: Intent { cmp=ai.promptstudio.tvclean.launcher/.MainActivity }\n", null))
-        bad(r.check(start, "Starting: Intent { cmp=ai.promptstudio.tvclean.launcher/.MainActivity }\nError type 3\nError: Activity class {ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.MainActivity} does not exist.\n", null))
+        bad(r.check(start, "Starting: Intent { cmp=com.gathin.tvhome/.MainActivity }\n", null))
+        bad(r.check(start, "Starting: Intent { cmp=com.gathin.tvhome/.MainActivity }\nError type 3\nError: Activity class {com.gathin.tvhome/com.gathin.tvhome.MainActivity} does not exist.\n", null))
         bad(r.check(start, "Status: ok\nError: Activity not started, unable to resolve Intent\n", null))
         bad(r.check(start, "", null))
     }

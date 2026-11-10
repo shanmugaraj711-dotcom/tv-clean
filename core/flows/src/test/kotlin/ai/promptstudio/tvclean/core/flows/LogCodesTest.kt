@@ -88,14 +88,14 @@ class LogCodesTest {
     }
 
     @Test fun opsAreNamedByKindAndTarget() {
-        val home = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+        val home = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
         val token = RunToken("00000000000000aa")
         assertEquals("Disable com.amazon.tv.launcher", LogCodes.op(Op.Disable(pkg)))
         assertEquals("Enable com.amazon.tv.launcher", LogCodes.op(Op.Enable(pkg)))
-        assertEquals("SetHome ai.promptstudio.tvclean.launcher/.MainActivity", LogCodes.op(Op.SetHome(home)))
-        assertEquals("VerifyHome ai.promptstudio.tvclean.launcher/.MainActivity", LogCodes.op(Op.VerifyHome(home)))
+        assertEquals("SetHome com.gathin.tvhome/.MainActivity", LogCodes.op(Op.SetHome(home)))
+        assertEquals("VerifyHome com.gathin.tvhome/.MainActivity", LogCodes.op(Op.VerifyHome(home)))
         assertEquals("SettingsPut screensaver_enabled", LogCodes.op(Op.SettingsPut(SettingKey.SCREENSAVER_ENABLED, "0")))
-        assertEquals("Install ai.promptstudio.tvclean.launcher", LogCodes.op(Op.InstallStream(BlobRef(sha, 1, "bundled:x.apk"), sha, home.pkg, 1, sha)))
+        assertEquals("Install com.gathin.tvhome", LogCodes.op(Op.InstallStream(BlobRef(sha, 1, "bundled:x.apk"), sha, home.pkg, 1, sha)))
         assertEquals("PushAsset config.json", LogCodes.op(Op.PushAsset(BlobRef(sha, 1, "x"), RemotePath(RemoteDir.OVERLAY, listOf("config.json")), sha)))
         assertEquals("Read package_dump", LogCodes.op(Op.Read(ProbeKind.PACKAGE_DUMP)))
         // A run token is never logged.

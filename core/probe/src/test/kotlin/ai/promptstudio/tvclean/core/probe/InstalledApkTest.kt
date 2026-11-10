@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 
 // RFC-INSTALL-1: the install check's second read, after the installed APK's hash read nothing.
 class InstalledApkTest {
-    private val pkg = PackageName("ai.promptstudio.tvclean.launcher")
+    private val pkg = PackageName("com.gathin.tvhome")
     private val prober = AdbProber(ProbeFixtures.clock())
     private val script = ProbeScripts.installedApkState(pkg).text
 

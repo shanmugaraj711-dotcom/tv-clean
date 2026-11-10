@@ -157,8 +157,10 @@ class AppForeground(initial: Boolean = false) {
     fun set(foreground: Boolean) { state.value = foreground }
 }
 
-// The launcher component everything targets (PRODUCT-SPEC 3.4).
+// The launcher component everything targets (PRODUCT-SPEC 3.4). pkg is the manifest package of
+// the bundled launcher APK (com.gathin.tvhome) — it must match PinnedLauncher.PACKAGE; see the
+// warning there. The .MainActivity is the launcher's own home activity.
 object Launcher {
-    val pkg = PackageName("ai.promptstudio.tvclean.launcher")
+    val pkg = PackageName("com.gathin.tvhome")
     val home = Component(pkg, ".MainActivity")
 }

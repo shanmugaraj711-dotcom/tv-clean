@@ -151,8 +151,8 @@ class TvRestoreFilesTest {
         assertEquals(Scenario.expectedOff().map { it.value }, o.getValue("switchedOff").jsonArray.map { it.jsonPrimitive.content })
         assertEquals(Scenario.stock.flat, o.getValue("homeBefore").jsonPrimitive.content)
         assertEquals(Scenario.launcher.flat, o.getValue("homeNow").jsonPrimitive.content)
-        assertEquals(listOf("ai.promptstudio.tvclean.launcher"), o.getValue("installed").jsonArray.map { it.jsonPrimitive.content })
-        assertEquals(listOf("/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json"), o.getValue("files").jsonArray.map { it.jsonPrimitive.content })
+        assertEquals(listOf("com.gathin.tvhome"), o.getValue("installed").jsonArray.map { it.jsonPrimitive.content })
+        assertEquals(listOf("/sdcard/Android/data/com.gathin.tvhome/files/config.json"), o.getValue("files").jsonArray.map { it.jsonPrimitive.content })
         val settings = o.getValue("settings").jsonArray.map { it.jsonObject }
         assertEquals(listOf("screensaver_components", "screensaver_enabled"), settings.map { it.getValue("name").jsonPrimitive.content })
         val changesBack = ChangeJson.decodeArray(o.getValue("changes").jsonArray)

@@ -228,7 +228,7 @@ class RestoreCommandsTest {
     // the cues themselves never make a step.
     @Test fun theCurtainLeavesNoStepWhenFinishedAndItsRemovalWhenInterrupted() {
         val plan = PlanId("p")
-        val curtain = PackageName("ai.promptstudio.tvclean.curtain")
+        val curtain = PackageName("tv.cleanyour.curtain")
         val receiver = ai.promptstudio.tvclean.core.model.Component(curtain, ".CueReceiver")
         val token = ai.promptstudio.tvclean.core.model.RunToken("0123456789abcdef")
         val blob = BlobRef(sha256Of("curtain"), 1, "bundled:tvclean-curtain.apk")
@@ -243,7 +243,7 @@ class RestoreCommandsTest {
         assertTrue(interrupted.none { it.change.op is Op.CurtainCue || it.change.op is Op.StartActivity }, interrupted.toString())
         val removal = interrupted.single { it.inverse == Op.Uninstall(curtain) }
         assertEquals(RestoreStepKind.REMOVE_APP, removal.kind)
-        assertEquals(listOf("'pm' 'uninstall' '--user' '0' 'ai.promptstudio.tvclean.curtain'"), removal.lines)
+        assertEquals(listOf("'pm' 'uninstall' '--user' '0' 'tv.cleanyour.curtain'"), removal.lines)
 
         val finished = RestoreCommands(renderer).steps(run + ChangeRecord(plan, 5, Op.Uninstall(curtain), Prior(present = true), 6))
         assertTrue(finished.none { it.change.op.let { op -> op is Op.CurtainCue || DefaultPlanner.packageOf(op) == curtain } }, finished.toString())

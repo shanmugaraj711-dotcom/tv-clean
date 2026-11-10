@@ -25,10 +25,10 @@ import kotlin.test.assertTrue
 class HelperLinesTest {
     private val renderer = ShellRenderer()
     private val service = HelperLines.SERVICE
-    private val full = "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.HomeKeyService"
+    private val full = "com.gathin.tvhome/com.gathin.tvhome.HomeKeyService"
     private val reader = "com.example.reader/.Reader"
     private val voice = "com.vendor.voice/com.vendor.voice.Assist\$Inner"
-    private val input = "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.InputKeyService"
+    private val input = "com.gathin.tvhome/com.gathin.tvhome.InputKeyService"
     private val token = RunToken("0123456789abcdef")
 
     // The TV's sh.
@@ -100,8 +100,8 @@ class HelperLinesTest {
             service.flat to null, full to null, "$reader:${service.flat}" to reader, "${service.flat}:$reader" to reader,
             "$reader:$full:$voice" to "$reader:$voice", "${service.flat}:$full" to null, "$reader:${service.flat}:$full:$voice" to "$reader:$voice",
             // The launcher's other helper and a package that only starts with ours are not ours to remove.
-            "$input:${service.flat}" to input, "ai.promptstudio.tvclean.launcherx/.HomeKeyService:${service.flat}" to "ai.promptstudio.tvclean.launcherx/.HomeKeyService",
-            "ai.promptstudio.tvclean.launcher/.HomeKeyServiceX" to "ai.promptstudio.tvclean.launcher/.HomeKeyServiceX",
+            "$input:${service.flat}" to input, "com.gathin.tvhomex/.HomeKeyService:${service.flat}" to "com.gathin.tvhomex/.HomeKeyService",
+            "com.gathin.tvhome/.HomeKeyServiceX" to "com.gathin.tvhome/.HomeKeyServiceX",
             reader to reader, "null" to "null",
         )
         for ((before, after) in cases) for (off in listOf(false, true)) {
@@ -140,8 +140,8 @@ class HelperLinesTest {
 
     @Test fun onlyOurServiceIsEverAddedOrRemovedAndNeverTwice() {
         val other = Component(PackageName("com.example.reader"), ".Reader")
-        val input = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".InputKeyService")
-        for (c in listOf(other, input, Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity"))) {
+        val input = Component(PackageName("com.gathin.tvhome"), ".InputKeyService")
+        for (c in listOf(other, input, Component(PackageName("com.gathin.tvhome"), ".MainActivity"))) {
             assertFailsWith<RenderRefused> { renderer.render(Op.AccessibilityAdd(null, c)) }
             assertFailsWith<RenderRefused> { renderer.render(Op.AccessibilityRemove(null, c)) }
             assertFailsWith<RenderRefused> { renderer.render(Op.ArmHelperWatchdog(c, 60, token, false)) }

@@ -103,7 +103,7 @@ private fun switchedOff(level: Level = Level.SIMPLE, groups: List<OffGroup> = of
 
 private fun appSettings(update: UpdateCheck = UpdateCheck.Idle, backing: String = "STRONGBOX") = AppSettingsState(
     version = "0.1.0", prefs = AppPrefsValue(haptics = true, largeTextFollowsSystem = true),
-    launcherPkg = "ai.promptstudio.tvclean.launcher", launcherVersion = "0.1.0", launcherDigest = "9f2c41d07a6be8135c4d0e72ab19f5c3",
+    launcherPkg = "com.gathin.tvhome", launcherVersion = "0.1.0", launcherDigest = "9f2c41d07a6be8135c4d0e72ab19f5c3",
     keyBacking = backing, keyFingerprint = "AB:CD:EF:01:23:45:67:89:AB:CD:EF:01:23:45:7F:2A", update = update,
 )
 

@@ -1,5 +1,5 @@
 # Home button helper: the safety timer of its check
-op: ArmHelperWatchdog component=ai.promptstudio.tvclean.launcher/.HomeKeyService seconds=150 token=0123456789abcdef offIfEmpty=true
+op: ArmHelperWatchdog component=com.gathin.tvhome/.HomeKeyService seconds=150 token=0123456789abcdef offIfEmpty=true
 privilege: TAKEOVER
 timeout_ms: 30000
 stdout_cap: 65536

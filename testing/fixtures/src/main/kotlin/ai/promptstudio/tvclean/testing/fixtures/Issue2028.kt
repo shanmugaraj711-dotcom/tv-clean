@@ -24,7 +24,7 @@ import ai.promptstudio.tvclean.core.model.SnapshotReason
 object Issue2028 {
     val jio = Component(PackageName("com.iwedia.ui.rjio.launcher.reliance"), "com.iwedia.ui.rjio.launcher.ui.intro.IntroActivity")
     val tvlauncher = Component(PackageName("com.google.android.tvlauncher"), ".MainActivity")
-    val ours = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+    val ours = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
     val personal = Component(PackageName("com.example.personal.home"), ".MainActivity")
     val fallbackHome = Component(PackageName("com.android.tv.settings"), ".system.FallbackHome")
 

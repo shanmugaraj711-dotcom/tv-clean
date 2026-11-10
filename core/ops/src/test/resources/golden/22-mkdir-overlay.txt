@@ -3,7 +3,7 @@ op: Mkdir dir=OVERLAY
 privilege: COMMUNITY
 timeout_ms: 30000
 stdout_cap: 65536
-line: 'mkdir' '-p' '/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files'
+line: 'mkdir' '-p' '/sdcard/Android/data/com.gathin.tvhome/files'
 transfer: none
 verify: none
 prior: none

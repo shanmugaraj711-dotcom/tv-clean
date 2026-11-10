@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 // or a switch asked for anyway and never weaves the curtain in.
 class OldAndroidPlanTest {
     private val curtainSha = Sha256("e".repeat(64))
-    private val curtain = LauncherArtifact(PackageName("ai.promptstudio.tvclean.curtain"), 1, "0.1", curtainSha, Samples.launcherArtifact().signer,
+    private val curtain = LauncherArtifact(PackageName("tv.cleanyour.curtain"), 1, "0.1", curtainSha, Samples.launcherArtifact().signer,
         BlobRef(curtainSha, 49_571, "bundled:tvclean-curtain.apk"))
     private val config = BlobRef(Sha256("c".repeat(64)), 100, "blobs/config")
 

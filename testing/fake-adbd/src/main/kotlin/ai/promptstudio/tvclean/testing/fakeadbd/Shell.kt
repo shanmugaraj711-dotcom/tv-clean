@@ -275,7 +275,7 @@ class FakeShell(private val tv: FakeTv, private val faults: Faults) {
                 if (p == null || pkg in tv.notForUser0 || p.state == "disabled-user" || p.state == "disabled") ExecOutcome("Error type 3\nError: Activity class {$component} does not exist.\n", 255)
                 else {
                     tv.startedActivities += component
-                    if (pkg == "ai.promptstudio.tvclean.launcher") tv.mkdir("/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files")
+                    if (pkg == "com.gathin.tvhome") tv.mkdir("/sdcard/Android/data/com.gathin.tvhome/files")
                     ExecOutcome("Starting: Intent { cmp=$component }\n" + if (wait) "Status: ok\nLaunchState: COLD\nActivity: $component\nTotalTime: 420\nWaitTime: 430\nComplete\n" else "")
                 }
             }

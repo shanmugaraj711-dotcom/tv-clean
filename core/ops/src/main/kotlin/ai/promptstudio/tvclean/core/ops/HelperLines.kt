@@ -12,7 +12,7 @@ import ai.promptstudio.tvclean.core.model.RunToken
 // from values checked again here.
 //
 // Only one service is ever added or removed: the launcher's HomeKeyService (SERVICE), in its short
-// (`ai.promptstudio.tvclean.launcher/.HomeKeyService`) or full class form. Every write of the service list is a
+// (`com.gathin.tvhome/.HomeKeyService`) or full class form. Every write of the service list is a
 // compare-and-set, or a removal of that one entry with every other entry left byte for byte and in
 // order:
 // - add: the TV reads the list and writes it with ours appended only while it still reads what the
@@ -30,7 +30,7 @@ import ai.promptstudio.tvclean.core.model.RunToken
 // Values sit in single quotes (no list, component or token admits one) or are only ever read into
 // shell variables and used inside double quotes; nothing read from the TV is pasted into a line.
 object HelperLines {
-    const val PKG = "ai.promptstudio.tvclean.launcher"
+    const val PKG = "com.gathin.tvhome"
     val SERVICE = Component(PackageName(PKG), ".HomeKeyService")
     const val LIST_KEY = "enabled_accessibility_services"
     const val ON_KEY = "accessibility_enabled"

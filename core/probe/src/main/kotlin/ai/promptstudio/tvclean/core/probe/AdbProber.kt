@@ -319,7 +319,7 @@ class AdbProber(
         const val SCREENSHOT_CAP = ShellRenderer.MAX_PNG_BYTES
         const val SIGNER_APK_CAP = 16L * 1024 * 1024
         private val random = java.security.SecureRandom()
-        val SIGNED_PACKAGES: Set<PackageName> = setOf(PackageName("ai.promptstudio.tvclean.launcher"), PackageName("ai.promptstudio.tvclean.curtain"))
+        val SIGNED_PACKAGES: Set<PackageName> = setOf(PackageName("com.gathin.tvhome"), PackageName("tv.cleanyour.curtain"))
         private val ZERO = Sha256("0".repeat(64))
         private val BOOT_ID_RE = Regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
         private val PNG_SIGNATURE = byteArrayOf(0x89.toByte(), 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A)

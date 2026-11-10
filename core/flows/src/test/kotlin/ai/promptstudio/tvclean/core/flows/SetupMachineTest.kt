@@ -619,7 +619,7 @@ class SetupMachineTest {
         val h = Harness()
         h.sessions.allowPromptFor[HOST] = "AB:CD:7F:2A"
         val sha = ai.promptstudio.tvclean.core.model.Sha256("e".repeat(64))
-        val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(PackageName("ai.promptstudio.tvclean.curtain"), 1, "0.1", sha, Samples.zeroHash,
+        val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(PackageName("tv.cleanyour.curtain"), 1, "0.1", sha, Samples.zeroHash,
             ai.promptstudio.tvclean.core.model.BlobRef(sha, 49_571, "bundled:tvclean-curtain.apk"))
         val m = SetupMachine(h.setupDeps(curtainPin = object : ai.promptstudio.tvclean.core.trust.CurtainPin { override fun bundled() = curtain }), backgroundScope)
         toFound(h, m)
@@ -649,7 +649,7 @@ class SetupMachineTest {
         h.sessions.allowPromptFor[HOST] = "AB:CD:7F:2A"
         h.prober.facts = Samples.miTvFacts().copy(sdk = 24, release = "7.0")
         val sha = Sha256("e".repeat(64))
-        val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(PackageName("ai.promptstudio.tvclean.curtain"), 1, "0.1", sha, Samples.zeroHash, BlobRef(sha, 49_571, "bundled:tvclean-curtain.apk"))
+        val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(PackageName("tv.cleanyour.curtain"), 1, "0.1", sha, Samples.zeroHash, BlobRef(sha, 49_571, "bundled:tvclean-curtain.apk"))
         val m = SetupMachine(h.setupDeps(curtainPin = object : ai.promptstudio.tvclean.core.trust.CurtainPin { override fun bundled() = curtain }), backgroundScope)
         toFound(h, m)
         assertIs<SetupState.Found>(m.state.value)
@@ -1466,7 +1466,7 @@ class SetupMachineTest {
     // D36 (RF-LAUNCHER-240 F1): a home screen app under another key is replaced, and only then; the
     // plan's summary then carries replacesLauncher, which S3 shows above the button.
     @Test fun onlyALauncherUnderAnotherKeyIsReplaced() = runTest(timeout = 30.seconds) {
-        val launcher = PackageName("ai.promptstudio.tvclean.launcher")
+        val launcher = PackageName("com.gathin.tvhome")
         for ((signer, replace) in listOf(Sha256("e".repeat(64)) to true, Samples.zeroHash to false, null to false)) {
             val h = Harness()
             h.sessions.allowPromptFor[HOST] = "AB:CD:7F:2A"
@@ -1601,7 +1601,7 @@ class SetupMachineTest {
     }
 
     // Issues #171 (Xiaomi MiTV4I, brand sure set), #187 (Xiaomi Mi Box S, exact profile) and #220
-    // (Polytron Google TV, no profile): Home already answers to ai.promptstudio.tvclean.launcher, the new home
+    // (Polytron Google TV, no profile): Home already answers to com.gathin.tvhome, the new home
     // screen's package name, signed with another key, and the TV's own home screen is switched off.
     // 0.3.3 took that for ours and asked for the install and the switch, which the planner refuses
     // (D36), so every probe ended in "plan refused" and the card said the TV had stopped answering.
@@ -1677,7 +1677,7 @@ class SetupMachineTest {
             "Projectivy Launcher cannot be switched off: it is a home screen app you installed",
             "com.spocky.projengmenu is not on this TV",
             "the home screen app can only be replaced while the TV's own home screen is in charge (D36)",
-            "the launcher artifact is ai.promptstudio.tvclean.launcher, not com.google.android.apps.tv.launcherx",
+            "the launcher artifact is com.gathin.tvhome, not com.google.android.apps.tv.launcherx",
         )) }
         val m = h.setup(backgroundScope)
         toFound(h, m)
@@ -1688,7 +1688,7 @@ class SetupMachineTest {
             "setup: refused because an app you installed cannot be switched off: it is a home screen app you installed",
             "setup: refused because an app you installed is not on this TV",
             "setup: refused because the home screen app can only be replaced while the TV's own home screen is in charge (D36)",
-            "setup: refused because the launcher artifact is ai.promptstudio.tvclean.launcher, not com.google.android.apps.tv.launcherx",
+            "setup: refused because the launcher artifact is com.gathin.tvhome, not com.google.android.apps.tv.launcherx",
         ), because, h.logLines.joinToString("\n"))
         assertTrue(h.logLines.none { "Projectivy" in it || "projengmenu" in it })
         // Try again reads the TV again; the same facts give the same card.

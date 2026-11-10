@@ -119,7 +119,7 @@ class HomeHelperPlanTest {
         assertEquals(null, refusal(tv.acc(sixteen.substringBeforeLast(':'), "1")))
         assertEquals(HomeHelper.Refusal.OTHERS_WOULD_BIND, refusal(tv.acc(reader, "0")))   // S3
         assertEquals(HomeHelper.Refusal.OTHERS_WOULD_BIND, refusal(tv.acc(reader, null)))
-        assertEquals(HomeHelper.Refusal.OTHERS_WOULD_BIND, refusal(tv.acc("ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.InputKeyService", "0")))
+        assertEquals(HomeHelper.Refusal.OTHERS_WOULD_BIND, refusal(tv.acc("com.gathin.tvhome/com.gathin.tvhome.InputKeyService", "0")))
         assertEquals(null, refusal(tv.acc(reader, "1")))   // S8: a reader with accessibility on is allowed
         // Through the planner: the plan says why, and nothing is planned.
         assertTrue(refusedWith(planner().plan(helperSetup(), tv.acc(reader, "0"), facts, emptyList())).single().startsWith("accessibility is off"))
@@ -186,7 +186,7 @@ class HomeHelperPlanTest {
         assertEquals(listOf<Op>(Op.AccessibilityRemove(service.flat, service)), wasOn.steps.map { it.op })
         assertTrue(ok(planner().plan(PlanRequest.HomeHelperOff, tv.acc(reader, "1"), facts, ourAdd)).steps.isEmpty())
         // The launcher's other helper, listed by a laptop install, stays.
-        val input = "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.InputKeyService"
+        val input = "com.gathin.tvhome/com.gathin.tvhome.InputKeyService"
         assertEquals(listOf<Op>(Op.AccessibilityRemove("$input:${service.flat}", service)),
             ok(planner().plan(PlanRequest.HomeHelperOff, tv.acc("$input:${service.flat}", "1"), facts, ourAdd)).steps.map { it.op })
     }

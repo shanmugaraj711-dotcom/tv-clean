@@ -35,7 +35,7 @@ class RestoreScriptsTest {
         val txt = RestoreScripts.commandsTxt(header, steps)
         val runnable = txt.lines().filter { it.isNotBlank() && !it.trim().startsWith("#") }
         assertEquals(steps.filter { it.kind == RestoreStepKind.PUT_BACK }.flatMap { it.lines }, runnable)
-        assertTrue(txt.lines().contains("# remove-app: 'pm' 'uninstall' '--user' '0' 'ai.promptstudio.tvclean.launcher'"))
+        assertTrue(txt.lines().contains("# remove-app: 'pm' 'uninstall' '--user' '0' 'com.gathin.tvhome'"))
     }
 
     @Test fun hostileTextNeverLeavesItsLiteral() {

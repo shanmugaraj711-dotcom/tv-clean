@@ -16,7 +16,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 // 0.3.4: the "plan refused" reports (#171 Xiaomi MiTV4I, #187 Xiaomi Mi Box S, #220 Polytron Google
-// TV). Home already answers to ai.promptstudio.tvclean.launcher, the new home screen's package name, signed with
+// TV). Home already answers to com.gathin.tvhome, the new home screen's package name, signed with
 // another key. 0.3.3's wizard took that for ours and asked for the install and the switch; the
 // planner's D36 rule (a launcher with another key is replaced only while the TV's own home screen is
 // in charge) refused the whole plan. The rule stays; the wizard no longer asks (SetupMachineTest),

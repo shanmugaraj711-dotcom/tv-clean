@@ -78,7 +78,7 @@ class RendererPropertyTest {
         return Op.Read(kind, arg)
     }
 
-    private val curtain = Component(PackageName("ai.promptstudio.tvclean.curtain"), ".CueReceiver")
+    private val curtain = Component(PackageName("tv.cleanyour.curtain"), ".CueReceiver")
     private fun cue() = Op.CurtainCue(curtain, token(), CurtainStage.entries[rnd.nextInt(CurtainStage.entries.size)], rnd.nextInt(0, 1000), rnd.nextInt(0, 1000),
         CurtainGroup.entries[rnd.nextInt(CurtainGroup.entries.size)], rnd.nextInt(0, 1000), rnd.nextInt(0, 1000))
 
@@ -179,7 +179,7 @@ class RendererPropertyTest {
     // and, since RFC-HELPER-1 (test build), the Home button helper's templates for HomeKeyService alone.
     // Pinned for every op kind, random ones and ones aimed at the launcher's 3.0 components.
     @Test fun noOpApprovesGrantsOrSwitchesOnTheLaunchersHelpers() {
-        val tvhome = PackageName("ai.promptstudio.tvclean.launcher")
+        val tvhome = PackageName("com.gathin.tvhome")
         val parts = listOf(".GuardRevival", ".GuardConfig", ".AppLaunchActivity", ".HomeKeyService", ".InputKeyService", ".MainActivity")
             .map { Component(tvhome, it) }
         val aimed = parts.flatMap { c ->
@@ -215,7 +215,7 @@ class RendererPropertyTest {
                 val argv = ShellTokens.tokenize(line.text)
                 assertTrue(argv.none { it in forbidden }, line.text)
                 assertTrue(argv.none { "WRITE_SECURE_SETTINGS" in it || "BIND_NOTIFICATION_LISTENER" in it }, line.text)
-                if (argv.take(2) == listOf("am", "broadcast")) assertEquals("ai.promptstudio.tvclean.curtain/.CueReceiver", argv[3], line.text)
+                if (argv.take(2) == listOf("am", "broadcast")) assertEquals("tv.cleanyour.curtain/.CueReceiver", argv[3], line.text)
                 // Any line naming accessibility, but the settings list read, is one of the two SettingsPut forms.
                 if (argv.any { "accessibility" in it } && argv.take(2) != listOf("settings", "list")) {
                     val put = assertIs<Op.SettingsPut>(op, line.text)
@@ -242,7 +242,7 @@ class RendererPropertyTest {
             val op = cue()
             val r = renderer.render(op)
             val argv = ShellTokens.tokenize(r.lines.single().text)
-            assertEquals(listOf("am", "broadcast", "-n", "ai.promptstudio.tvclean.curtain/.CueReceiver", "-a", "ai.promptstudio.tvclean.curtain.CUE",
+            assertEquals(listOf("am", "broadcast", "-n", "tv.cleanyour.curtain/.CueReceiver", "-a", "tv.cleanyour.curtain.CUE",
                 "--es", "token", op.token.value, "--es", "stage", op.stage.name, "--es", "group", op.group.name,
                 "--ei", "count", "${op.count}", "--ei", "total", "${op.total}", "--ei", "gcount", "${op.groupCount}", "--ei", "gtotal", "${op.groupTotal}", "--receiver-foreground"), argv)
             assertEquals(Privilege.PROFILE_STEP, r.privilege)
@@ -254,8 +254,8 @@ class RendererPropertyTest {
         val bad = listOf(
             Op.CurtainCue(curtain, t, CurtainStage.OFF, -1, 3), Op.CurtainCue(curtain, t, CurtainStage.OFF, 1, 1000),
             Op.CurtainCue(curtain, t, CurtainStage.OFF, 1, 3, CurtainGroup.ADVERTS, 1000, 1), Op.CurtainCue(curtain, t, CurtainStage.OFF, 1, 3, CurtainGroup.ADVERTS, 1, -5),
-            Op.CurtainCue(Component(PackageName("ai.promptstudio.tvclean.launcher"), ".CueReceiver"), t, CurtainStage.SCAN, 0, 0),
-            Op.CurtainCue(Component(PackageName("ai.promptstudio.tvclean.curtainx"), ".CueReceiver"), t, CurtainStage.SCAN, 0, 0),
+            Op.CurtainCue(Component(PackageName("com.gathin.tvhome"), ".CueReceiver"), t, CurtainStage.SCAN, 0, 0),
+            Op.CurtainCue(Component(PackageName("tv.cleanyour.curtainx"), ".CueReceiver"), t, CurtainStage.SCAN, 0, 0),
         )
         for (op in bad) assertFailsWith<RenderRefused>(op.toString()) { renderer.render(op) }
     }
@@ -300,7 +300,7 @@ class RendererPropertyTest {
             assertFailsWith<IllegalArgumentException>(bad.toString()) { RemotePath(RemoteDir.TMP, bad) }
         }
         // And the renderer refuses what the types cannot express as a bad combination.
-        val launcher = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+        val launcher = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
         val refused = listOf<Op>(
             Op.SettingsPut(SettingKey.ADB_ENABLED, "1"),
             Op.SettingsPut(SettingKey.SCREENSAVER_ENABLED, "2"),

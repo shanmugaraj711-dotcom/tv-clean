@@ -19,7 +19,7 @@ import ai.promptstudio.tvclean.core.session.TvSession
 // both files and restarts Home. The digest read on every connect is what the drift banner compares.
 class FileOverlayTransport(
     private val prober: Prober,
-    private val launcher: Component = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity"),
+    private val launcher: Component = Component(PackageName("com.gathin.tvhome"), ".MainActivity"),
 ) : ConfigTransport {
     override val kind: ConfigTransportKind = ConfigTransportKind.FILE_OVERLAY
 

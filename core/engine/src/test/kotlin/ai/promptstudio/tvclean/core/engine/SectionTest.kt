@@ -152,7 +152,7 @@ class SectionTest {
     @Test fun theTimerRollsBackAndTheCurtainIsRemoved() = runTest(timeout = TEST_TIMEOUT) {
         val h = Harness(this)
         val engine = h.engine()
-        val curtainPkg = PackageName("ai.promptstudio.tvclean.curtain")
+        val curtainPkg = PackageName("tv.cleanyour.curtain")
         val bytes = "fake curtain apk".encodeToByteArray()
         val sha = h.tv.acceptApk(bytes, curtainPkg, 1, h.signer)
         val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(curtainPkg, 1, "0.1", sha, h.signer, ai.promptstudio.tvclean.core.model.BlobRef(sha, bytes.size.toLong(), "bundled:curtain.apk"))

@@ -52,8 +52,8 @@ class ThemeProviderRunTest {
         // The push to the staging file runs before the write that reads it, and the check reads through the provider.
         val log = h.tv.execLog.map { Recording.normalize(it) }
         val push = log.indexOf("push /data/local/tmp/tvclean/theme-config.json")
-        val write = log.indexOfFirst { it.contains("content write --uri content://ai.promptstudio.tvclean.launcher.theme/config.json") }
-        val read = log.indexOfFirst { it.startsWith("content read --uri content://ai.promptstudio.tvclean.launcher.theme/config.json") }
+        val write = log.indexOfFirst { it.contains("content write --uri content://com.gathin.tvhome.theme/config.json") }
+        val read = log.indexOfFirst { it.startsWith("content read --uri content://com.gathin.tvhome.theme/config.json") }
         assertTrue(push in 0 until write && write < read, log.toString())
         assertTrue(log.none { it.startsWith("sha256sum /sdcard/") }, "never checked as the shell")
     }
@@ -82,7 +82,7 @@ class ThemeProviderRunTest {
         assertTrue(h.tv.files[FileOverlayTransport.CONFIG.absolute]!!.contentEquals(cfg))
         assertTrue(FileOverlayTransport.CONFIG.absolute !in h.tv.shellOwned)
         // The old wallpaper is cleared by the launcher too.
-        assertTrue(h.tv.execLog.map { Recording.normalize(it) }.any { it == "content delete --uri content://ai.promptstudio.tvclean.launcher.theme/wallpaper.jpg" })
+        assertTrue(h.tv.execLog.map { Recording.normalize(it) }.any { it == "content delete --uri content://com.gathin.tvhome.theme/wallpaper.jpg" })
     }
 
     // Where the provider does not answer, the line copies the staged file in as before; the check still reads as the

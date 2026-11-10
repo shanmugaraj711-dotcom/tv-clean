@@ -63,7 +63,7 @@ class FileOverlayTransportTest {
         assertEquals(listOf(Op.RemoveFile(FileOverlayTransport.CONFIG), Op.RemoveFile(FileOverlayTransport.WALLPAPER), Op.RestartHome(h.launcher)), t.resetPlanSteps())
         assertFailsWith<IllegalArgumentException> { t.writePlanSteps(cfg.copy(size = 64L * 1024 + 1), null) }
         assertFailsWith<IllegalArgumentException> { t.writePlanSteps(cfg, wp.copy(size = 300L * 1024 + 1)) }
-        assertEquals("/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json", FileOverlayTransport.CONFIG.absolute)
+        assertEquals("/sdcard/Android/data/com.gathin.tvhome/files/config.json", FileOverlayTransport.CONFIG.absolute)
         assertNull(t.readDigest(h.tv))
         val bytes = "{}".encodeToByteArray()
         h.tv.files[FileOverlayTransport.CONFIG.absolute] = bytes

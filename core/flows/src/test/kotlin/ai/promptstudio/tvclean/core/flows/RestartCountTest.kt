@@ -46,7 +46,7 @@ class RestartCountTest {
     private val theirs = HomeResolution(stock, listOf(HomeClaimant(stock, 2), HomeClaimant(Launcher.home, 0)))
     private val launcher = LauncherState(1, Samples.zeroHash, null, null)
     private val build = "0.4.8 (full, test build)"
-    private val helperService = "ai.promptstudio.tvclean.launcher/.HomeKeyService"
+    private val helperService = "com.gathin.tvhome/.HomeKeyService"
     private val talkback = "com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService"
 
     @Test fun aHeldRestartIsCountedOnceAcrossTwoBoots() = runTest(timeout = 30.seconds) {
@@ -96,7 +96,7 @@ class RestartCountTest {
         assertEquals(HomePath.LIST, HomePath.of(tv.copy(launcher = launcher), snap, HomeDecision(true, profile = "exact xiaomi-mitv-axso0")))
         assertEquals(HomePath.R0, HomePath.of(tv.copy(launcher = launcher, profileId = null), snap, HomeDecision(true, profile = "brand set Xiaomi")))
         assertEquals(HomePath.LIST, HomePath.of(tv.copy(launcher = launcher, profileId = null), snap, HomeDecision(true, profile = "candidate tcl-x")))
-        val helper = snap.copy(settings = mapOf(SettingKey.ENABLED_ACCESSIBILITY to "ai.promptstudio.tvclean.launcher/.HomeKeyService", SettingKey.ACCESSIBILITY_ENABLED to "1"))
+        val helper = snap.copy(settings = mapOf(SettingKey.ENABLED_ACCESSIBILITY to "com.gathin.tvhome/.HomeKeyService", SettingKey.ACCESSIBILITY_ENABLED to "1"))
         assertEquals(HomePath.HELPER, HomePath.of(tv, helper, null), "our service listed")
         assertEquals(HomePath.HELPER, HomePath.of(tv.copy(launcher = launcher), snap, HomeDecision(false, redirect = true)), "a read from before the helper")
         assertNull(HomePath.of(tv.copy(launcher = null), snap, HomeDecision(false, redirect = true)), "the TV's own home screen chosen")
@@ -177,7 +177,7 @@ class RestartCountTest {
         val tv = h.knownTv().copy(launcher = launcher)
         h.tvs.upsert(tv)
         h.snapshots.save(Samples.miTvSnapshot().copy(takenAtMs = Samples.NOW_MS + 1,
-            settings = mapOf(SettingKey.ENABLED_ACCESSIBILITY to "ai.promptstudio.tvclean.launcher/.HomeKeyService", SettingKey.ACCESSIBILITY_ENABLED to "1"))
+            settings = mapOf(SettingKey.ENABLED_ACCESSIBILITY to "com.gathin.tvhome/.HomeKeyService", SettingKey.ACCESSIBILITY_ENABLED to "1"))
             .let { it.copy(contentHash = SnapshotCodec.hash(it)) })
         h.prober.home = theirs
         h.prober.accessibilityNow = AccessibilityNow("1", helperService)

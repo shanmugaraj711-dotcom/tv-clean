@@ -27,12 +27,12 @@ class ThemeProviderLinesTest {
 
     @Test fun theWriteIsUpstreamsWayWithTheCopyAsTheFallback() {
         assertEquals(
-            "rm -f /sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json 2>/dev/null; " +
-                "o=\$(content write --uri content://ai.promptstudio.tvclean.launcher.theme/config.json < /data/local/tmp/tvclean/theme-config.json 2>&1) && [ -z \"\$o\" ] || " +
-                "cp /data/local/tmp/tvclean/theme-config.json /sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json; " +
+            "rm -f /sdcard/Android/data/com.gathin.tvhome/files/config.json 2>/dev/null; " +
+                "o=\$(content write --uri content://com.gathin.tvhome.theme/config.json < /data/local/tmp/tvclean/theme-config.json 2>&1) && [ -z \"\$o\" ] || " +
+                "cp /data/local/tmp/tvclean/theme-config.json /sdcard/Android/data/com.gathin.tvhome/files/config.json; " +
                 "r=\$?; rm -f /data/local/tmp/tvclean/theme-config.json; exit \$r",
             ThemeProviderLines.write(config))
-        assertEquals("content read --uri content://ai.promptstudio.tvclean.launcher.theme/wallpaper.jpg | sha256sum", ThemeProviderLines.read(wallpaper))
+        assertEquals("content read --uri content://com.gathin.tvhome.theme/wallpaper.jpg | sha256sum", ThemeProviderLines.read(wallpaper))
     }
 
     @Test fun onlyTheTwoThemeFilesInTheLaunchersFolder() {
@@ -62,7 +62,7 @@ class ThemeProviderLinesTest {
     @Test fun aRemovalThroughTheProviderIsOneQuotedLineAndTheEmptyHashMeansGone() {
         val op = Op.RemoveFile(wallpaper, FileRoute.THEME_PROVIDER)
         val r = renderer.render(op)
-        assertEquals(listOf("content", "delete", "--uri", "content://ai.promptstudio.tvclean.launcher.theme/wallpaper.jpg"), ShellTokens.tokenize(r.lines.single().text))
+        assertEquals(listOf("content", "delete", "--uri", "content://com.gathin.tvhome.theme/wallpaper.jpg"), ShellTokens.tokenize(r.lines.single().text))
         assertIs<VerifyResult.Ok>(renderer.check(op, "$EMPTY_FILE_SHA256  -\n", null))
         assertIs<VerifyResult.Mismatch>(renderer.check(op, "${sha.hex}  -\n", null))
         // The sync route keeps its rule: an empty file there is a file.

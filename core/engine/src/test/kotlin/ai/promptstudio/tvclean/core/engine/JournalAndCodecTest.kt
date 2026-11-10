@@ -160,9 +160,9 @@ class PlanJsonTest {
             Op.Read(ai.promptstudio.tvclean.core.model.ProbeKind.SHA256_OF_FILE, ai.promptstudio.tvclean.core.model.ReadArg.Path(path)), Op.Read(ai.promptstudio.tvclean.core.model.ProbeKind.PACKAGE_DUMP, ai.promptstudio.tvclean.core.model.ReadArg.Pkg(launcher.pkg)),
             Op.Read(ai.promptstudio.tvclean.core.model.ProbeKind.WATCHDOG_ALIVE, ai.promptstudio.tvclean.core.model.ReadArg.Token(token)),
             Op.Settle(15), Op.Reboot, Op.DebugOff,
-            Op.CurtainCue(ai.promptstudio.tvclean.core.model.Component(PackageName("ai.promptstudio.tvclean.curtain"), ".CueReceiver"), token, ai.promptstudio.tvclean.core.model.CurtainStage.OFF, 3, 12,
+            Op.CurtainCue(ai.promptstudio.tvclean.core.model.Component(PackageName("tv.cleanyour.curtain"), ".CueReceiver"), token, ai.promptstudio.tvclean.core.model.CurtainStage.OFF, 3, 12,
                 ai.promptstudio.tvclean.core.model.CurtainGroup.BRAND_EXTRAS, 1, 2),
-            Op.CurtainCue(ai.promptstudio.tvclean.core.model.Component(PackageName("ai.promptstudio.tvclean.curtain"), ".CueReceiver"), token, ai.promptstudio.tvclean.core.model.CurtainStage.FINALE, 0, 0),
+            Op.CurtainCue(ai.promptstudio.tvclean.core.model.Component(PackageName("tv.cleanyour.curtain"), ".CueReceiver"), token, ai.promptstudio.tvclean.core.model.CurtainStage.FINALE, 0, 0),
         )
         for (op in ops) assertEquals(op, OpJson.decode(OpJson.encode(op)), op.toString())
         assertEquals(Prior(), OpJson.decodePrior(OpJson.encodePrior(Prior())))

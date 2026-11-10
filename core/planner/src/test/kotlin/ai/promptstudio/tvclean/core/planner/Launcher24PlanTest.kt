@@ -131,7 +131,7 @@ class Launcher24PlanTest {
     // A look push restarts Home; a TV whose launcher had an accessibility service on gets it back
     // (tools/theme.sh), as typed settings steps after the restart. Without one, nothing is added.
     @Test fun aRestartOfHomePutsTheLaunchersAccessibilityServicesBack() {
-        val list = "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.InputKeyService:com.example.reader/.Reader"
+        val list = "com.gathin.tvhome/com.gathin.tvhome.InputKeyService:com.example.reader/.Reader"
         val base = snapshot(home = launcher, claimants = listOf(launcher, stock), extra = mapOf(installedLauncher()))
         val with = base.withSettings(base.settings + mapOf(SettingKey.ENABLED_ACCESSIBILITY to list, SettingKey.ACCESSIBILITY_ENABLED to "1"))
         val config = BlobRef(Sha256("c".repeat(64)), 100, "blob:c")

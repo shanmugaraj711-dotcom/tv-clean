@@ -26,15 +26,26 @@ object TrustRoots {
 // scripts/build-launcher-on-forge.sh (docs/history/reviews/LAUNCHER-300-build-output.txt). The
 // verifyLauncherPin task (part of :core:trust check and of :android:platform preBuild) fails the
 // build when the asset differs.
+// PACKAGE IS THE MANIFEST PACKAGE OF THE PINNED APK, verified with `aapt2 dump badging` on the
+// bundled asset (com.gathin.tvhome, 2026-11-10): the pin check verifies size, sha256 and signer
+// ONLY, never the package. The 2026-11-10 rebrand renamed PACKAGE to ai.promptstudio.tvclean
+// .launcher (our own launcher module's package, which is NOT bundled) while the asset stayed
+// upstream's: every install check, StartActivity, SetHome and VerifyHome then looked for a
+// package that can never exist on a TV, the switch failed at openSection on every run, and the
+// "another home screen app, Gathin Home" stop card looped on every "Use the new home screen"
+// tap (Mi TV 4I, Nov 2026). If the asset is ever re-fetched or our own launcher ships,
+// re-verify PACKAGE with aapt2 and update it together with the pin — and update Launcher.pkg
+// (Ports.kt), SwitchOffRule.OUR_LAUNCHER, the theme authority, the overlay folder and the
+// curtain's PACKAGE in the same change.
 object PinnedLauncher {
     const val ASSET_NAME = "tvclean-launcher.apk"
     const val UPSTREAM_COMMIT = "b06ab21105c49900cb1ed76b24414dba1e21d0db"
-    const val PACKAGE = "ai.promptstudio.tvclean.launcher"
+    const val PACKAGE = "com.gathin.tvhome"
     const val VERSION_CODE = 9L
     const val VERSION_NAME = "3.0"
     const val SIZE = 540_541L
     const val SHA256 = "9fcc21c0eb81548c2432b3bf89c1d9c6b6ad17dcf7f7fc2e8d90d7ccbea7d60e"
-    // SHA-256 of the signing certificate (DER), "O=tvclean, CN=TV Clean launcher", v2 and v3.
+    // SHA-256 of the signing certificate (DER), "O=cleanyourtv, CN=Clean Your TV launcher", v2 and v3.
     const val SIGNER_SHA256 = "576418154bec6505bfc709ccaa6ae85b6e09d98eb89f4a25147ca1b4b0505132"
 }
 
@@ -44,7 +55,10 @@ object PinnedLauncher {
 // check and of :android:platform preBuild) fails the build when the asset differs.
 object PinnedCurtain {
     const val ASSET_NAME = "tvclean-curtain.apk"
-    const val PACKAGE = "ai.promptstudio.tvclean.curtain"
+    // The manifest package of the pinned asset, verified with `aapt2 dump badging`
+    // (tv.cleanyour.curtain, 2026-11-10) — same warning as PinnedLauncher above: this must name
+    // the asset's own package, not our curtain module's (which is not bundled).
+    const val PACKAGE = "tv.cleanyour.curtain"
     const val ACTIVITY = ".CurtainActivity"
     const val RECEIVER = ".CueReceiver"
     const val VERSION_CODE = 1L

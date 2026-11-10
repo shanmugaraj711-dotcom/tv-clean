@@ -51,7 +51,7 @@ class LookSkippedTest {
         h.setupPlan = h.lookPlan()
         h.engine.onStart = { p -> if (p.kind != ai.promptstudio.tvclean.core.planner.PlanKind.SETUP) finish(p, RunStatus.COMPLETED) else {
             h.journal.append(JournalRecord.Begin(p.id, 1, p.steps[1].op, listOf("fake"), null, 21))
-            h.journal.append(JournalRecord.Failed(p.id, 1, 1, "exit 1", "cp: /sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json: Permission denied"))
+            h.journal.append(JournalRecord.Failed(p.id, 1, 1, "exit 1", "cp: /sdcard/Android/data/com.gathin.tvhome/files/config.json: Permission denied"))
             emit(p.tvId, RunState.Finished(p, RunStatus.COMPLETED_WITH_SKIPS, listOf(p.steps[1]), HomeOutcome.CONFIRMED))
         } }
         val m = h.setup(backgroundScope)
@@ -62,10 +62,10 @@ class LookSkippedTest {
         assertTrue(h.logLines.contains("setup: the look did not reach the TV; the choice is kept for the Look sheet"))
         assertTrue(d.summary.skipped.isEmpty(), "the look is not a switch-off that stayed on")
         val line = h.logLines.single { it.startsWith("setup: look not sent") }
-        assertEquals("setup: look not sent: PushAsset config.json via provider: nonzero_exit(1) cp: /sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json: Permission denied", line)
+        assertEquals("setup: look not sent: PushAsset config.json via provider: nonzero_exit(1) cp: /sdcard/Android/data/com.gathin.tvhome/files/config.json: Permission denied", line)
         // The report's step line (a finished run) carries it too.
         val f = RunState.Finished(h.setupPlan, RunStatus.COMPLETED_WITH_SKIPS, listOf(h.setupPlan.steps[1]), null)
-        assertTrue(RunLines.finished(f, h.ledger).endsWith("; look not sent: PushAsset config.json via provider: nonzero_exit(1) cp: /sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json: Permission denied"))
+        assertTrue(RunLines.finished(f, h.ledger).endsWith("; look not sent: PushAsset config.json via provider: nonzero_exit(1) cp: /sdcard/Android/data/com.gathin.tvhome/files/config.json: Permission denied"))
     }
 
     @Test fun aLookThatArrivedHasNoLine() = runTest(timeout = 30.seconds) {
@@ -91,12 +91,12 @@ class LookSkippedTest {
         val p = h.plan(listOf(install, Op.PushAsset(BlobRef(sha, 10, "blobs/c"), config, sha, FileRoute.THEME_PROVIDER)), takeover = true)
             .let { p -> p.copy(steps = p.steps.mapIndexed { i, s -> when (i) { 0 -> s.copy(group = DefaultPlanner.GROUP_LAUNCHER); 1 -> s.copy(group = DefaultPlanner.GROUP_THEME); else -> s } }) }
         h.journal.append(JournalRecord.Begin(p.id, 1, p.steps[1].op, listOf("fake"), null, 21))
-        h.journal.append(JournalRecord.Failed(p.id, 1, 1, "exit 1", "Error: no provider for ai.promptstudio.tvclean.launcher.theme"))
+        h.journal.append(JournalRecord.Failed(p.id, 1, 1, "exit 1", "Error: no provider for com.gathin.tvhome.theme"))
         val f = RunState.Finished(p, RunStatus.COMPLETED_WITH_SKIPS, listOf(p.steps[0], p.steps[1]), null)
         assertEquals("look not sent: the new home screen did not install", RunLines.lookSkipped(f, h.ledger))
         assertTrue(RunLines.finished(f, h.ledger).endsWith("2 skipped; look not sent: the new home screen did not install"), RunLines.finished(f, h.ledger))
         val curtain = f.copy(skipped = listOf(p.steps[0].copy(group = DefaultPlanner.GROUP_CURTAIN), p.steps[1]))
-        assertEquals("look not sent: PushAsset config.json via provider: nonzero_exit(1) Error: no provider for ai.promptstudio.tvclean.launcher.theme",
+        assertEquals("look not sent: PushAsset config.json via provider: nonzero_exit(1) Error: no provider for com.gathin.tvhome.theme",
             RunLines.lookSkipped(curtain, h.ledger))
     }
 

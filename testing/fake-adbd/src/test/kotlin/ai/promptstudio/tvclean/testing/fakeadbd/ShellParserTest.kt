@@ -100,14 +100,14 @@ class ShellParserTest {
         val apk = ByteArray(1000) { 3 }
         tv.files["/data/local/tmp/tvclean/x.apk"] = apk
         assertTrue(String(shell.run("pm install -r --user 0 /data/local/tmp/tvclean/x.apk").stdout).startsWith("Failure [INSTALL_PARSE_FAILED_NOT_APK"))
-        tv.apkCatalog[sha256Hex(apk)] = FakePackage("ai.promptstudio.tvclean.launcher", "/data/app/ai.promptstudio.tvclean.launcher-1/base.apk", versionCode = 7, signer = "ab".repeat(32))
+        tv.apkCatalog[sha256Hex(apk)] = FakePackage("com.gathin.tvhome", "/data/app/com.gathin.tvhome-1/base.apk", versionCode = 7, signer = "ab".repeat(32))
         assertEquals("Success\n", String(shell.run("pm install -r --user 0 /data/local/tmp/tvclean/x.apk").stdout))
-        assertEquals(7, tv.packages.getValue("ai.promptstudio.tvclean.launcher").versionCode)
-        assertTrue(String(shell.run("dumpsys package ai.promptstudio.tvclean.launcher").stdout).contains("versionCode=7"))
-        assertEquals("Success\n", String(shell.run("pm uninstall ai.promptstudio.tvclean.launcher").stdout))
+        assertEquals(7, tv.packages.getValue("com.gathin.tvhome").versionCode)
+        assertTrue(String(shell.run("dumpsys package com.gathin.tvhome").stdout).contains("versionCode=7"))
+        assertEquals("Success\n", String(shell.run("pm uninstall com.gathin.tvhome").stdout))
         assertEquals(1, shell.run("pm uninstall com.tcl.tv").exit)
         tv.installFailure = "INSTALL_FAILED_INSUFFICIENT_STORAGE"
-        tv.apkCatalog[sha256Hex(apk)] = FakePackage("ai.promptstudio.tvclean.launcher", "/data/app/x/base.apk")
+        tv.apkCatalog[sha256Hex(apk)] = FakePackage("com.gathin.tvhome", "/data/app/x/base.apk")
         assertEquals("Failure [INSTALL_FAILED_INSUFFICIENT_STORAGE]\n", String(shell.run("pm install -r /data/local/tmp/tvclean/x.apk").stdout))
     }
 

@@ -33,7 +33,7 @@ import kotlin.test.assertTrue
 // once per stage, removed as the last step; every curtain step CONTINUEs and none sits inside the
 // guarded section; with the curtain off, refused by the TV or not handed in, the plan is today's.
 class CurtainPlanTest {
-    private val curtainPkg = PackageName("ai.promptstudio.tvclean.curtain")
+    private val curtainPkg = PackageName("tv.cleanyour.curtain")
     private val curtainSha = Sha256("e".repeat(64))
     private val curtain = LauncherArtifact(curtainPkg, 1, "0.1", curtainSha, Samples.launcherArtifact().signer, BlobRef(curtainSha, 49_571, "bundled:tvclean-curtain.apk"))
     private val config = BlobRef(Sha256("c".repeat(64)), 100, "blobs/config")
@@ -53,7 +53,7 @@ class CurtainPlanTest {
     private fun curtainSteps(p: Plan) = p.steps.filter { it.group == DefaultPlanner.GROUP_CURTAIN }
     private fun body(p: Plan) = p.steps.filter { it.group != DefaultPlanner.GROUP_CURTAIN }
 
-    private fun head() = listOf("InstallStream ai.promptstudio.tvclean.curtain", "start ai.promptstudio.tvclean.curtain/.CurtainActivity", "cue SCAN 0/18", "cue RESTORE_SAVED 0/0")
+    private fun head() = listOf("InstallStream tv.cleanyour.curtain", "start tv.cleanyour.curtain/.CurtainActivity", "cue SCAN 0/18", "cue RESTORE_SAVED 0/0")
     private fun cleaning(group: String) = installed.indices.flatMap { i ->
         val k = i + 1
         listOf("Disable ${installed[i].value}", "cue OFF $k/18 $group $k/18") + if (k == 18) listOf("cue GROUP_DONE 18/18 $group 18/18") else emptyList()
@@ -65,9 +65,9 @@ class CurtainPlanTest {
         val p = plan(withCurtain(), planner = planner())
         assertEquals(
             head() + cleaning("OTHER") + listOf(
-                "Settle", "cue INSTALL 0/0", "InstallStream ai.promptstudio.tvclean.launcher", "cue INSTALLED 0/0", "cue FINALE 0/0", "Settle",
-                "start ai.promptstudio.tvclean.launcher/.MainActivity wait", "Mkdir", "ArmHomeWatchdog", "Disable com.google.android.tvlauncher",
-                "SetHome", "VerifyHome", "ConfirmHome", "KillWatchdog", "Uninstall ai.promptstudio.tvclean.curtain",
+                "Settle", "cue INSTALL 0/0", "InstallStream com.gathin.tvhome", "cue INSTALLED 0/0", "cue FINALE 0/0", "Settle",
+                "start com.gathin.tvhome/.MainActivity wait", "Mkdir", "ArmHomeWatchdog", "Disable com.google.android.tvlauncher",
+                "SetHome", "VerifyHome", "ConfirmHome", "KillWatchdog", "Uninstall tv.cleanyour.curtain",
             ),
             p.steps.map(::label),
         )
@@ -78,7 +78,7 @@ class CurtainPlanTest {
         assertTrue(tokens.single() != p.sections.single().token)
         // The narration: the install speaks, the settle speaks, the rest is silent.
         val voiced = curtainSteps(p).filter { it.narration.isNotBlank() }.map { label(it) to it.narration }
-        assertEquals(listOf("InstallStream ai.promptstudio.tvclean.curtain" to "Showing the progress on the TV", "Settle" to "Giving the TV a moment"), voiced)
+        assertEquals(listOf("InstallStream tv.cleanyour.curtain" to "Showing the progress on the TV", "Settle" to "Giving the TV a moment"), voiced)
         assertEquals(Op.Settle(3), curtainSteps(p).first { it.op is Op.Settle }.op)
         assertEquals(Prior(present = false), p.steps.first().prior)
         assertEquals(null, p.steps.last().prior, "the curtain is not on the TV when the run starts")
@@ -90,8 +90,8 @@ class CurtainPlanTest {
         val p = plan(withCurtain(setup().copy(config = config)), planner = planner())
         val labels = p.steps.map(::label)
         val finale = labels.indexOf("cue FINALE 0/0")
-        assertEquals(listOf("cue FINALE 0/0", "Settle", "start ai.promptstudio.tvclean.launcher/.MainActivity wait", "Mkdir", "PushAsset", "RemoveFile", "RestartHome",
-            "start ai.promptstudio.tvclean.launcher/.MainActivity wait"), labels.subList(finale, finale + 8))
+        assertEquals(listOf("cue FINALE 0/0", "Settle", "start com.gathin.tvhome/.MainActivity wait", "Mkdir", "PushAsset", "RemoveFile", "RestartHome",
+            "start com.gathin.tvhome/.MainActivity wait"), labels.subList(finale, finale + 8))
         assertEquals(DefaultPlanner.GROUP_THEME, p.steps[finale + 2].group)
         assertCurtainInvariants(p, plan(setup().copy(config = config), planner = planner()))
     }
@@ -100,16 +100,16 @@ class CurtainPlanTest {
     @Test fun pinAlreadyInstalledIsStartedOnly() {
         val snap = withPackage(curtainState(versionCode = 1))
         val p = plan(withCurtain(), snapshot = snap, journals = ourInstall, planner = planner())
-        assertEquals(listOf("start ai.promptstudio.tvclean.curtain/.CurtainActivity", "cue SCAN 0/18"), p.steps.take(2).map(::label))
-        assertEquals("Uninstall ai.promptstudio.tvclean.curtain", label(p.steps.last()))
+        assertEquals(listOf("start tv.cleanyour.curtain/.CurtainActivity", "cue SCAN 0/18"), p.steps.take(2).map(::label))
+        assertEquals("Uninstall tv.cleanyour.curtain", label(p.steps.last()))
         // An older version is replaced (D39 ladder with the package present).
         val older = plan(withCurtain(), snapshot = withPackage(curtainState(versionCode = 0)), journals = ourInstall, planner = planner())
-        assertEquals("InstallStream ai.promptstudio.tvclean.curtain", label(older.steps.first()))
+        assertEquals("InstallStream tv.cleanyour.curtain", label(older.steps.first()))
         assertEquals(Prior(present = true), older.steps.first().prior)
         // Without cmd: push, install with -r, tidy up; only the install speaks.
         val noCmd = snap.copy(facts = snap.facts.copy(adbFeatures = snap.facts.adbFeatures - "cmd")).let { it.copy(contentHash = SnapshotCodec.hash(it)) }
         val pushed = plan(withCurtain(), snapshot = withPackage(curtainState(versionCode = 0), noCmd), journals = ourInstall, planner = planner())
-        assertEquals(listOf("Mkdir", "PushAsset", "Install ai.promptstudio.tvclean.curtain", "RemoveFile"), pushed.steps.take(4).map(::label))
+        assertEquals(listOf("Mkdir", "PushAsset", "Install tv.cleanyour.curtain", "RemoveFile"), pushed.steps.take(4).map(::label))
         assertEquals(setOf(ai.promptstudio.tvclean.core.model.InstallFlag.REPLACE), (pushed.steps[2].op as Op.Install).flags)
         assertEquals(listOf("", "", "Showing the progress on the TV", ""), pushed.steps.take(4).map { it.narration })
     }
@@ -133,15 +133,15 @@ class CurtainPlanTest {
         assertTrue(plan(PlanRequest.Leftovers(emptySet()), snapshot = squat).steps.isEmpty())
         // Our own interrupted run left it: the install is in the records.
         val reused = plan(withCurtain(), snapshot = squat, journals = ourInstall, planner = planner())
-        assertEquals("start ai.promptstudio.tvclean.curtain/.CurtainActivity", label(reused.steps.first()))
-        assertEquals(listOf("Uninstall ai.promptstudio.tvclean.curtain"), plan(PlanRequest.Leftovers(emptySet()), snapshot = squat, journals = ourInstall).steps.map(::label))
+        assertEquals("start tv.cleanyour.curtain/.CurtainActivity", label(reused.steps.first()))
+        assertEquals(listOf("Uninstall tv.cleanyour.curtain"), plan(PlanRequest.Leftovers(emptySet()), snapshot = squat, journals = ourInstall).steps.map(::label))
         // Marked installed by us in the snapshot does too.
         val marked = withPackage(curtainState().copy(installedByUs = true))
-        assertEquals(listOf("Uninstall ai.promptstudio.tvclean.curtain"), plan(PlanRequest.Leftovers(emptySet()), snapshot = marked).steps.map(::label))
+        assertEquals(listOf("Uninstall tv.cleanyour.curtain"), plan(PlanRequest.Leftovers(emptySet()), snapshot = marked).steps.map(::label))
         // Our own run on a clean TV: installed, used and removed by the plan itself.
         val own = plan(withCurtain(), planner = planner())
-        assertEquals("InstallStream ai.promptstudio.tvclean.curtain", label(own.steps.first()))
-        assertEquals("Uninstall ai.promptstudio.tvclean.curtain", label(own.steps.last()))
+        assertEquals("InstallStream tv.cleanyour.curtain", label(own.steps.first()))
+        assertEquals("Uninstall tv.cleanyour.curtain", label(own.steps.last()))
     }
 
     @Test fun installRefusalToggleOffAndNoPinGiveTodaysPlan() {
@@ -160,11 +160,11 @@ class CurtainPlanTest {
     // No takeover and no look: FINALE is the last cue, then the settle, then the removal.
     @Test fun noTakeoverEndsWithTheFinale() {
         val p = plan(withCurtain(setup(choices = choices(takeover = false))), planner = planner())
-        assertEquals(listOf("cue INSTALLED 0/0", "cue FINALE 0/0", "Settle", "Uninstall ai.promptstudio.tvclean.curtain"), p.steps.takeLast(4).map(::label))
+        assertEquals(listOf("cue INSTALLED 0/0", "cue FINALE 0/0", "Settle", "Uninstall tv.cleanyour.curtain"), p.steps.takeLast(4).map(::label))
         assertTrue(p.sections.isEmpty())
         val debloatOnly = plan(withCurtain(setup(choices = choices(takeover = false, installLauncher = false))), planner = planner())
         assertTrue(debloatOnly.steps.none { (it.op as? Op.CurtainCue)?.stage == CurtainStage.INSTALL })
-        assertEquals(listOf("cue GROUP_DONE 18/18 OTHER 18/18", "cue FINALE 0/0", "Settle", "Uninstall ai.promptstudio.tvclean.curtain"), debloatOnly.steps.takeLast(4).map(::label))
+        assertEquals(listOf("cue GROUP_DONE 18/18 OTHER 18/18", "cue FINALE 0/0", "Settle", "Uninstall tv.cleanyour.curtain"), debloatOnly.steps.takeLast(4).map(::label))
     }
 
     // The group words: a profile's category ids map to the fixed vocabulary; counts restart per group,
@@ -192,7 +192,7 @@ class CurtainPlanTest {
     @Test fun leftoverIsRemovedFirstByLeftovers() {
         val snap = withPackage(curtainState())
         val p = plan(PlanRequest.Leftovers(setOf(installed.first())), snapshot = snap, journals = ourInstall)
-        assertEquals(listOf("Uninstall ai.promptstudio.tvclean.curtain", "Disable ${installed.first().value}"), p.steps.map(::label))
+        assertEquals(listOf("Uninstall tv.cleanyour.curtain", "Disable ${installed.first().value}"), p.steps.map(::label))
         assertEquals("Removing the progress screen from the TV", p.steps.first().narration)
         assertEquals(FailurePolicy.CONTINUE, p.steps.first().onFailure)
         assertEquals(listOf("Disable ${installed.first().value}"), plan(PlanRequest.Leftovers(setOf(installed.first()))).steps.map(::label))

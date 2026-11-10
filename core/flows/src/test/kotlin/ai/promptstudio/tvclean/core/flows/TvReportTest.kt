@@ -164,7 +164,7 @@ class TvReportTest {
             assertFalse("projengmenu" in out, out)
             assertTrue("Resolves to: an app you installed (not named)\n" in out, out)
             assertTrue(
-                "Claimant: ai.promptstudio.tvclean.launcher/.MainActivity priority 3\n" +
+                "Claimant: com.gathin.tvhome/.MainActivity priority 3\n" +
                     "Claimant: an app you installed (not named) priority 3\n" +
                     "Claimant: com.google.android.apps.tv.launcherx/.home.HomeActivity priority 2\n" +
                     "Claimant: com.google.android.tungsten.setupwraith/.SetupWraithActivity priority 1\n" in out,

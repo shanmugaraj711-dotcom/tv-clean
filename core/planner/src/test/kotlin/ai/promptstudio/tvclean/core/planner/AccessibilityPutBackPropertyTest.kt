@@ -34,8 +34,8 @@ import kotlin.test.assertTrue
 class AccessibilityPutBackPropertyTest {
     private val rnd = Random(0x5EED_0A11)
     private val accessibility = setOf(SettingKey.ENABLED_ACCESSIBILITY, SettingKey.ACCESSIBILITY_ENABLED)
-    private val helpers = listOf("ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.InputKeyService", "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.HomeKeyService",
-        "ai.promptstudio.tvclean.launcher/.HomeKeyService")
+    private val helpers = listOf("com.gathin.tvhome/com.gathin.tvhome.InputKeyService", "com.gathin.tvhome/com.gathin.tvhome.HomeKeyService",
+        "com.gathin.tvhome/.HomeKeyService")
     private val others = listOf("com.example.reader/.Reader", "com.vendor.voice/com.vendor.voice.Assist")
     private val config = BlobRef(Sha256("c".repeat(64)), 100, "blob:c")
     private val ours = Samples.launcherArtifact()

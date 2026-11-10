@@ -69,7 +69,7 @@ class HomeStopWordsTest {
         assertEquals(StopCase.HOME_UNKNOWN, card.case)
         assertEquals("STOP_HOME_LOW_STORAGE_BODY{free=120}", card.body)
         assertTrue(card.primary.startsWith("STOP_HOME_UNKNOWN_PRIMARY"), card.primary)
-        assertTrue(h.logLines.any { it == "setup: home switch stopped at Install ai.promptstudio.tvclean.launcher: failed: ${streamClosed(120)}" }, h.logLines.joinToString("\n"))
+        assertTrue(h.logLines.any { it == "setup: home switch stopped at Install com.gathin.tvhome: failed: ${streamClosed(120)}" }, h.logLines.joinToString("\n"))
     }
 
     // Room to spare, or no storage read at all: the card is the one it was.

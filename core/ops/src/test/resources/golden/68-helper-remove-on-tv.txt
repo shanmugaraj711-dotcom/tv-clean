@@ -1,5 +1,5 @@
 # Home button helper: taken out of the list the TV has now, accessibility off when it was the last
-op: AccessibilityRemove expected=null component=ai.promptstudio.tvclean.launcher/.HomeKeyService offIfEmpty=true
+op: AccessibilityRemove expected=null component=com.gathin.tvhome/.HomeKeyService offIfEmpty=true
 privilege: PROFILE_STEP
 timeout_ms: 30000
 stdout_cap: 65536

@@ -7,7 +7,7 @@ package ai.promptstudio.tvclean.core.model
 // R0: 1 the vocabulary moved here from :core:ops: :adb:session (RemotePath, BlobRef), :core:probe (ProbeKind),
 // :core:planner and :core:backup (Op, Prior, ChangeRecord) and the module index (postInstall) all name these types
 
-enum class RemoteDir(val path: String) { TMP("/data/local/tmp/tvclean"), OVERLAY("/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files"), RESTORE("/sdcard/tvclean") }
+enum class RemoteDir(val path: String) { TMP("/data/local/tmp/tvclean"), OVERLAY("/sdcard/Android/data/com.gathin.tvhome/files"), RESTORE("/sdcard/tvclean") }
 data class RemotePath(val dir: RemoteDir, val segments: List<String>) {
     init { require(segments.size in 1..3 && segments.all { FILE_NAME_RE.matches(it) && !it.contains("..") }) }   // R0: 3
     val absolute: String get() = dir.path + "/" + segments.joinToString("/") }
@@ -25,7 +25,7 @@ enum class InstallFlag { REPLACE }      // renders -r; no other flag exists
 enum class CurtainStage { SCAN, RESTORE_SAVED, OFF, GROUP_DONE, INSTALL, INSTALLED, FINALE }
 enum class CurtainGroup { NONE, ADVERTS, TRACKING, NOBODY_ASKED, BRAND_EXTRAS, SHOP_DEMO, OTHER }
 // RFC-THEME-1: how a file reaches the launcher's folder (RemoteDir.OVERLAY). SYNC: an adb sync push or an rm, as the
-// shell. THEME_PROVIDER: the launcher's own ThemeProvider (launcher 2.5 and later, authority ai.promptstudio.tvclean.launcher.theme)
+// shell. THEME_PROVIDER: the launcher's own ThemeProvider (launcher 2.5 and later, authority com.gathin.tvhome.theme)
 // writes or deletes it, so the file belongs to the launcher: the file is staged in TMP by a sync push, written with
 // `content write`, a copy from the staged file is the fallback, and the check reads it back through the provider.
 // Android 11 sets that lock the shell out of Android/data (Xiaomi, TCL) and Android 14, where the shell's file is the

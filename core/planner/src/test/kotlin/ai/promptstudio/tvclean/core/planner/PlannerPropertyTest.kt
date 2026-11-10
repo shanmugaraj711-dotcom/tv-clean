@@ -119,7 +119,7 @@ class PlannerPropertyTest {
     // curtain steps is exactly the plan without the curtain; apply, re-plan and undo still hold.
     @Test fun theCurtainNeverChangesTheSetupItShows() {
         val curtainSha = ai.promptstudio.tvclean.core.model.Sha256("e".repeat(64))
-        val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(PackageName("ai.promptstudio.tvclean.curtain"), 1, "0.1", curtainSha, artifact().signer,
+        val curtain = ai.promptstudio.tvclean.core.model.LauncherArtifact(PackageName("tv.cleanyour.curtain"), 1, "0.1", curtainSha, artifact().signer,
             ai.promptstudio.tvclean.core.model.BlobRef(curtainSha, 49_571, "bundled:tvclean-curtain.apk"))
         var woven = 0
         repeat(150) {
@@ -135,7 +135,7 @@ class PlannerPropertyTest {
             val c = with.steps.filter { it.group == DefaultPlanner.GROUP_CURTAIN }
             assertTrue(c.all { it.onFailure == ai.promptstudio.tvclean.core.ops.FailurePolicy.CONTINUE })
             assertTrue(c.none { s -> with.sections.any { s.index in it.from..it.to } })
-            assertEquals(Op.Uninstall(PackageName("ai.promptstudio.tvclean.curtain")), with.steps.last().op)
+            assertEquals(Op.Uninstall(PackageName("tv.cleanyour.curtain")), with.steps.last().op)
             assertEquals(without.steps.map { listOf(it.op, it.prior, it.group, it.narration, it.onFailure) },
                 with.steps.filter { it.group != DefaultPlanner.GROUP_CURTAIN }.map { listOf(it.op, it.prior, it.group, it.narration, it.onFailure) })
             for ((a, b) in without.sections.zip(with.sections)) {
@@ -147,7 +147,7 @@ class PlannerPropertyTest {
             val tv = ModelTv(snap)
             val baseline = tv.state()
             tv.apply(with)
-            assertTrue(PackageName("ai.promptstudio.tvclean.curtain") !in tv.packages)
+            assertTrue(PackageName("tv.cleanyour.curtain") !in tv.packages)
             val replan = (planner().plan(req(curtain), tv.snapshot(), facts, tv.changes) as PlanResult.Ok).plan
             assertEquals(emptyList<Op>(), replan.steps.map { it.op })
             val undo = (planner().plan(PlanRequest.UndoEverything(tv.changes, removeLauncher = true), tv.snapshot(), facts, tv.changes) as PlanResult.Ok).plan

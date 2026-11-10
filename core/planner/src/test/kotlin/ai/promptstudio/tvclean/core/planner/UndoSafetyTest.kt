@@ -29,7 +29,7 @@ import kotlin.test.assertTrue
 class UndoSafetyTest {
     private val mic = PackageName("com.google.android.tv.remote.service")
     private val chooser = Component(PackageName("android"), "com.android.internal.app.ResolverActivity")
-    private val helpers = "ai.promptstudio.tvclean.launcher/ai.promptstudio.tvclean.launcher.InputKeyService"
+    private val helpers = "com.gathin.tvhome/com.gathin.tvhome.InputKeyService"
 
     private fun Snapshot.with(pkg: PackageName, state: EnabledState) =
         copy(packages = packages + (pkg to PackageState(state, true, 1, null, false, false, null, false))).let { it.copy(contentHash = SnapshotCodec.hash(it)) }

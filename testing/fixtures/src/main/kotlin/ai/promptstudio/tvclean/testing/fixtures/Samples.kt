@@ -34,7 +34,7 @@ import ai.promptstudio.tvclean.core.store.SnapshotCodec
 object Samples {
     const val NOW_MS = 1_760_000_000_000L
     val zeroHash = Sha256("0".repeat(64))
-    val launcherComponent = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+    val launcherComponent = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
     val stockLauncher = Component(PackageName("com.google.android.tvlauncher"), ".MainActivity")
 
     fun miTvFacts(): DeviceFacts = Fixtures.miTv().facts()
@@ -79,7 +79,7 @@ object Samples {
     )
 
     fun launcherArtifact(blob: BlobRef = BlobRef(zeroHash, 260_000, "bundled:launcher.apk")): LauncherArtifact =
-        LauncherArtifact(PackageName("ai.promptstudio.tvclean.launcher"), 1, "0.1.0", blob.sha256, zeroHash, blob)
+        LauncherArtifact(PackageName("com.gathin.tvhome"), 1, "0.1.0", blob.sha256, zeroHash, blob)
 
     // A plan the way the planner would hand it over: rendered with `renderer`, hash = planHash.
     fun plan(

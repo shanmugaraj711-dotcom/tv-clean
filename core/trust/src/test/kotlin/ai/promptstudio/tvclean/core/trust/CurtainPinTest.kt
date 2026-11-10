@@ -33,13 +33,13 @@ class CurtainPinTest {
 
     @Test fun oneSignerForBothTvApps() {
         assertEquals(PinnedLauncher.SIGNER_SHA256, PinnedCurtain.SIGNER_SHA256)
-        assertEquals("ai.promptstudio.tvclean.curtain", PinnedCurtain.PACKAGE)
+        assertEquals("tv.cleanyour.curtain", PinnedCurtain.PACKAGE)
         assertTrue(PinnedCurtain.SIZE < 200L * 1024)
     }
 
     @Test fun bundledCurtainPinServesThePinnedBlob() {
         val artifact = BundledCurtainPin(OneBlob(PinnedCurtain.ASSET_NAME, apk.readBytes())).bundled()
-        assertEquals(PackageName("ai.promptstudio.tvclean.curtain"), artifact.pkg)
+        assertEquals(PackageName("tv.cleanyour.curtain"), artifact.pkg)
         assertEquals(PinnedCurtain.VERSION_CODE, artifact.versionCode)
         assertEquals(Sha256(PinnedCurtain.SHA256), artifact.sha256)
         assertEquals(Sha256(PinnedLauncher.SIGNER_SHA256), artifact.signer)

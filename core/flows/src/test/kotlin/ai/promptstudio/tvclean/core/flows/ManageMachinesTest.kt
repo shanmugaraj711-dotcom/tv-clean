@@ -936,7 +936,7 @@ class ManageMachinesTest {
     // "We stopped". Now the screen says why, from the stored decision, and sends nothing.
     @Test fun withoutTheNewHomeScreenTheScreenSaysWhyAndSendsNothing() = runTest(timeout = 30.seconds) {
         val h = Harness()
-        val tv = h.knownTv().copy(profileId = null).also { h.tvs.upsert(it) }   // the miTv snapshot has no ai.promptstudio.tvclean.launcher
+        val tv = h.knownTv().copy(profileId = null).also { h.tvs.upsert(it) }   // the miTv snapshot has no com.gathin.tvhome
         h.profiles.resolver = { _, _ -> ProfileResolution.None(emptyList()) }   // still no list for it
         // Decided by this version with no list (beta3 writes both; one without is an earlier Setup's).
         HomeDecisions(h.documents).save(tv.id, HomeDecision(false, "WIZARD_STAYS_ON", app = "0.2.0", profile = "none"))

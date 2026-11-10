@@ -88,7 +88,7 @@ class FakeOpRenderer(
 class FakeConfigTransport(
     override val kind: ConfigTransportKind = ConfigTransportKind.FILE_OVERLAY,
     @Volatile var digest: Sha256? = null,
-    private val launcher: Component = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity"),
+    private val launcher: Component = Component(PackageName("com.gathin.tvhome"), ".MainActivity"),
 ) : ConfigTransport {
     val writes = CopyOnWriteArrayList<Pair<BlobRef, BlobRef?>>()
     val routes = CopyOnWriteArrayList<FileRoute>()   // RFC-THEME-1: the route of each write, in order

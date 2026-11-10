@@ -60,9 +60,9 @@ class ShellTokensTest {
     }
 
     @Test fun lineAssertsItsOwnRoundTrip() {
-        val argv = listOf("cmd", "package", "set-home-activity", "--user", "0", "ai.promptstudio.tvclean.launcher/.MainActivity")
+        val argv = listOf("cmd", "package", "set-home-activity", "--user", "0", "com.gathin.tvhome/.MainActivity")
         val line = ShellTokens.line(argv)
-        assertEquals("'cmd' 'package' 'set-home-activity' '--user' '0' 'ai.promptstudio.tvclean.launcher/.MainActivity'", line)
+        assertEquals("'cmd' 'package' 'set-home-activity' '--user' '0' 'com.gathin.tvhome/.MainActivity'", line)
         assertEquals(argv, ShellTokens.tokenize(line))
         assertFailsWith<IllegalArgumentException> { ShellTokens.line(emptyList()) }
     }

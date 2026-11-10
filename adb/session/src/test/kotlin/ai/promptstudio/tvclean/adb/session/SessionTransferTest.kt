@@ -85,11 +85,11 @@ class SessionTransferTest {
         val s = rig.open()
         val apk = ByteArray(300_000) { (it * 3).toByte() }
         val b = blob(apk)
-        rig.tv.apkCatalog[sha256Hex(apk)] = FakePackage("ai.promptstudio.tvclean.launcher", "/data/app/ai.promptstudio.tvclean.launcher-1/base.apk", versionCode = 3)
+        rig.tv.apkCatalog[sha256Hex(apk)] = FakePackage("com.gathin.tvhome", "/data/app/com.gathin.tvhome-1/base.apk", versionCode = 3)
         val progress = ArrayList<Long>()
         assertEquals(InstallOutcome.Installed, s.installStream(b, b.size) { progress += it })
         assertEquals(apk.size.toLong(), progress.last())
-        assertEquals(3, rig.tv.packages.getValue("ai.promptstudio.tvclean.launcher").versionCode)
+        assertEquals(3, rig.tv.packages.getValue("com.gathin.tvhome").versionCode)
 
         rig.tv.installFailure = "INSTALL_FAILED_INSUFFICIENT_STORAGE"
         assertEquals(InstallOutcome.Failed("INSTALL_FAILED_INSUFFICIENT_STORAGE", ""), s.installStream(b, b.size))
@@ -114,21 +114,21 @@ class SessionTransferTest {
         val s = rig.open()
         val apk = ByteArray(5_000) { (it * 7).toByte() }
         val b = blob(apk)
-        val pkg = FakePackage("ai.promptstudio.tvclean.launcher", "/data/app/ai.promptstudio.tvclean.launcher-1/base.apk", versionCode = 9)
+        val pkg = FakePackage("com.gathin.tvhome", "/data/app/com.gathin.tvhome-1/base.apk", versionCode = 9)
         rig.tv.apkCatalog[sha256Hex(apk)] = pkg
         rig.tv.packages[pkg.name] = pkg.copy()
         rig.tv.notForUser0 += pkg.name
         assertTrue(rig.tv.sdk <= 32, "a persona with Android 11 and 12's install rule")
         assertEquals("Success", rig.tv.installApk(apk), "for all users")
         assertTrue(pkg.name in rig.tv.notForUser0, "for all users leaves user 0 out")
-        assertEquals(1, s.exec(line("pm path ai.promptstudio.tvclean.launcher")).exit)
+        assertEquals(1, s.exec(line("pm path com.gathin.tvhome")).exit)
 
         assertEquals(InstallOutcome.Installed, s.installStream(b, b.size))
         assertTrue(rig.adbd.events.any { it == "install: Success" })
         assertTrue(pkg.name !in rig.tv.notForUser0)
-        val path = s.exec(line("pm path ai.promptstudio.tvclean.launcher"))
+        val path = s.exec(line("pm path com.gathin.tvhome"))
         assertEquals(0, path.exit)
-        assertEquals("package:/data/app/ai.promptstudio.tvclean.launcher-1/base.apk\n", path.stdout)
+        assertEquals("package:/data/app/com.gathin.tvhome-1/base.apk\n", path.stdout)
     }
 
     @Test fun stalledPushTimesOutOnTheIdleClock() = runTest {

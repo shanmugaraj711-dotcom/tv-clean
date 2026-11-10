@@ -65,9 +65,9 @@ class GoldenTest {
         )
         val rendered = ops.map { r.render(it) }
         val input = "'pm' 'disable-user' '--user' '0' 'com.miui.tv.analytics'\n" +
-            "sync:/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json ${GoldenCases.cfgSha.hex}\n" +
-            "'am' 'force-stop' 'ai.promptstudio.tvclean.launcher'\n" +
-            "'am' 'start' '-n' 'ai.promptstudio.tvclean.launcher/.MainActivity'\n" +
+            "sync:/sdcard/Android/data/com.gathin.tvhome/files/config.json ${GoldenCases.cfgSha.hex}\n" +
+            "'am' 'force-stop' 'com.gathin.tvhome'\n" +
+            "'am' 'start' '-n' 'com.gathin.tvhome/.MainActivity'\n" +
             "'screencap' '-p' '/data/local/tmp/tvclean/screen.png'\n" +
             "sync:/data/local/tmp/tvclean/screen.png 16777216\n" +
             "sync:bundled:launcher.apk 260000\n"

@@ -55,7 +55,7 @@ class HomeFitTest {
         // Not the next list down either: tcl-g05-google-tv matches the model name alone.
         assertEquals("tcl-g05-google-tv", tested.filter { it.id != "tcl-65c725" }.filter { BundledProfileSource.score(it, facts) != null }.single().id)
         // Either sign of Google TV's home screen is enough: answering Home, or claiming it.
-        val ours = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+        val ours = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
         assertEquals("brand set TCL", name(source.resolveNow(facts, home = home(ours, ours, KnownLaunchers.LAUNCHERX))))
         assertEquals("brand set TCL", name(source.resolveNow(facts, home = HomeResolution(KnownLaunchers.LAUNCHERX, emptyList()))))
         // The Android TV set the list was written for keeps it.
@@ -89,7 +89,7 @@ class HomeFitTest {
     // longer claims Home. It still counts, so the TV does not flip back to the Android TV list.
     @Test fun aSwitchedOffGoogleTvHomeStillCounts() = runBlocking<Unit> {
         val tcl65 = tested.single { it.id == "tcl-65c725" }
-        val ours = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity")
+        val ours = Component(PackageName("com.gathin.tvhome"), ".MainActivity")
         val after = home(ours, ours, setupwraith)
         val before = Issue114.snapshot()
         val off = before.packages + (Issue114.launcherx.pkg to before.packages.getValue(Issue114.launcherx.pkg).copy(enabled = EnabledState.DISABLED_USER))

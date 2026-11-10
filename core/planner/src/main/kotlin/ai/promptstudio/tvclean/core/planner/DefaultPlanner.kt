@@ -1069,7 +1069,7 @@ class DefaultPlanner(
         const val NARRATION_RESTART_UPDATED = "Restarting the updated home screen"
         // RFC-CURTAIN-1
         const val GROUP_CURTAIN = "curtain"
-        const val CURTAIN_PACKAGE = "ai.promptstudio.tvclean.curtain"
+        const val CURTAIN_PACKAGE = "tv.cleanyour.curtain"
         const val CURTAIN_SETTLE_SECONDS = 3
         const val NARRATION_CURTAIN = "Showing the progress on the TV"
         const val NARRATION_CURTAIN_SETTLE = "Giving the TV a moment"

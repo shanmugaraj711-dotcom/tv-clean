@@ -151,27 +151,27 @@ private val homeSwitchGroup = GroupSummary("home", "Needed for the new home scre
 ))
 // The Setup plan sends the dock and the look before the switch (RFC-DOCK-1), so its config.json
 // push is on the list as the sync line planHash uses.
-private const val CONFIG_SYNC = "sync:/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/config.json 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+private const val CONFIG_SYNC = "sync:/sdcard/Android/data/com.gathin.tvhome/files/config.json 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
 private val homeSwitchCommands = listOf(
     CONFIG_SYNC,
     "pm disable-user --user 0 com.google.android.tvlauncher",
-    "cmd package set-home-activity ai.promptstudio.tvclean.launcher/.MainActivity",
+    "cmd package set-home-activity com.gathin.tvhome/.MainActivity",
 )
 private val homeSwitchOnlyPlan = plan(summary(listOf(homeSwitchGroup)).copy(dock = emptyList()))
 // RFC-CURTAIN-1: the same plan with the TV curtain, as "Show commands" lists it: the curtain's install,
 // its start, one am broadcast per cue, and its removal last.
 private fun cue(stage: String, count: Int = 0, total: Int = 0) =
-    "am broadcast -n ai.promptstudio.tvclean.curtain/.CueReceiver -a ai.promptstudio.tvclean.curtain.CUE --es token 3f9c0a17d2e4b856 --es stage $stage --es group NONE --ei count $count --ei total $total --ei gcount 0 --ei gtotal 0 --receiver-foreground"
+    "am broadcast -n tv.cleanyour.curtain/.CueReceiver -a tv.cleanyour.curtain.CUE --es token 3f9c0a17d2e4b856 --es stage $stage --es group NONE --ei count $count --ei total $total --ei gcount 0 --ei gtotal 0 --receiver-foreground"
 private val curtainCommands = listOf(
     "sync:bundled:tvclean-curtain.apk 49571",
-    "am start -n ai.promptstudio.tvclean.curtain/.CurtainActivity",
+    "am start -n tv.cleanyour.curtain/.CurtainActivity",
     cue("SCAN"), cue("RESTORE_SAVED"), cue("INSTALL"),
     "sync:bundled:tvclean-launcher.apk 270885",
     cue("INSTALLED"), cue("FINALE"),
     CONFIG_SYNC,
     "pm disable-user --user 0 com.google.android.tvlauncher",
-    "cmd package set-home-activity ai.promptstudio.tvclean.launcher/.MainActivity",
-    "pm uninstall --user 0 ai.promptstudio.tvclean.curtain",
+    "cmd package set-home-activity com.gathin.tvhome/.MainActivity",
+    "pm uninstall --user 0 tv.cleanyour.curtain",
 )
 private val noHomePlan = plan(summary(listOf(
     GroupSummary("ads", "Adverts and sponsored rows", off = 6, total = 6, rows = emptyList()),
@@ -211,7 +211,7 @@ private val commands = listOf(
     "pm disable-user --user 0 com.mitv.tvhome.atv",
     "pm disable-user --user 0 com.glance.tv",
     CONFIG_SYNC,
-    "cmd package set-home-activity ai.promptstudio.tvclean.launcher/.Home",
+    "cmd package set-home-activity com.gathin.tvhome/.Home",
 )
 
 private val connected = SetupExtras(tvName = "Mi TV 4A", chip = ChipState.CONNECTED)
