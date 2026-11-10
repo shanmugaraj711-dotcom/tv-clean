@@ -50,6 +50,10 @@ dependencies {
     implementation(project(":adb:session"))
     // T7: the real implementations behind Seams (layer 9 may use every lower layer).
     implementation(project(":adb:wire"))
+    // RFC-PAIRING-1: AppGraph wires the TLS identity through AndroidTlsUpgrader /
+    // AndroidPairingRunner / KeystoreAdbSigner, whose signatures name :adb:pairing types
+    // (TlsIdentity, PairingClient, PairingCrypto, PairingException, AdbCertificate).
+    implementation(project(":adb:pairing"))
     implementation(project(":core:ops"))
     implementation(project(":core:spec"))
     implementation(project(":core:probe"))
