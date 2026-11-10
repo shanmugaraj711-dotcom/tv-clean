@@ -31,7 +31,11 @@ class AdbConnection private constructor(private val core: ConnectionCore) {   //
     // RFC-RECONNECT-1: `sendPublicKey` false stops the handshake with Auth.Denied where the TV does not take the
     // signature, before the public key goes (the key is what raises the TV's Allow dialog).
     companion object { suspend fun open(socket: AdbSocket, signer: AdbSigner, tls: TlsUpgrader?, onAwaitingAllow: suspend (String) -> Unit, firstAuthTimeoutMs: Long = 120_000,
-        sendPublicKey: Boolean = true): AdbConnection = AdbConnection(ConnectionCore.open(socket, signer, tls, onAwaitingAllow, firstAuthTimeoutMs, sendPublicKey)) }
+        sendPublicKey: Boolean = true,
+        // RFC-PAIRING-1: the pin a TLS pairing recorded; null is trust on first use, as before.
+        // Added to this frozen entry point because ConnectionCore.open already takes it and the
+        // session passes it — without it the :adb:session module does not compile.
+        tlsPin: Sha256? = null): AdbConnection = AdbConnection(ConnectionCore.open(socket, signer, tls, onAwaitingAllow, firstAuthTimeoutMs, sendPublicKey, tlsPin)) }
     val features: Set<String> get() = core.features
     val maxPayload: Int get() = core.maxPayload
     suspend fun openStream(service: AdbService): AdbStream = core.openStream(service)     // R0: 3
