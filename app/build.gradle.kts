@@ -34,6 +34,14 @@ android {
     lint {
         textReport = true
     }
+    packaging {
+        resources {
+            // Our TLS pairing pulls in Bouncy Castle 1.86 (bcprov, bcpkix, bctls, bcutil);
+            // all four jars ship META-INF/LICENSE.md and the Java-resource merge refuses
+            // the duplicate. The licence text is not needed inside the APK.
+            excludes += "META-INF/LICENSE.md"
+        }
+    }
 }
 
 dependencies {
