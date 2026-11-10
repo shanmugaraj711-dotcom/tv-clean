@@ -13,6 +13,18 @@ TV Clean is built on the open-source [Clean Your TV app](https://github.com/udha
 3. **Tamil + English UI.** The main flow (Connect, Analyse, Clean and the key status messages) is available in Tamil as well as English.
 4. **Our own launcher (in progress).** The home screen will be TV Clean's own leanback launcher (`ai.promptstudio.tvclean.launcher`, module `tv/launcher` in this repo) — not Gathin's. The launcher code is written, but the APK the app installs today is still Gathin's bundled one: the new launcher has to be built, signed with a new TV Clean release key, and its signer pinned before it replaces the bundled APK.
 
+## How to use it
+
+![How to use TV Clean](docs/how-to-use.svg)
+
+1. **Install the APK on your phone** — Android 9 or newer. Download `app-full-debug.apk` from the [latest debug build](https://github.com/shanmugaraj711-dotcom/tv-clean/releases/tag/debug), tap the file, allow the install, open TV Clean.
+2. **Put the phone and the TV on the same Wi-Fi** — both must be on the same network, or the phone cannot see the TV.
+3. **Turn on network debugging on the TV** — with the TV remote. The app shows you the exact steps on screen. If your TV only offers wireless debugging with a pairing code, the app pairs over TLS from the phone alone, no computer needed.
+4. **Open TV Clean and tap Start** — the app finds your TV, reads what is on it, and shows the plan: what goes off and what stays. Nothing changes yet.
+5. **Check the plan, tap Make it clean** — a restore point is saved first, then the clutter goes and the new home screen comes on. About five minutes. You can put anything back from the restore point.
+
+*Real phone screenshots of each step will replace the diagram above after the first TV test.*
+
 ## How it works
 
 | 1. Connect | 2. Analyse | 3. Clean |

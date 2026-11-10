@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="560" viewBox="0 0 760 560" font-family="sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10294d"/>
+      <stop offset="1" stop-color="#0b1e3a"/>
+    </linearGradient>
+  </defs>
+  <rect width="760" height="560" rx="16" fill="url(#bg)"/>
+  <text x="380" y="52" text-anchor="middle" font-size="26" font-weight="bold" fill="#f5c86b">How to use TV Clean</text>
+  <text x="380" y="80" text-anchor="middle" font-size="15" fill="#c9d6e8">Phone + TV on the same Wi-Fi. About 5 minutes. No laptop, no cable.</text>
+
+  <g font-size="16">
+    <rect x="40" y="104" width="680" height="72" rx="12" fill="#16365f"/>
+    <circle cx="80" cy="140" r="20" fill="#e8a33d"/>
+    <text x="80" y="147" text-anchor="middle" font-size="20" font-weight="bold" fill="#0b1e3a">1</text>
+    <text x="112" y="134" font-weight="bold" fill="#ffffff">Install the APK on your phone</text>
+    <text x="112" y="158" fill="#c9d6e8">Android 9 or newer. Tap the file, allow install, open TV Clean.</text>
+
+    <rect x="40" y="192" width="680" height="72" rx="12" fill="#16365f"/>
+    <circle cx="80" cy="228" r="20" fill="#e8a33d"/>
+    <text x="80" y="235" text-anchor="middle" font-size="20" font-weight="bold" fill="#0b1e3a">2</text>
+    <text x="112" y="222" font-weight="bold" fill="#ffffff">Put the phone and the TV on the same Wi-Fi</text>
+    <text x="112" y="246" fill="#c9d6e8">Both must be on the same network, or the phone cannot see the TV.</text>
+
+    <rect x="40" y="280" width="680" height="72" rx="12" fill="#16365f"/>
+    <circle cx="80" cy="316" r="20" fill="#e8a33d"/>
+    <text x="80" y="323" text-anchor="middle" font-size="20" font-weight="bold" fill="#0b1e3a">3</text>
+    <text x="112" y="310" font-weight="bold" fill="#ffffff">Turn on network debugging on the TV</text>
+    <text x="112" y="334" fill="#c9d6e8">With the TV remote. The app shows you the exact steps on screen.</text>
+
+    <rect x="40" y="368" width="680" height="72" rx="12" fill="#16365f"/>
+    <circle cx="80" cy="404" r="20" fill="#e8a33d"/>
+    <text x="80" y="411" text-anchor="middle" font-size="20" font-weight="bold" fill="#0b1e3a">4</text>
+    <text x="112" y="398" font-weight="bold" fill="#ffffff">Open TV Clean and tap Start</text>
+    <text x="112" y="422" fill="#c9d6e8">The app finds your TV, reads what is on it, and shows the plan.</text>
+
+    <rect x="40" y="456" width="680" height="72" rx="12" fill="#16365f"/>
+    <circle cx="80" cy="492" r="20" fill="#e8a33d"/>
+    <text x="80" y="499" text-anchor="middle" font-size="20" font-weight="bold" fill="#0b1e3a">5</text>
+    <text x="112" y="486" font-weight="bold" fill="#ffffff">Check the plan, tap Make it clean</text>
+    <text x="112" y="510" fill="#c9d6e8">A restore point is saved first. Then the clutter goes. Undo any time.</text>
+  </g>
+  <path d="M 80 176 L 80 192" stroke="#e8a33d" stroke-width="3"/>
+  <path d="M 80 264 L 80 280" stroke="#e8a33d" stroke-width="3"/>
+  <path d="M 80 352 L 80 368" stroke="#e8a33d" stroke-width="3"/>
+  <path d="M 80 440 L 80 456" stroke="#e8a33d" stroke-width="3"/>
+</svg>
