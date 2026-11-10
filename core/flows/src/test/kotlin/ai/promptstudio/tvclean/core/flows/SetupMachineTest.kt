@@ -335,6 +335,15 @@ class SetupMachineTest {
         }
         j.append(JournalRecord.Section(p.id, "home_takeover", RunToken("00000000000000aa"), SectionState.CONFIRMED, Samples.NOW_MS))
         j.append(JournalRecord.End(p.id, RunStatus.COMPLETED))
+        // The TV after the switch: our home screen is Home, the stock one is off, the clean-up
+        // switch-off stayed off. The fresh read after the run must see this, not the read before it.
+        h.prober.snapshotFor = { r ->
+            Samples.snapshot(
+                packages = Samples.miTvPackages(disabled = ai.promptstudio.tvclean.testing.fixtures.Fixtures.miTv().disabledAfter.toSet() + Samples.stockLauncher.pkg.value),
+                home = ai.promptstudio.tvclean.core.model.HomeResolution(Launcher.home, listOf(ai.promptstudio.tvclean.core.model.HomeClaimant(Launcher.home, 2))),
+                reason = r,
+            )
+        }
         finish(p, RunStatus.COMPLETED, HomeOutcome.CONFIRMED)
     }
 
@@ -1689,6 +1698,7 @@ class SetupMachineTest {
 
     // Issue #15 (a Smarttech set no profile knows, the switch blocked): nothing to switch off and no
     // home switch. Done says plainly that nothing was changed, never "Your TV is ready".
+    // NO_SILENT_NO_CHANGE: the empty plan never runs at all — no engine start, no credential prompt.
     @Test fun issue15ARunThatChangedNothingSaysSoOnDone() = runTest(timeout = 30.seconds) {
         val h = Harness()
         h.sessions.allowPromptFor[HOST] = "AB:CD:7F:2A"
@@ -1699,6 +1709,8 @@ class SetupMachineTest {
         val done = assertIs<SetupState.Done>(m.state.value)
         assertEquals(0, done.summary.switchedOff)
         assertTrue(m.extras.value.doneNothing)
+        assertTrue(h.engine.calls.none { it is FakeEngine.Call.Start }, "an empty plan never starts the engine")
+        assertEquals(NothingWhy.NOTHING_PLANNED, m.extras.value.doneNothingWhy)
         // A run that switched things off is not "nothing".
         val h2 = Harness()
         h2.sessions.allowPromptFor[HOST] = "AB:CD:7F:2A"
@@ -1707,6 +1719,33 @@ class SetupMachineTest {
         m2.dispatch(SetupIntent.MakeItClean); settle()
         assertEquals(2, assertIs<SetupState.Done>(m2.state.value).summary.switchedOff)
         assertFalse(m2.extras.value.doneNothing)
+    }
+
+    // NO_SILENT_NO_CHANGE (owner order 2026-11-10): the journal says both switch-offs are done,
+    // but the TV kept them on. Done says plainly that nothing changed, never "2 switched off".
+    @Test fun aRunTheTvKeptEverythingOnSaysNothingChanged() = runTest(timeout = 30.seconds) {
+        val h = Harness()
+        h.sessions.allowPromptFor[HOST] = "AB:CD:7F:2A"
+        // The TV as it reads after the run: both packages still on.
+        h.prober.snapshotFor = { r -> Samples.snapshot(packages = Samples.miTvPackages(disabled = emptySet()), reason = r) }
+        h.engine.onStart = { p ->
+            val j = h.journal
+            j.append(JournalRecord.PlanStart(p.id, p.tvId, p.baseSnapshot, p.steps.size, p.hash, "test", Samples.NOW_MS))
+            for (step in p.steps) {
+                j.append(JournalRecord.Begin(p.id, step.index, step.op, emptyList(), null, Samples.NOW_MS))
+                j.append(JournalRecord.Done(p.id, step.index, 0, true, 1))
+            }
+            j.append(JournalRecord.End(p.id, RunStatus.COMPLETED))
+            finish(p, RunStatus.COMPLETED)
+        }
+        val m = h.setup(backgroundScope)
+        toFound(h, m)
+        m.dispatch(SetupIntent.MakeItClean); settle()
+        val done = assertIs<SetupState.Done>(m.state.value)
+        assertEquals(0, done.summary.switchedOff)
+        assertTrue(m.extras.value.doneNothing)
+        assertEquals(NothingWhy.KEPT_ON, m.extras.value.doneNothingWhy)
+        assertTrue(h.logLines.any { it.startsWith("setup: read the TV again after the run: 0 of 2 switch-offs still off") }, h.logLines.joinToString("\n"))
     }
 
     // Issue #10: the finish line names the switch-offs the run skipped, so a report shows what stayed on.

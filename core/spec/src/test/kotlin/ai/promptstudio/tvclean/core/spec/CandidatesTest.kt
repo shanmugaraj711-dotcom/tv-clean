@@ -23,7 +23,7 @@ class CandidatesTest {
     private val candidateDir = File(Fixtures.repoRoot, "core/spec/candidates")
     private val candidateMeta = File(candidateDir, "candidate-meta.json")
     private val ids = listOf(
-        "aurzen-boomair", "haier-android-tv-nippori", "sharp-aquos-tve19a", "smarttech-apollo-premium4k", "xiaomi-mitv4i-magnolia",
+        "aurzen-boomair", "haier-android-tv-nippori", "sharp-aquos-tve19a", "smarttech-apollo-premium4k",
     )
 
     private fun without() = ProfileConverter.convert(examples, meta, "b06ab21", unconverted)
@@ -95,23 +95,23 @@ class CandidatesTest {
     }
 
     // A candidate is the exact profile only after the person agreed, and never over a tested list.
+    // The Mi TV 4I was promoted to a tested list (2026-11-10), so it is the example of the second
+    // half now: never a candidate, consent or no consent, it resolves to its exact profile.
     @Test fun resolvingToACandidate() = runBlocking<Unit> {
         val (bundle, _) = with()
         var yes = false
         val source = BundledProfileSource(bundle, CandidateConsent { yes })
         val magnolia = facts("Xiaomi", "MiTV4I", "magnolia", 28)
-        assertEquals("xiaomi-mitv4i-magnolia", source.candidateFor(magnolia)?.id)
-        val careful = source.resolve(magnolia)
-        assertIs<ProfileResolution.BrandSureSet>(careful)
-        assertEquals("Xiaomi", careful.brand)
+        assertNull(source.candidateFor(magnolia))
+        val exact = source.resolve(magnolia)
+        assertIs<ProfileResolution.Exact>(exact)
+        assertEquals("xiaomi-mitv4i-magnolia", exact.profile.id)
         yes = true
-        val tried = source.resolve(magnolia)
-        assertIs<ProfileResolution.Exact>(tried)
-        assertEquals("xiaomi-mitv4i-magnolia", tried.profile.id)
-        // Another Android version of the same TV: no candidate (D-W4-14).
+        assertEquals("xiaomi-mitv4i-magnolia", (source.resolve(magnolia) as ProfileResolution.Exact).profile.id)
+        // Another Android version of the same TV: no exact profile (D-W4-14), the brand set.
         assertNull(source.candidateFor(magnolia.copy(sdk = 30)))
         assertIs<ProfileResolution.BrandSureSet>(source.resolve(magnolia.copy(sdk = 30)))
-        // A TV with a tested list is never offered a candidate, whatever the answer.
+        // Another TV with a tested list is never offered a candidate, whatever the answer.
         val tested = Fixtures.miTv().facts()
         assertNull(source.candidateFor(tested))
         assertEquals("xiaomi-mitv-axso0", (source.resolve(tested) as ProfileResolution.Exact).profile.id)
@@ -120,8 +120,10 @@ class CandidatesTest {
         val boomair = facts("AURZEN", "BOOMAIR", "himalaya", 30)
         assertEquals("aurzen-boomair", source.candidateFor(boomair)?.id)
         assertIs<ProfileResolution.None>(source.resolve(boomair))
+        yes = true
+        assertEquals("aurzen-boomair", (source.resolve(boomair) as ProfileResolution.Exact).profile.id)
         // Without consent wiring (the release graph before the test build), never a candidate.
-        assertIs<ProfileResolution.BrandSureSet>(BundledProfileSource(bundle).resolve(magnolia))
+        assertIs<ProfileResolution.Exact>(BundledProfileSource(bundle).resolve(magnolia))
     }
 
     // Safety: what a candidate switches off by default passes the same rules a shipped list does

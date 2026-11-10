@@ -33,6 +33,7 @@ import ai.promptstudio.tvclean.core.model.Component
 import ai.promptstudio.tvclean.core.model.ConnectionState
 import ai.promptstudio.tvclean.core.model.DebugState
 import ai.promptstudio.tvclean.core.model.DeviceFacts
+import ai.promptstudio.tvclean.core.model.EnabledState
 import ai.promptstudio.tvclean.core.model.Endpoint
 import ai.promptstudio.tvclean.core.model.LauncherState
 import ai.promptstudio.tvclean.core.model.Level
@@ -61,6 +62,7 @@ import ai.promptstudio.tvclean.core.planner.Plan
 import ai.promptstudio.tvclean.core.planner.PlanKind
 import ai.promptstudio.tvclean.core.planner.PlanRequest
 import ai.promptstudio.tvclean.core.planner.PlanResult
+import ai.promptstudio.tvclean.core.planner.Step
 import ai.promptstudio.tvclean.core.planner.StockHome
 import ai.promptstudio.tvclean.core.planner.SwitchOffRule
 import ai.promptstudio.tvclean.core.probe.LaunchableApps
@@ -966,6 +968,13 @@ class SetupMachine(
         }
         // Issue #2028: so is a TV whose Home answers to a home screen we do not know, ranked above ours.
         val stockUnknown = !ours && (StockHome.of(snap, stocks) == null || StockHome.unknownAboveOurs(snap, stocks))
+        // beta3 review (#1119): Home already answering to a home screen app the person installed
+        // stays theirs, on every path — the exact profile's takeover would otherwise take it with
+        // no block (the R0 path's OTHER_HOME only exists where there is no exact profile).
+        val resolved = snap.home.resolved
+        val resolvedOtherHome = !ours && resolved != null &&
+            stocks.none { it.pkg == resolved.pkg } && resolved.pkg != pin.pkg &&
+            !StockHome.isPlaceholder(resolved) && HomeSwitchRisk.installedHome(resolved.pkg, snap)
         return when {
             f.installRefusal || fireOs || p?.platform == Platform.TCL_CN || TclChina.applies(f, p) -> HomeBlock.TV_REFUSES
             f.sdk < DefaultPlanner.TV_MIN_SDK -> HomeBlock.OLD_ANDROID
@@ -977,7 +986,7 @@ class SetupMachine(
             risk == HomeSwitchRisk.Risk.WIZARD_WIFI -> HomeBlock.WIZARD_WIFI
             risk == HomeSwitchRisk.Risk.WIZARD_WIFI_UNKNOWN -> HomeBlock.WIZARD_WIFI_UNKNOWN
             risk == HomeSwitchRisk.Risk.WIZARD_STAYS_ON -> HomeBlock.WIZARD_STAYS_ON
-            risk == HomeSwitchRisk.Risk.OTHER_HOME -> HomeBlock.OTHER_HOME
+            risk == HomeSwitchRisk.Risk.OTHER_HOME || resolvedOtherHome -> HomeBlock.OTHER_HOME
             risk == HomeSwitchRisk.Risk.VENDOR_HOME -> HomeBlock.VENDOR_HOME
             risk == HomeSwitchRisk.Risk.PATCHWALL_FEEDS -> HomeBlock.PATCHWALL_FEEDS
             else -> HomeBlock.NONE
@@ -1219,6 +1228,15 @@ class SetupMachine(
         val record = tv
         val s = session
         if (record == null || s == null) { mutableExtras.update { it.copy(starting = false) }; return }
+        // NO_SILENT_NO_CHANGE (owner order 2026-11-10, "make sure this will not happen again"):
+        // a plan with no step that changes the TV never runs. It ends here, on the plain
+        // "nothing changed" Done, instead of running an empty plan to a clean "done" — and it
+        // never asks for the credential first, since there is nothing to protect.
+        if (!plan.hasEffectiveStep()) {
+            deps.log.line("setup: nothing to do, the plan has no step that changes the TV")
+            showDone(record.id, null, homeOn = false)
+            return
+        }
         mutableExtras.update { it.copy(starting = true) }
         var pass = given ?: deps.gate.cached(record.id)
         if (pass == null && GateKeeper.needsPass(plan)) {
@@ -1358,6 +1376,95 @@ class SetupMachine(
         }
     }
 
+    // NO_SILENT_NO_CHANGE (owner order 2026-11-10): a step changes the TV when it writes to it.
+    // A read, a check and a phone-side sleep do not.
+    private fun Plan.hasEffectiveStep(): Boolean = steps.any { step ->
+        when (step.op) {
+            is Op.Read, is Op.VerifyHome, is Op.Settle -> false
+            else -> true
+        }
+    }
+
+    // What a run's outcome read back from the TV says, or null when the TV cannot be read again.
+    private data class VerifiedRun(
+        val offCorrection: Int,   // switch-offs the ledger claims that the TV does not show off
+        val homeOn: Boolean?,     // the switch held, or null when the fresh read cannot say
+        val changed: Boolean,     // anything this run changed, read from the TV
+        val allKeptOn: Boolean,   // every planned switch-off is still on
+    )
+
+    // An op the snapshot can re-read: its effect is a package state, a present package, a setting
+    // or the home screen. A pushed file, a started app or a watchdog arm is not.
+    private fun isVerifiableOp(op: Op): Boolean = when (op) {
+        is Op.Disable, is Op.Enable, is Op.DefaultState, is Op.Uninstall,
+        is Op.Install, is Op.InstallStream, is Op.SettingsPut, is Op.SetHome -> true
+        else -> false
+    }
+
+    // NO_SILENT_NO_CHANGE: after a run, read the TV again and check what the run actually changed.
+    // The ledger alone cannot say that: a disable the TV answered but kept on is a Done in the
+    // journal and a "switched off" on Done, while the TV shows nothing changed. Returns null when
+    // there is nothing to check (no step Done) or the TV cannot be read again; the ledger's word
+    // then stands, as before.
+    private suspend fun verifyRunOnTv(plan: Plan, progress: RunProgress?, skipped: List<Step>, mine: List<ChangeRecord>, curtainLeft: Boolean, s: TvSession): VerifiedRun? {
+        if ((progress?.doneSteps ?: 0) <= 0) return null
+        // A read, not a new base: the check must not move the stored snapshot (the restore point
+        // names the read before the run), so readSnapshot, never freshSnapshot.
+        val fresh = attempt { deps.runner.readSnapshot(s) }.getOrNull() ?: return null
+        val planned = plan.steps.filter { it.op is Op.Disable }
+        // A switch-off counts only when the TV still shows it off now.
+        val stuck = planned.count { step ->
+            when (fresh.packages[(step.op as Op.Disable).pkg]?.enabled) {
+                EnabledState.DISABLED_USER, EnabledState.DISABLED -> true
+                else -> false
+            }
+        }
+        val claimed = progress?.doneDisables ?: (planned.size - skipped.count { it.op is Op.Disable })
+        val correction = (claimed - stuck).coerceAtLeast(0)
+        // The home switch: only a clear answer changes it. A chooser, a placeholder or no answer
+        // leaves the run's own word standing.
+        val homeOn: Boolean? = if (plan.steps.any { it.op is Op.SetHome }) {
+            val resolved = fresh.home.resolved
+            when {
+                resolved == null || StockHome.isPlaceholder(resolved) -> null
+                resolved.pkg == deps.launcherPin.bundled().pkg -> true
+                else -> false
+            }
+        } else null
+        // Changed, read from the TV: a switch-off still off, the switch held, an install present,
+        // a setting at its new value, or a package gone. The curtain is its own ledger check
+        // (curtainLeft), never counted here; a change the snapshot cannot re-read keeps the
+        // ledger's word.
+        val claims = mine.filter { plan.steps.getOrNull(it.step)?.group != DefaultPlanner.GROUP_CURTAIN }
+        val installVerified = claims.any { c ->
+            when (val op = c.op) {
+                is Op.Install -> op.pkg in fresh.packages
+                is Op.InstallStream -> op.pkg in fresh.packages
+                else -> false
+            }
+        }
+        val settingsVerified = claims.any { c ->
+            val op = c.op as? Op.SettingsPut ?: return@any false
+            fresh.settings[op.key] == op.value
+        }
+        val disappeared = claims.any { c ->
+            when (val op = c.op) {
+                is Op.Disable -> op.pkg !in fresh.packages
+                is Op.Uninstall -> op.pkg !in fresh.packages
+                else -> false
+            }
+        }
+        val verifiedSomething = stuck > 0 || homeOn == true || installVerified || settingsVerified || disappeared
+        val unverifiable = claims.any { !isVerifiableOp(it.op) }
+        val changed = curtainLeft || (claims.isNotEmpty() && (verifiedSomething || unverifiable))
+        val allKeptOn = planned.isNotEmpty() && planned.all { step ->
+            val state = fresh.packages[(step.op as Op.Disable).pkg]?.enabled
+            state == EnabledState.ENABLED || state == EnabledState.DEFAULT
+        }
+        deps.log.line("setup: read the TV again after the run: $stuck of ${planned.size} switch-offs still off, home ${when (homeOn) { true -> "on"; false -> "unchanged"; null -> "unread" }}")
+        return VerifiedRun(correction, homeOn, changed, allKeptOn)
+    }
+
     private suspend fun showDone(tvId: TvId, f: RunState.Finished?, homeOn: Boolean) {
         val record = tv ?: deps.tvs.tvs.value.firstOrNull { it.id == tvId } ?: return
         val plan = f?.plan ?: setupPlan
@@ -1370,12 +1477,45 @@ class SetupMachine(
         val stopped = f == null || f.status == RunStatus.ABANDONED
         // QA of 0.4.5: after "Try again", what this Setup's runs switched off and left off, all of them.
         val soFar = if (plan != null && earlierRuns.isNotEmpty()) switchedOffSoFar(plan) else null
-        val off = when {
+        val ledgerOff = when {
             soFar != null && (stopped || (progress?.doneSteps ?: 0) > 0) -> soFar
             progress != null && progress.doneSteps > 0 -> progress.doneDisables
             stopped -> 0
             plan != null -> planned.size - skipped.count { it.op is Op.Disable }
             else -> 0
+        }
+        // Issue #15: nothing switched off, no new home screen and no other change of this run: Done
+        // says plainly that nothing changed. The TV curtain comes and goes, so it does not count,
+        // unless this run installed it and its removal did not go through: it is still on the TV.
+        val mine = plan?.let { pl -> deps.ledger.changes(tvId).filter { it.planId == pl.id } }.orEmpty()
+        fun curtain(step: Int) = plan?.steps?.getOrNull(step)?.group == DefaultPlanner.GROUP_CURTAIN
+        val curtainRemoval = plan?.steps?.lastOrNull { it.group == DefaultPlanner.GROUP_CURTAIN && it.op is Op.Uninstall }
+        val curtainInstalled = mine.any { curtain(it.step) && (it.op is Op.Install || it.op is Op.InstallStream) }
+        val curtainLeft = curtainInstalled && (curtainRemoval == null || mine.none { it.step == curtainRemoval.index })
+        val ledgerChanged = mine.any { !curtain(it.step) } || curtainLeft
+        val baseWhy = when {
+            planned.isEmpty() -> NothingWhy.NOTHING_PLANNED
+            planned.all { p -> skipped.any { it.index == p.index } } -> NothingWhy.KEPT_ON
+            else -> NothingWhy.STOPPED
+        }
+        // NO_SILENT_NO_CHANGE: what the run really changed, read back from the TV. The ledger's
+        // word stands when the TV cannot be read again; when it can, the read wins. The correction
+        // only ever lowers the count: a switch-off the TV does not show off never counts.
+        var off = ledgerOff
+        var verifiedHomeOn = homeOn
+        var changed = ledgerChanged
+        var why = baseWhy
+        val live = session
+        if (f != null && f.status != RunStatus.ABANDONED && live != null && plan != null) {
+            val verified = verifyRunOnTv(plan, progress, skipped, mine, curtainLeft, live)
+            if (verified != null) {
+                off = (ledgerOff - verified.offCorrection).coerceAtLeast(0)
+                verified.homeOn?.let { verifiedHomeOn = it }
+                changed = verified.changed
+                // The run did not stop: the TV kept every switch-off on. That is the reason, never
+                // "the run stopped".
+                if (off == 0 && verified.allKeptOn) why = NothingWhy.KEPT_ON
+            }
         }
         // RF-LAUNCHER-250 F1: a package the live check kept because it runs the TV's inputs gets its
         // own line on Done, never the generic "it's harmless" one.
@@ -1385,7 +1525,7 @@ class SetupMachine(
         val p = profile()
         // UX finding 24: the wizard quirk only matters when the switch ran; a kept home screen on a
         // reboot tested profile has nothing a restart could check.
-        val recommended = p == null || (homeOn && Quirk.HOME_TAKEOVER_SETUPWRAITH in p.quirks) || p.tested?.rebootTested != true
+        val recommended = p == null || (verifiedHomeOn && Quirk.HOME_TAKEOVER_SETUPWRAITH in p.quirks) || p.tested?.rebootTested != true
         // beta3 QA: the restore point Undo everything goes back to is the first read (the baseline),
         // so Done names that one, and says when it is from an earlier run.
         val baseline = deps.snapshots.baseline(tvId)
@@ -1399,10 +1539,10 @@ class SetupMachine(
         // push or the launcher's ThemeProvider) CONTINUE on failure, so the run ends well without it;
         // Done says so, and the choice is saved anyway so the Look sheet opens on it and "Put it on
         // the TV" sends it again. The same steps as the log's and the report's "look not sent" line.
-        val lookFailed = homeOn && skipped.any { RunLines.isLookSend(it) }
+        val lookFailed = verifiedHomeOn && skipped.any { RunLines.isLookSend(it) }
         val done = record.copy(
             wizard = null,
-            launcher = if (homeOn) LauncherState(launcher.versionCode, launcher.signer, digest ?: record.launcher?.overlayDigest, digest ?: record.launcher?.ourOverlayDigest)
+            launcher = if (verifiedHomeOn) LauncherState(launcher.versionCode, launcher.signer, digest ?: record.launcher?.overlayDigest, digest ?: record.launcher?.ourOverlayDigest)
                 else record.launcher?.let { l -> if (digest != null) l.copy(overlayDigest = digest, ourOverlayDigest = digest) else l },
             lastSeenAt = deps.clock.nowMs(),
         )
@@ -1425,35 +1565,21 @@ class SetupMachine(
             deps.documents?.let { docs -> attempt { EarlierLook.remember(docs, tvId, EarlierLook.firstLook(home.saved, choice.dock), choice, keptPhoto, oldPhoto) } }
             deps.homePrefs?.let { prefs -> attempt { prefs.save(tvId, choice) } }
         }
-        // Issue #15: nothing switched off, no new home screen and no other change of this run: Done
-        // says plainly that nothing changed. The TV curtain comes and goes, so it does not count,
-        // unless this run installed it and its removal did not go through: it is still on the TV.
-        val mine = plan?.let { pl -> deps.ledger.changes(tvId).filter { it.planId == pl.id } }.orEmpty()
-        fun curtain(step: Int) = plan?.steps?.getOrNull(step)?.group == DefaultPlanner.GROUP_CURTAIN
-        val curtainRemoval = plan?.steps?.lastOrNull { it.group == DefaultPlanner.GROUP_CURTAIN && it.op is Op.Uninstall }
-        val curtainInstalled = mine.any { curtain(it.step) && (it.op is Op.Install || it.op is Op.InstallStream) }
-        val curtainLeft = curtainInstalled && (curtainRemoval == null || mine.none { it.step == curtainRemoval.index })
-        val changed = mine.any { !curtain(it.step) } || curtainLeft
-        val why = when {
-            planned.isEmpty() -> NothingWhy.NOTHING_PLANNED
-            planned.all { p -> skipped.any { it.index == p.index } } -> NothingWhy.KEPT_ON
-            else -> NothingWhy.STOPPED
-        }
         // QA of 0.4.5: the switch was in the plan and the old home screen is back (the check ran out
         // of time, the person said no, the new one did not take over): Done says the home screen is
         // unchanged and why, never only "Your TV is ready".
-        val homeKept = f?.home?.takeIf { !homeOn && it != HomeOutcome.CONFIRMED && plan?.sections?.isNotEmpty() == true }
+        val homeKept = f?.home?.takeIf { !verifiedHomeOn && it != HomeOutcome.CONFIRMED && plan?.sections?.isNotEmpty() == true }
         if (lookFailed) deps.log.line("setup: the look did not reach the TV; the choice is kept for the Look sheet")
-        mutableExtras.update { it.copy(doneLines = skippedNames, doneKept = keptNames, doneNothing = off == 0 && !homeOn && !changed, doneNothingWhy = why,
+        mutableExtras.update { it.copy(doneLines = skippedNames, doneKept = keptNames, doneNothing = off == 0 && !verifiedHomeOn && !changed, doneNothingWhy = why,
             keepsDebugging = keepsDebugging(tvId), doneHomeKept = homeKept, doneLookFailed = lookFailed) }
-        send(Ev.ShowDone(tvId, DoneSummary(off, homeOn, restorePointAt, skippedNames, recommended, restorePointEarlier)))
+        send(Ev.ShowDone(tvId, DoneSummary(off, verifiedHomeOn, restorePointAt, skippedNames, recommended, restorePointEarlier)))
         session?.let { s -> mutableExtras.update { it.copy(restorePointPushed = deps.restorePoint.write(done, s, p)) } }
         session?.let { s ->
             // 0.4.8 (Restarts): the boot this Done starts from, so the restart check below (or Manage's next connect after
             // a restart) has something to count against.
-            if (homeOn) countRestart(done, s)
+            if (verifiedHomeOn) countRestart(done, s)
             // PLAN item 3: the look went to the TV with the new home screen: the TV as it looks now, one screenshot.
-            if (homeOn && !lookFailed && setupHome?.digest?.let { it == digest } == true) {
+            if (verifiedHomeOn && !lookFailed && setupHome?.digest?.let { it == digest } == true) {
                 attempt { deps.prober.screenshot(s) }.getOrNull()?.let { png -> mutableExtras.update { it.copy(doneShot = png) } }
             }
         }

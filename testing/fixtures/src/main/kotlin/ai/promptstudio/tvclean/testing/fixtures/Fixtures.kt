@@ -21,7 +21,7 @@ object Fixtures {
 
     val fixturesDir: File get() = File(repoRoot, "fixtures")
     val conformanceDir: File get() = File(fixturesDir, "conformance")
-    val upstreamDir: File get() = File(repoRoot, "third_party/tvclean")
+    val upstreamDir: File get() = File(repoRoot, "third_party/cleanyourtv")
 
     fun file(relativeToFixtures: String): File =
         File(fixturesDir, relativeToFixtures).also { require(it.isFile) { "missing fixture $it" } }
@@ -37,7 +37,7 @@ object Fixtures {
     private fun upstream(): File {
         val examples = File(upstreamDir, "examples")
         check(examples.isDirectory) {
-            "upstream submodule missing at $upstreamDir; run: git submodule update --init third_party/tvclean"
+            "upstream submodule missing at $upstreamDir; run: git submodule update --init third_party/cleanyourtv"
         }
         return upstreamDir
     }

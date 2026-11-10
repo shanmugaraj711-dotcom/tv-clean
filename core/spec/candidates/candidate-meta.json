@@ -224,65 +224,6 @@
           "ask": false
         }
       }
-    },
-    "xiaomi-mitv4i-magnolia": {
-      "match": {
-        "models": [
-          "MiTV4I"
-        ],
-        "devices": [
-          "magnolia"
-        ],
-        "brand": "Xiaomi",
-        "sdkMin": 28,
-        "sdkMax": 28,
-        "fingerprintPrefix": null
-      },
-      "platform": "ANDROID_TV",
-      "stockLaunchers": [
-        "com.google.android.tvlauncher"
-      ],
-      "liveTv": "com.android.tv",
-      "setupWraith": null,
-      "quirks": [],
-      "neverDisable": [
-        "com.droidlogic.tvinput",
-        "com.droidlogic.droidlivetv",
-        "mitv.service",
-        "com.xiaomi.android.tvsetup.partnercustomizer",
-        "com.google.android.tv.remote.service"
-      ],
-      "suggestedDock": [],
-      "tested": {
-        "by": "candidate, issue #111 #126 #161 #190",
-        "firmware": "PI.3698",
-        "daysLivedWith": null,
-        "rebootTested": false,
-        "candidate": true
-      },
-      "groups": {
-        "Xiaomi + Google telemetry": {
-          "category": "tracking",
-          "ask": false
-        },
-        "PatchWall, content rows, sponsored rows, partner auto-installs": {
-          "category": "ads",
-          "ask": false
-        },
-        "Xiaomi background services": {
-          "category": "brand",
-          "ask": false
-        },
-        "Preloaded apps": {
-          "category": "preloads",
-          "ask": false
-        },
-        "Android extras a TV without camera, printer or SIM doesn't use": {
-          "category": "preloads",
-          "ask": false
-        }
-      },
-      "packages": {}
     }
   }
 }

@@ -702,7 +702,7 @@
   {"id":"xiaomi-mitv-mtsu0-interstellar","brand":"Xiaomi","name":"MiTV-MTSU0","models":["MiTV-MTSU0"],"codenames":["interstellar"],"android":["14"],"status":"cleanup","clean":"brand","reason":"UNKNOWN_HOME","reports":2},
   {"id":"xiaomi-mitv-mztu1-stepup","brand":"Xiaomi","name":"MiTV-MZTU1","models":["MiTV-MZTU1"],"codenames":["stepup"],"android":["14"],"status":"new","clean":"brand","reports":13},
   {"id":"xiaomi-mitv-nsop0-furyroad","brand":"Xiaomi","name":"MiTV-NSOP0","models":["MiTV-NSOP0"],"codenames":["furyroad"],"android":["9"],"status":"cleanup","clean":"brand","reason":"UNKNOWN_HOME","reports":1},
-  {"id":"xiaomi-mitv4i-magnolia","brand":"Xiaomi","name":"MiTV4I","models":["MiTV4I"],"codenames":["magnolia"],"android":["9"],"status":"new","clean":"brand","test_lists":["xiaomi-mitv4i-magnolia"],"reports":21},
+  {"id":"xiaomi-mitv4i-magnolia","brand":"Xiaomi","name":"MiTV4I","models":["MiTV4I"],"codenames":["magnolia"],"android":["9"],"status":"new","clean":"list","reports":21},
   {"id":"list-xiaomi-tv-a-pro-2026","brand":"Xiaomi","name":"TV A Pro 2026","models":["MiTV-MZTU0"],"codenames":["river"],"android":["14"],"status":"new","clean":"list","lists":["xiaomi-tv-a-pro-2026"],"reports":0},
   {"id":"xlaxiata-ax512-dv8252","brand":"XLAxiata","name":"AX512","models":["AX512"],"codenames":["DV8252"],"android":["10"],"status":"test","clean":"general","reason":"TEST_R0","confirm":{"have":0,"need":2,"android":"10"},"reports":1},
   {"id":"xlaxiata-sdn200-lte-siden","brand":"XLAxiata","name":"SDN200","models":["SDN200"],"codenames":["lte_siden"],"android":["10"],"status":"cleanup","clean":"general","reason":"UNKNOWN_HOME","reports":1},

@@ -22,7 +22,9 @@ import kotlin.time.Duration.Companion.seconds
 // WIZARD_STAYS_ON because a home screen app the person installed claims Home (priority 0) next to
 // tvlauncher (2) and FallbackHome. The packages are the TV report of the issue (0.4.0), the Home
 // and what this app switched off since are the newest problem report's (0.4.6-beta2). Setup now
-// plans the switch with their app left installed and on.
+// plans the switch with their app left installed and on. The Mi TV 4I has had an exact profile
+// since 2026-11-10, so the R0 path no longer applies to it. An app the person installed that
+// answers Home keeps their choice on every path (the guard in SetupMachine.homeBlock).
 @OptIn(ExperimentalCoroutinesApi::class)
 class Issue1119SetupTest {
     private fun snapshot(): Pair<ReportText.Parsed, ai.promptstudio.tvclean.core.model.Snapshot> {
@@ -66,18 +68,26 @@ class Issue1119SetupTest {
         return h to m
     }
 
-    // beta3: the same TV with that app listed as a system app (as a vendor home ships): R0 cannot take
-    // it, and the reason told is the other home screen app, not the setup wizard.
-    @Test fun anotherHomeAppR0CannotTakeIsTheReasonTold() = runTest(timeout = 60.seconds) {
+    // The same TV with that app listed as a system app (as a vendor home ships): the exact profile
+    // plans the switch, and the set-home tie at priority 0 is decided by the app's own SetHome,
+    // with the system app left installed and on; VerifyHome rolls back if their app keeps Home.
+    // (Before the profile, R0 could not take a system app, so the reason told was the other home
+    // screen app.)
+    @Test fun systemHomeAppIsLeftAloneByThePlannedSwitch() = runTest(timeout = 60.seconds) {
         val (problem, base) = snapshot()
         val theirs = PackageName("person.home1")
         val snap = base.copy(packages = base.packages + (theirs to base.packages.getValue(theirs).copy(system = true)))
         releaseRule {
             for (wifi in listOf(SavedWifi(true, 1, setOf("android.uid.system:1000")), SavedWifi(true, 1, setOf("com.google.android.tungsten.setupwraith:10010")))) {
-                val (h, m) = found(problem, snap, wifi)
-                assertEquals(HomeBlock.OTHER_HOME, m.extras.value.homeBlock, "${wifi.owners}")
-                assertEquals(HomeDecision(false, "OTHER_HOME", profile = "brand set Xiaomi"), HomeDecisions(h.documents).load(snap.tvId))
-                assertTrue("setup: home switch blocked OTHER_HOME" in h.logLines, h.logLines.joinToString("\n"))
+                var plan: ai.promptstudio.tvclean.core.planner.Plan? = null
+                val (h, m) = found(problem, snap, wifi) { plan = it }
+                assertEquals(HomeBlock.NONE, m.extras.value.homeBlock, "${wifi.owners}")
+                assertEquals(HomeDecision(true, profile = "exact xiaomi-mitv4i-magnolia"), HomeDecisions(h.documents).load(snap.tvId))
+                assertTrue("setup: home switch planned" in h.logLines, h.logLines.joinToString("\n"))
+                val ops = plan!!.steps.map { it.op }
+                assertTrue(ops.none { (it is Op.Disable && it.pkg == theirs) || (it is Op.Uninstall && it.pkg == theirs) }, "their app stays")
+                assertTrue(ops.any { it is Op.SetHome && it.component.pkg == Launcher.pkg } && ops.any { it is Op.VerifyHome && it.expected.pkg == Launcher.pkg })
+                assertTrue(theirs in plan!!.sections.single().rollbackIfFocus)
             }
         }
     }

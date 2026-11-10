@@ -156,6 +156,9 @@ object SureSetGenerator {
         "amazon-fire-tv-aftdec012e", "google-chromecast-gtv-hd", "hisense-smarttv-4k-ffm-android11", "hisense-smarttv-4k-ffm-lushan", "karbonn-swtv-20ae",
         "ok-ai-pont-ikebukuro", "philips-50pud7406", "skyworth-sw-22sa", "skyworth-swtv-22ae-fhd", "sony-bravia-4k-ur3", "sony-bravia-4k-vh1", "sony-kd-43x80l",
         "xiaomi-mi-box-3", "xiaomi-mitv-mftr0", "xiaomi-mitv-moeu0", "xiaomi-mitv-mooq2", "xiaomi-mitv-mssp1",
+        // The Mi TV 4I list (2026-11-10): a real TV's list, held back from the brand sets like the
+        // rest until a restart of the new home screen is confirmed on it.
+        "xiaomi-mitv4i-magnolia",
         // The v2.7.0 list curated for a reported TV (#446), held back from the brand sets like the rest.
         "motorola-mt4310",
     ) + PROMOTED_045 + PROMOTED_B06AB21_PART2

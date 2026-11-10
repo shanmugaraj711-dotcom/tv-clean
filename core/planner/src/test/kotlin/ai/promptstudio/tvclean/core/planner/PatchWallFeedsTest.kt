@@ -74,7 +74,8 @@ class PatchWallFeedsTest {
     private val axso2: Profile = fixtureProfile("xiaomi-mitv-axso2-android11",
         checkNotNull(javaClass.getResourceAsStream("/candidates/xiaomi-mitv-axso2-android11/debloat.txt")).readBytes().decodeToString())
     private val miTv4i: Profile = fixtureProfile("xiaomi-mitv4i-magnolia",
-        File(Fixtures.repoRoot, "core/spec/candidates/xiaomi-mitv4i-magnolia/debloat.txt").readText())
+        // Promoted from a candidate list (2026-11-10): the list now lives with our own examples.
+        File(Fixtures.repoRoot, "third_party/our-examples/xiaomi-mitv4i-magnolia/debloat.txt").readText())
 
     // The TV: every package of the list installed and on (PatchWall and both feeds among them).
     private fun tv(profile: Profile?, off: Set<PackageName> = emptySet(), sdk: Int = 30, device: String = "dangalUHD"): Snapshot {

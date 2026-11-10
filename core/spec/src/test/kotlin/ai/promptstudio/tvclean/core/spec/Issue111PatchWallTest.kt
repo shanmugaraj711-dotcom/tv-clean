@@ -2,8 +2,6 @@ package ai.promptstudio.tvclean.core.spec
 
 import ai.promptstudio.tvclean.core.model.GroupDefault
 import ai.promptstudio.tvclean.core.model.PackageName
-import ai.promptstudio.tvclean.testing.fixtures.Fixtures
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -34,11 +32,10 @@ class Issue111PatchWallTest {
         assertTrue(xiaomi.groups.filter { it.default == GroupDefault.ASK }.all { g -> g.packages.all { it.name == patchwall } })
     }
 
-    // The test list made for the Mi TV 4i (a candidate, test builds only) gets the same rule.
-    @Test fun theMiTv4iCandidateOffersPatchWall() {
-        val dir = File(Fixtures.repoRoot, "core/spec/candidates")
-        val meta = ProfileMeta.decode(File(dir, "candidate-meta.json").readText())
-        val profile = DebloatTxt.parse(File(dir, "xiaomi-mitv4i-magnolia/debloat.txt").readText(), "xiaomi-mitv4i-magnolia", meta.profiles["xiaomi-mitv4i-magnolia"])
+    // The Mi TV 4i list, promoted from a candidate to a tested list (2026-11-10), gets the same rule:
+    // PatchWall is an ask row in the shipped profile, whatever the list itself says.
+    @Test fun theMiTv4iListOffersPatchWall() {
+        val profile = BundledProfileSource.bundled.profiles.single { it.id == "xiaomi-mitv4i-magnolia" }
         val groups = profile.groups.filter { g -> g.packages.any { it.name == patchwall } }
         assertEquals(listOf(GroupDefault.ASK), groups.map { it.default })
     }

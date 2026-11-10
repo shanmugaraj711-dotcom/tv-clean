@@ -77,4 +77,14 @@ else
   echo "fetched: third_party/cleanyourtv (examples + themes)"
 fi
 
+# Our own TV lists: folders we curate (not in the upstream tarball) are overlaid into examples/
+# after the submodule extract, so the build converts them like upstream ones. Runs whether the
+# cache above hit or missed, so a cached extract still gets them.
+# (2026-11-10: xiaomi-mitv4i-magnolia, Mi TV 4I — the pinned tarball has no list for it.)
+if [ -d "third_party/our-examples" ]; then
+  mkdir -p third_party/cleanyourtv/examples
+  cp -r third_party/our-examples/. third_party/cleanyourtv/examples/
+  echo "overlaid: third_party/our-examples -> third_party/cleanyourtv/examples"
+fi
+
 echo "binary assets: all verified"

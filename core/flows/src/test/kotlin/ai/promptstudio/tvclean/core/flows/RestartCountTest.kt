@@ -482,6 +482,14 @@ class RestartCountTest {
                 h.journal.append(JournalRecord.Begin(p.id, i, p.steps[i].op, listOf("fake"), null, 1))
                 h.journal.append(JournalRecord.Done(p.id, i, 0, true, 5))
             }
+            // The TV after the run: our home screen is Home, the clean-up switch-off stayed off.
+            // The fresh read after the run must see this, not the read before it.
+            h.prober.snapshotFor = { r ->
+                Samples.snapshot(
+                    home = ai.promptstudio.tvclean.core.model.HomeResolution(Launcher.home, listOf(ai.promptstudio.tvclean.core.model.HomeClaimant(Launcher.home, 2))),
+                    reason = r,
+                )
+            }
             finish(p, RunStatus.COMPLETED, if (p.kind == PlanKind.SETUP) HomeOutcome.CONFIRMED else null)
         }
         m.dispatch(SetupIntent.MakeItClean); settle()
