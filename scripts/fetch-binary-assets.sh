@@ -49,4 +49,32 @@ fetch "ui/design/src/main/res/font/tvclean_outfit.ttf" "ui/design/src/main/res/f
 fetch "android/platform/signatures/cleanyourtv-launcher/APKSigningBlock" "android/platform/signatures/cleanyourtv-launcher/APKSigningBlock" "27d7136077116d37acf35d1ffb98aaf080b3352ae2c3ce2e1458d33d24c71989" "8192"
 fetch "android/platform/signatures/cleanyourtv-curtain/APKSigningBlock" "android/platform/signatures/cleanyourtv-curtain/APKSigningBlock" "c8eebc74a3a27931c94e0a2adbac4c53ce62e9df490a48f8f9b42a1b14d5c31d" "8192"
 
+
+# The upstream launcher repo (the git submodule, pinned by core/spec D-W1-8).
+# Our push cannot carry a git submodule (the connector cannot create gitlinks),
+# so CI downloads the pinned launcher tarball and extracts the two trees the
+# build reads: examples/ (TV debloat lists -> profiles.json) and themes/
+# (the bundled default/aurora/six-columns themes). Idempotent: a complete
+# extract is left alone.
+SUBMODULE_URL="https://codeload.github.com/Gathin23/cleanyourtv/tar.gz/b06ab21105c49900cb1ed76b24414dba1e21d0db"
+SUBMODULE_SHA="025f89f6e2a84338a40d1fd74eb4528039fb666033d5debdeaafbb76a5346184"
+SUBMODULE_TOP="cleanyourtv-b06ab21105c49900cb1ed76b24414dba1e21d0db"
+if [ -f "third_party/cleanyourtv/examples/README.md" ] && [ -f "third_party/cleanyourtv/themes/default/config.json" ] && [ -f "third_party/cleanyourtv/themes/aurora/config.json" ] && [ -f "third_party/cleanyourtv/themes/six-columns/config.json" ]; then
+  echo "ok (cached): third_party/cleanyourtv (examples + themes)"
+else
+  rm -rf third_party/cleanyourtv
+  mkdir -p third_party/cleanyourtv
+  tmp_tar="$(mktemp)"
+  curl --retry 3 -fsSL "$SUBMODULE_URL" -o "$tmp_tar"
+  got_sha="$(sha256sum "$tmp_tar" | cut -d' ' -f1)"
+  if [ "$got_sha" != "$SUBMODULE_SHA" ]; then
+    echo "ERROR: launcher tarball failed verification (got sha $got_sha, want sha $SUBMODULE_SHA)" >&2
+    rm -f "$tmp_tar"
+    exit 1
+  fi
+  tar -xzf "$tmp_tar" -C third_party/cleanyourtv --strip-components=1 "$SUBMODULE_TOP/examples" "$SUBMODULE_TOP/themes"
+  rm -f "$tmp_tar"
+  echo "fetched: third_party/cleanyourtv (examples + themes)"
+fi
+
 echo "binary assets: all verified"

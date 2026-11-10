@@ -10,7 +10,7 @@ dependencies {
 }
 
 // The upstream launcher repository, pinned by W1 (DECISIONS-W1.md, D-W1-8).
-val upstream = rootProject.layout.projectDirectory.dir("third_party/tvclean")
+val upstream = rootProject.layout.projectDirectory.dir("third_party/cleanyourtv")
 val upstreamCommit = "b06ab21"
 
 // D28: profiles are converted at build time from the pinned upstream examples and shipped as
