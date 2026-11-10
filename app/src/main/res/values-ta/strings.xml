@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TV Clean, :app. Tamil translations. app_name is translatable="false" in the
+  English source (the product name stays "TV Clean"), so it is not here.
+-->
+<resources>
+    <string name="app_channel_setup_name">டிவியை அமைக்கிறோம்</string>
+    <string name="app_channel_setup_description">போன் உங்கள் டிவியில் மாற்றங்களைச் செய்யும்போது முன்னேற்றத்தைக் காட்டும், டிவியைப் பார்க்க வேண்டிய நேரத்தில் சொல்லும்.</string>
+    <string name="app_restore_read_failed">Restore point ஐப் படிப்பதில் ஏதோ தவறு</string>
+</resources>
