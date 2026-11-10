@@ -1,0 +1,10 @@
+# The installed APK's path (the prober hashes it)
+op: Read kind=SHA256_OF_INSTALLED pkg=ai.promptstudio.tvclean.launcher
+privilege: READ
+timeout_ms: 30000
+stdout_cap: 65536
+line: 'pm' 'path' 'ai.promptstudio.tvclean.launcher'
+transfer: none
+verify: none
+prior: none
+inverse: none

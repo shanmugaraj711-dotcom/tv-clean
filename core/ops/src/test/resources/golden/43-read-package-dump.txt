@@ -1,0 +1,10 @@
+# dumpsys of one package
+op: Read kind=PACKAGE_DUMP pkg=ai.promptstudio.tvclean.launcher
+privilege: READ
+timeout_ms: 20000
+stdout_cap: 1048576
+line: 'dumpsys' 'package' 'ai.promptstudio.tvclean.launcher'
+transfer: none
+verify: none
+prior: none
+inverse: none

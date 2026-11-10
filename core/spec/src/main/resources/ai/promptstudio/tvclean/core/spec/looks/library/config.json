@@ -1,0 +1,15 @@
+{
+  "background_color": "#141210",
+  "wallpaper": true,
+  "wallpaper_dim": 0,
+  "wallpaper_rotation_minutes": 0,
+  "sky_intensity": 0,
+  "cinematic_home": false,
+  "dock_title": false,
+  "dock_row": false,
+  "columns": 5,
+  "rows_below_dock": 0,
+  "animations": true,
+  "advanced_effects": false,
+  "reduced_motion": true
+}

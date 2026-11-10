@@ -1,0 +1,4 @@
+fc2a3ded0b4e37149d77e3ff2f6be09693b428b357645093818396d570efb0de  look2 docs of 0.4.0 (e42aaf2): 288500 builds, 43050 distinct docs
+# SHA-256 over the sorted distinct LauncherConfigCodec.encode bytes of every LookKeys.build in the
+# LookDifferentialTest cross product, each doc as a 4 byte big endian length then its bytes.
+# Look2BytesTest.look2BytesUnchangedWithDefaultExtras recomputes it on every run. Never edit it.

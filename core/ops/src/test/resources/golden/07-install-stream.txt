@@ -1,0 +1,12 @@
+# Streaming install when the TV advertises cmd
+op: InstallStream blob=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:260000:bundled:launcher.apk sha256=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa pkg=ai.promptstudio.tvclean.launcher versionCode=1 signer=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+privilege: COMMUNITY
+timeout_ms: 125200
+stdout_cap: 65536
+line: none
+transfer: sync:bundled:launcher.apk 260000
+verify: Read kind=PACKAGE_DUMP pkg=ai.promptstudio.tvclean.launcher
+verify_line: 'dumpsys' 'package' 'ai.promptstudio.tvclean.launcher'
+prior: present=false
+inverse: Uninstall pkg=ai.promptstudio.tvclean.launcher
+inverse_line: 'pm' 'uninstall' '--user' '0' 'ai.promptstudio.tvclean.launcher'

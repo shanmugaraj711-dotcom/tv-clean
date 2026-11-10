@@ -1,0 +1,11 @@
+# Two lines, force-stop then start
+op: RestartHome component=ai.promptstudio.tvclean.launcher/.MainActivity
+privilege: COMMUNITY
+timeout_ms: 30000
+stdout_cap: 65536
+line: 'am' 'force-stop' 'ai.promptstudio.tvclean.launcher'
+line: 'am' 'start' '-n' 'ai.promptstudio.tvclean.launcher/.MainActivity'
+transfer: none
+verify: none
+prior: none
+inverse: none

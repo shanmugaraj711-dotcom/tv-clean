@@ -1,0 +1,11 @@
+# wallpaper.jpg the same way
+op: PushAsset src=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc:1234:blobs/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc dest=/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/wallpaper.jpg sha256=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc route=THEME_PROVIDER
+privilege: COMMUNITY
+timeout_ms: 600000
+stdout_cap: 65536
+line: rm -f /sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/wallpaper.jpg 2>/dev/null; o=$(content write --uri content://ai.promptstudio.tvclean.launcher.theme/wallpaper.jpg < /data/local/tmp/tvclean/theme-wallpaper.jpg 2>&1) && [ -z "$o" ] || cp /data/local/tmp/tvclean/theme-wallpaper.jpg /sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/wallpaper.jpg; r=$?; rm -f /data/local/tmp/tvclean/theme-wallpaper.jpg; exit $r
+transfer: sync:/data/local/tmp/tvclean/theme-wallpaper.jpg cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+verify: Read kind=LAUNCHER_FILE_SHA256 path=/sdcard/Android/data/ai.promptstudio.tvclean.launcher/files/wallpaper.jpg
+verify_line: content read --uri content://ai.promptstudio.tvclean.launcher.theme/wallpaper.jpg | sha256sum
+prior: present=true
+inverse: none

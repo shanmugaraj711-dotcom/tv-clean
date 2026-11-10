@@ -1,0 +1,72 @@
+Clean Your TV: TV report
+App: 0.3.7 (full)
+Phone: OnePlus LE2101, Android 14
+
+TV
+Brand: THOMSON
+Manufacturer: SPPL
+Model: SPPL 2K ANDROID TV
+Device: sauve
+Android: 11 (SDK 30)
+Build: THOMSON/SPPL_2K_RT41/sauve:11/RTK4.241026.026/12861515:user/release-keys
+Google Play services: yes
+Home screen it came with: Android TV (Leanback)
+Read from the TV: 2026-10-25
+
+Matching
+Profile: brand set Thomson
+Home switch: blocked WIZARD_STAYS_ON
+
+Home screen
+Resolves to: com.google.android.tvlauncher/.MainActivity
+Claimant: com.google.android.tvlauncher/.MainActivity priority 2
+Claimant: com.realtek.keyintercept/.fallbackhome.FallbackHome priority -999
+Claimant: com.android.tv.settings/.system.FallbackHome priority -1000
+
+System apps (107)
+Off, disabled-user (1):
+com.google.android.feedback
+
+On, enabled (3):
+com.android.vending, com.google.android.videos, com.realtek.rtkvirtualkeyboard
+
+On, default (103):
+android, android.autoinstalls.config.rplus.device, com.amazon.amazonvideo.livingroom,
+com.android.backupconfirm, com.android.bluetooth, com.android.captiveportallogin,
+com.android.certinstaller, com.android.companiondevicemanager, com.android.cts.ctsshim,
+com.android.cts.priv.ctsshim, com.android.dreams.basic, com.android.dynsystem,
+com.android.externalstorage, com.android.hotspot2.osulogin, com.android.htmlviewer,
+com.android.inputdevices, com.android.keychain, com.android.localtransport,
+com.android.location.fused, com.android.networkstack.inprocess,
+com.android.networkstack.permissionconfig, com.android.networkstack.tethering.inprocess,
+com.android.pacprocessor, com.android.printspooler, com.android.providers.calendar,
+com.android.providers.contacts, com.android.providers.downloads, com.android.providers.media,
+com.android.providers.media.module, com.android.providers.settings, com.android.providers.tv,
+com.android.providers.userdictionary, com.android.proxyhandler, com.android.se,
+com.android.settings.intelligence, com.android.sharedstoragebackup, com.android.shell,
+com.android.soundpicker, com.android.statementservice, com.android.systemui, com.android.tv,
+com.android.tv.globalkeyhandler.overlay, com.android.tv.overlay.lowram, com.android.tv.settings,
+com.android.vpndialogs, com.android.wallpaperbackup, com.android.wifi.resources,
+com.factory.factoryautomation, com.google.android.apps.mediashell, com.google.android.backdrop,
+com.google.android.ext.services, com.google.android.ext.shared, com.google.android.gms,
+com.google.android.gsf, com.google.android.inputmethod.latin, com.google.android.katniss,
+com.google.android.marvin.talkback, com.google.android.modulemetadata,
+com.google.android.onetimeinitializer, com.google.android.overlay.modules.ext.services,
+com.google.android.overlay.modules.modulemetadata.forframework,
+com.google.android.overlay.modules.permissioncontroller,
+com.google.android.overlay.modules.permissioncontroller.forframework,
+com.google.android.packageinstaller, com.google.android.partnersetup,
+com.google.android.permissioncontroller, com.google.android.play.games,
+com.google.android.sss.authbridge, com.google.android.syncadapters.calendar, com.google.android.tts,
+com.google.android.tungsten.setupwraith, com.google.android.tv.frameworkpackagestubs,
+com.google.android.tv.remote.service, com.google.android.tvlauncher,
+com.google.android.tvrecommendations, com.google.android.webview, com.google.android.youtube.tv,
+com.google.android.youtube.tvmusic, com.hk.factorymenu, com.netflix.ninja, com.realsil.ota,
+com.realtek.display.monitor, com.realtek.dtmb, com.realtek.dtv, com.realtek.factorymenu,
+com.realtek.hw.configprovider, com.realtek.keyintercept,
+com.realtek.leanbacklauncher.partnercustomizer, com.realtek.media.notification, com.realtek.menu,
+com.realtek.power, com.realtek.retailmode, com.realtek.setupwizard, com.realtek.setupwizard.overlay,
+com.realtek.storemode, com.realtek.tv, com.realtek.tv.atsc, com.realtek.tv.atv, com.realtek.tv.isdb,
+com.realtek.tv.passthrough, com.rtk.engmenu, com.rtk.mediabrowser, com.vewd.core.service
+
+Other apps: 11 (not named)

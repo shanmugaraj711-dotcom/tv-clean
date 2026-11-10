@@ -1,0 +1,143 @@
+package ai.promptstudio.tvclean.core.planner
+
+import ai.promptstudio.tvclean.core.model.Component
+import ai.promptstudio.tvclean.core.model.PackageName
+import ai.promptstudio.tvclean.core.model.PackageState
+import ai.promptstudio.tvclean.core.model.Profile
+import ai.promptstudio.tvclean.core.model.Snapshot
+import ai.promptstudio.tvclean.core.ops.Denylist
+import ai.promptstudio.tvclean.core.ops.HomePlaceholder
+import ai.promptstudio.tvclean.core.spec.KnownLaunchers
+
+// What may be switched off (0.3.3, issue #10): one rule for the planner at plan time and for the
+// engine just before each switch-off, with the run's live facts. Before 0.3.3 each side had its own
+// copy, and a rule added to one (the stock launchers, the setup wizard) was missing from the other,
+// so a plan could hold a switch-off the engine then refused. Both sides now ask this object, so for
+// the same facts they give the same answer. Not a frozen interface.
+//
+// The order: the protected denylist with the package's facts (Denylist.reason: static names, the
+// wizard rule, persistent, a TV input, the profile's never_disable, the keyboard, the screensaver);
+// a package that asks for TV_INPUT_HARDWARE (only the engine reads that, from the dump it reads just
+// before the step); Fire OS's own home screens, which the firmware never lets anyone switch off; a
+// home screen app the person installed (not one of the stock launchers), never switched off, not
+// even by the home screen switch; and,
+// outside the home screen switch only, the TV's own home screens (the profile's stock launchers, the
+// current HOME and every HOME claimant) and the first-run setup wizard, which only that switch may
+// switch off (section 3.4).
+object SwitchOffRule {
+    const val REASON_YOUR_LAUNCHER = "it is a home screen app you installed, and we never switch those off"
+    // Our own new home screen, the planner's launcher package. The probe cannot tell who installed
+    // a package (installedByUs always reads false), so it is named here: never the person's.
+    val OUR_LAUNCHER = PackageName("ai.promptstudio.tvclean.launcher")
+
+    // The reason `pkg` may not be switched off, or null when it may. `state` is what the caller knows
+    // of the package (the engine's live dump, the planner's snapshot); `snapshot` gives HOME, the
+    // keyboard and the screensaver (null: not known, those checks are left out). `inHomeSwitch`: the
+    // switch-off is part of the open home screen switch. `requestsTvInputHardware`: the package's
+    // dump asks for TV_INPUT_HARDWARE (upstream #421).
+    fun reason(
+        pkg: PackageName,
+        state: PackageState?,
+        profile: Profile?,
+        snapshot: Snapshot?,
+        stockLaunchers: List<Component>,
+        inHomeSwitch: Boolean = false,
+        requestsTvInputHardware: Boolean = false,
+    ): String? {
+        Denylist.reason(pkg, state, profile, snapshot)?.let { return it }
+        if (requestsTvInputHardware) return Denylist.REASON_TV_INPUT
+        if (FireOs.isHome(pkg)) return DefaultPlanner.REASON_FIRE_OS_HOME
+        val stock = stockLaunchers.any { it.pkg == pkg }   // the TV's own by the allowlist, whatever its system flag reads
+        if (!stock && snapshot != null && isPersonsLauncher(pkg, snapshot, state)) return REASON_YOUR_LAUNCHER
+        if (inHomeSwitch) return null
+        if (stock || (snapshot != null && isHomeScreen(pkg, snapshot))) return DefaultPlanner.REASON_HOME_SCREEN
+        if (pkg.value in Denylist.setupWizards || profile?.setupWraith == pkg) return DefaultPlanner.REASON_WIZARD_SECTION_ONLY
+        return null
+    }
+
+    // The TV's current HOME, whatever it is (R5-W4 O5: PatchWall on an unknown Xiaomi), or any HOME
+    // claimant (PLAN 6.5: the current HOME resolver is protected).
+    //
+    // WP4 (B5): when HOME answers with the system chooser, a placeholder or nothing at all, the TV
+    // has not said which home screen it uses, so every known TV home screen (KnownLaunchers) counts
+    // as one too, claimant or not.
+    //
+    // Issue #1944: a factory test app a tested list switches off (HomePlaceholder.FACTORY_HOMES_OFF)
+    // is no home screen as a mere claimant while HOME answers to a real home screen, so the list's
+    // line takes it off before the switch, as upstream's header says. It stays protected while HOME
+    // answers to it, or to the chooser, a placeholder or nothing.
+    fun isHomeScreen(pkg: PackageName, snapshot: Snapshot): Boolean {
+        val resolved = snapshot.home.resolved
+        val undecided = resolved == null || StockHome.isPlaceholder(resolved)
+        if (resolved?.pkg == pkg) return true
+        if (snapshot.home.claimants.any { it.component.pkg == pkg } && (undecided || pkg !in HomePlaceholder.FACTORY_HOMES_OFF)) return true
+        return undecided && pkg in KnownLaunchers.byPackage
+    }
+
+    // A home screen app the person installed (issue #8: Projectivy, Wolf and the like): HOME or a
+    // HOME claimant, not a system package, not our own new home screen, and not put there by this
+    // app. A package whose system flag is not known counts as theirs, the safe side (as the TV
+    // report does).
+    fun isPersonsLauncher(pkg: PackageName, snapshot: Snapshot, state: PackageState? = snapshot.packages[pkg]): Boolean {
+        if (!isHomeScreen(pkg, snapshot)) return false
+        // Google's and Amazon's own TV home screens are never the person's, even when an update put
+        // them under /data and the system flag reads wrong.
+        if (pkg in KnownLaunchers.byPackage) return false
+        if (pkg == OUR_LAUNCHER) return false
+        val known = state ?: snapshot.packages[pkg]
+        return known?.system != true && known?.installedByUs != true
+    }
+}
+
+// The TV's own home screen the home screen switch hands HOME back to, shared by the planner's
+// takeover and SetupMachine's decision to offer the switch (0.3.3, issue #8), so the wizard never
+// asks the planner for a switch it then refuses as a whole. Not a frozen interface.
+object StockHome {
+    // Matched by component first, then by package: only the package of each allowlisted stock
+    // launcher is verified on a real TV for every profile, the class is not. Either way the component
+    // is the claimant the TV itself reported. Null: no HOME claimant is one of `stockLaunchers`.
+    fun of(snapshot: Snapshot, stockLaunchers: List<Component>): Component? {
+        val claimants = snapshot.home.claimants.map { it.component }
+        val resolved = snapshot.home.resolved
+        fun stockPkg(c: Component) = stockLaunchers.any { it.pkg == c.pkg }
+        return claimants.firstOrNull { it == resolved && it in stockLaunchers }
+            ?: claimants.firstOrNull { it in stockLaunchers }
+            ?: claimants.firstOrNull { it == resolved && stockPkg(it) }
+            ?: claimants.firstOrNull { stockPkg(it) }
+    }
+
+    // A HOME answer that is not a home screen (WP4, B5): HomePlaceholder in :core:ops.
+    fun isPlaceholder(c: Component): Boolean = ai.promptstudio.tvclean.core.ops.HomePlaceholder.isPlaceholder(c)
+
+    // The home screen a SetHome records as the one before it (its prior, which the journal, the
+    // restore point's homeBefore and Undo everything read): HOME as the TV answered, unless that is
+    // a placeholder or nothing, then the stock home the switch hands back to.
+    fun recorded(snapshot: Snapshot, stock: Component): Component =
+        snapshot.home.resolved?.takeUnless { isPlaceholder(it) } ?: stock
+
+    // Issue #2028 (a Jio set-top box no list knows): Home answered to the operator's own launcher, a
+    // system app claiming it at priority 2, while Google's tvlauncher claimed it too at 0. The plan
+    // switched tvlauncher off as the stock home, but Android always hands Home to the claimant with
+    // the highest priority and ignores set-home-activity for one below it, so Home stayed on the
+    // operator's launcher and ours (priority 0, as for any app that is not a system app) never took it.
+    // So: HOME answers to a home screen that is none of `stockLaunchers`, not ours and not a
+    // placeholder, at a priority above ours. The switch cannot take Home from it and step R would hand
+    // Home to a stock home that never had it; Setup leaves the home screen alone (UNKNOWN_HOME) on
+    // every path, a tested list's included. One the claimants give no priority for counts as above.
+    fun unknownAboveOurs(snapshot: Snapshot, stockLaunchers: List<Component>): Boolean {
+        val resolved = snapshot.home.resolved ?: return false
+        if (isPlaceholder(resolved) || resolved.pkg == SwitchOffRule.OUR_LAUNCHER || stockLaunchers.any { it.pkg == resolved.pkg }) return false
+        val claimants = snapshot.home.claimants
+        val ours = claimants.filter { it.component.pkg == SwitchOffRule.OUR_LAUNCHER }.maxOfOrNull { it.priority } ?: 0
+        val its = claimants.filter { it.component.pkg == resolved.pkg }.maxOfOrNull { it.priority } ?: return true
+        return its > ours
+    }
+
+    // HOME answers to a home screen app the person installed, and the TV's own is not among the
+    // claimants: the home screen was changed before (by another app or an earlier change), so the
+    // switch has nothing to hand HOME back to and the person's choice stays.
+    fun changedByPerson(snapshot: Snapshot, stockLaunchers: List<Component>): Boolean {
+        val resolved = snapshot.home.resolved ?: return false
+        return of(snapshot, stockLaunchers) == null && SwitchOffRule.isPersonsLauncher(resolved.pkg, snapshot)
+    }
+}

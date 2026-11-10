@@ -1,0 +1,11 @@
+# Install the launcher from tmp, no flags, it was present (no undo)
+op: Install apk=/data/local/tmp/tvclean/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.apk sha256=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa pkg=ai.promptstudio.tvclean.launcher versionCode=1 signer=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb flags=
+privilege: COMMUNITY
+timeout_ms: 120000
+stdout_cap: 65536
+line: 'pm' 'install' '--user' '0' '/data/local/tmp/tvclean/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.apk'
+transfer: none
+verify: Read kind=PACKAGE_DUMP pkg=ai.promptstudio.tvclean.launcher
+verify_line: 'dumpsys' 'package' 'ai.promptstudio.tvclean.launcher'
+prior: present=true
+inverse: none

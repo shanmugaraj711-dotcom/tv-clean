@@ -1,0 +1,18 @@
+{
+  "festival": "diwali",
+  "festival_until": "2026-11-10",
+  "accent_color": "#FFB23C",
+  "background_color": "#120809",
+  "wallpaper": true,
+  "wallpaper_dim": 0,
+  "wallpaper_rotation_minutes": 0,
+  "sky_intensity": 0,
+  "cinematic_home": false,
+  "dock_title": true,
+  "dock_row": true,
+  "columns": 5,
+  "rows_below_dock": 0,
+  "animations": true,
+  "advanced_effects": true,
+  "reduced_motion": false
+}

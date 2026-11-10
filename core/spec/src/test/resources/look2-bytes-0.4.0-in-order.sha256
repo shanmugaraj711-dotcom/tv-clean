@@ -1,0 +1,4 @@
+200297c9cf070857f3dca24d94c10d7ea8a4c2567ba1528392d16f6e378c5d0b  look2 docs of 0.4.0 (e42aaf2) in input order: 288500 builds
+# SHA-256 over the LauncherConfigCodec.encode bytes of every LookKeys.build in the LookDifferentialTest
+# cross product, in input order, each doc as a 4 byte big endian length then its bytes. Taken on
+# unmodified e42aaf2 with the same inputs as look2-bytes-0.4.0.sha256. Never edit it.
