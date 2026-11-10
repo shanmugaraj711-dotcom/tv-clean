@@ -1,0 +1,1 @@
+0.4.6.1: Fixed: a TV that got a new address on your Wi-Fi, after a TV update or a new router, is found again. The app looked only at the saved address and waited at "Waiting for the TV..." for good; now it looks for the TV on the network, checks it is the same TV that already allowed this phone, and saves the new address. No other TV is connected and none shows an Allow prompt.

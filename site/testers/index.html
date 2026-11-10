@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testers - Clean Your TV</title>
+<meta name="description" content="Thank you to the people who tested the Clean Your TV app on their own TVs and told us how it went.">
+<meta name="theme-color" content="#050507">
+<link rel="icon" type="image/png" href="../assets/icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+:root{--surface2:#15161d}
+.t-stats{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 22px;font-size:15px;color:var(--muted)}
+.t-stats b{color:var(--accent-soft);font-weight:600;font-size:18px;margin-right:4px}
+.t-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;margin:0 0 14px;scrollbar-width:none}
+.t-chips::-webkit-scrollbar{display:none}
+.t-chip{flex:none;border:1.5px solid var(--line);background:transparent;color:var(--text);border-radius:999px;padding:7px 14px;font:inherit;font-size:15px;cursor:pointer}
+.t-chip span{color:var(--muted);margin-left:4px}
+.t-chip[aria-pressed=true]{border-color:rgba(232,168,76,.6);background:rgba(232,168,76,.12);color:var(--accent-soft)}
+.t-chip[aria-pressed=true] span{color:var(--accent-soft)}
+.t-wall{display:flex;flex-wrap:wrap;gap:12px}
+.t-pill{display:inline-flex;align-items:center;gap:12px;padding:6px 16px 6px 6px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--text);font:inherit;text-align:left;cursor:pointer;max-width:100%;transition:border-color .15s,transform .15s,background .15s}
+.t-pill:hover,.t-pill:focus-visible{border-color:var(--accent);background:var(--surface2);transform:translateY(-2px);outline:none}
+.t-pill img{width:44px;height:44px;border-radius:50%;flex:none;background:#1b1d25}
+.t-tx{display:flex;flex-direction:column;min-width:0;line-height:1.2}
+.t-tx b{font-weight:600;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t-tx small{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t-bug{width:22px;height:22px;flex:none;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(232,168,76,.15);color:var(--accent);font-size:12px}
+dialog{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:24px;padding:24px;width:min(420px,calc(100vw - 32px));box-shadow:0 30px 80px rgba(0,0,0,.6)}
+dialog::backdrop{background:rgba(5,5,7,.7);backdrop-filter:blur(3px)}
+.t-dh{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-right:30px}
+.t-dh img{width:64px;height:64px;border-radius:50%}
+.t-dh b{display:block;font-size:20px;font-weight:600;word-break:break-all}
+.t-dh small{color:var(--muted);font-size:15px}
+.t-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:500;background:rgba(232,168,76,.12);color:var(--accent-soft);border:1px solid rgba(232,168,76,.4);margin-bottom:12px}
+.t-what{font-size:17px;line-height:1.5;margin:0 0 18px}
+.t-acts{display:flex;flex-wrap:wrap;gap:10px}
+.t-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:11px 20px;font-weight:600;font-size:15px;text-decoration:none;background:#f6f6f8;color:#0a0a0c;border:0;font-family:inherit;cursor:pointer}
+.t-btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--line)}
+.t-btn:hover{background:#fff;color:#000}.t-btn.ghost:hover{border-color:var(--accent);background:transparent;color:#fff}
+.t-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:18px;cursor:pointer}
+.t-join{margin-top:46px;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:26px}
+.t-steps{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 20px}
+.t-st{display:inline-flex;align-items:center;gap:10px;border:1.5px solid rgba(232,168,76,.45);background:rgba(232,168,76,.08);border-radius:999px;padding:6px 16px 6px 6px;font-size:16px}
+.t-n{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#1a1306;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.t-muted{color:var(--muted);font-size:15px}
+.testers{width:100%;border-collapse:collapse;margin-top:18px;font-size:17px}
+.testers th{text-align:left;font-weight:500;color:var(--muted);font-size:14px;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--line)}
+.testers td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
+.testers td.who{white-space:nowrap;font-weight:500}
+.testers td.what{color:var(--muted)}
+.tablewrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="../"><img src="../assets/icon.png" alt="" width="36" height="36">Clean Your TV</a>
+    <nav class="top" aria-label="Main"><a href="../">Home</a><a class="opt" href="../tvs/">TV list</a><a href="https://github.com/udhaykumarbala/cleanyourtv-app">GitHub</a></nav>
+  </header>
+  <main>
+    <h1 style="font-size:clamp(34px,6vw,52px)">Thank you, testers</h1>
+    <p class="lead">These people tried test builds of the app on their own TVs and told us how it went. Every report made the app safer for everyone with the same TV. Tap anyone to see what they did.</p>
+    <p class="small">The TV lists themselves come from <a href="https://github.com/Gathin23/cleanyourtv">Clean Your TV</a> by Gathin and its community. This page thanks the people who tested this phone app. <a href="../tvs/">See what the app does on each TV</a>.</p>
+    <div class="t-stats" id="stats"></div>
+    <div class="t-chips" id="chips" role="group" aria-label="Filter by TV brand"></div>
+    <div class="t-wall" id="wall"></div>
+    <noscript>
+    <div class="tablewrap">
+    <table class="testers">
+      <thead><tr><th>Who</th><th>TV</th><th>What their test did</th></tr></thead>
+      <tbody>
+        <tr><td class="who"><a href="https://github.com/clayauld">clayauld</a></td><td>AURZEN BOOMAIR projector</td><td class="what">Tried the very first test build and confirmed everything still worked.</td></tr>
+        <tr><td class="who"><a href="https://github.com/juancarlosjimenezarg-tech">juancarlosjimenezarg-tech</a></td><td>Philips 2020/2021 UHD Android TV</td><td class="what">Checked Live TV, the remote buttons and HDMI after the clean-up.</td></tr>
+        <tr><td class="who"><a href="https://github.com/iasdev">iasdev</a></td><td>Philips 2020/2021 UHD Android TV</td><td class="what">Confirmed the clean-up and told us the home screen had stayed, which we explain better now.</td></tr>
+        <tr><td class="who"><a href="https://github.com/harashoo1">harashoo1</a></td><td>SHARP AQUOS TVE19A</td><td class="what">Tested the list and confirmed the TV worked fine afterwards.</td></tr>
+        <tr><td class="who"><a href="https://github.com/vjlu">vjlu</a></td><td>Smarttech Apollo Premium4K</td><td class="what">Told us the test list changed nothing on this TV, which shaped the notes in the next build.</td></tr>
+        <tr><td class="who"><a href="https://github.com/quest99812">quest99812</a></td><td>Xiaomi MiTV-AESP0</td><td class="what">Confirmed the app list works and reported where the home screen did not change.</td></tr>
+        <tr><td class="who"><a href="https://github.com/wbsaputra">wbsaputra</a></td><td>Xiaomi MiTV-AESP0</td><td class="what">Tested a beta and confirmed everything worked.</td></tr>
+        <tr><td class="who"><a href="https://github.com/Ganeshgoud9374">Ganeshgoud9374</a></td><td>Redmi MiTV-MOOQ3</td><td class="what">Tried the test version and reported back, which shaped the notes in the next build.</td></tr>
+        <tr><td class="who"><a href="https://github.com/Alinator13">Alinator13</a></td><td>TCL Smart TV (BeyondTV)</td><td class="what">Checked casting and streaming after the clean-up.</td></tr>
+        <tr><td class="who"><a href="https://github.com/nanip42-ui">nanip42-ui</a></td><td>Xiaomi Mi TV 4i</td><td class="what">Found that the remote's PatchWall button stopped working. PatchWall is now the owner's choice on every Xiaomi TV.</td></tr>
+        <tr><td class="who"><a href="https://github.com/zjt48162">zjt48162</a></td><td>TCL Smart TV (G06)</td><td class="what">Checked every remote button, Wi-Fi reconnecting and Live TV.</td></tr>
+        <tr><td class="who"><a href="https://github.com/DragonSin09">DragonSin09</a></td><td>Skyworth SWTV-22SA-FHD</td><td class="what">Confirmed the list works on a fresh Setup.</td></tr>
+        <tr><td class="who"><a href="https://github.com/syed-talha-amaan">syed-talha-amaan</a></td><td>OnePlus TV C00</td><td class="what">Sent a full report from a test build that showed the test list worked.</td></tr>
+        <tr><td class="who"><a href="https://github.com/VikR225">VikR225</a></td><td>OnePlus TV C00</td><td class="what">Tried a beta and told us what improved and what was still missing.</td></tr>
+        <tr><td class="who"><a href="https://github.com/EseLoKo">EseLoKo</a></td><td>Sony BRAVIA 4K VH22</td><td class="what">Tested the list and confirmed it worked.</td></tr>
+        <tr><td class="who"><a href="https://github.com/chaitanyamestry13">chaitanyamestry13</a></td><td>Xiaomi Mi TV 4i</td><td class="what">Tested several builds and kept reporting back, which helped us find what was missing on this TV.</td></tr>
+        <tr><td class="who"><a href="https://github.com/morgangiubbolini75-source">morgangiubbolini75-source</a></td><td>Hisense HiSmart 2K ATV4</td><td class="what">Tried the 0.4.6 test build and confirmed the new home screen works with the setup wizard left on, the first TV outside Xiaomi to show it.</td></tr>
+        <tr><td class="who"><a href="https://github.com/dineshkoravi">dineshkoravi</a></td><td>Xiaomi Mi TV 4A</td><td class="what">Tried the 0.4.6 test build and confirmed it works.</td></tr>
+        <tr><td class="who"><a href="https://github.com/YMJ1123">YMJ1123</a></td><td>Philips TPM191E</td><td class="what">Tried the 0.4.6 test build and confirmed it works.</td></tr>
+        <tr><td class="who"><a href="https://github.com/StyvennDevilliers">StyvennDevilliers</a></td><td>MY Android TV</td><td class="what">Tested the new home screen and confirmed it works.</td></tr>
+        <tr><td class="who"><a href="https://github.com/samr6714-dotcom">samr6714-dotcom</a></td><td>NEBULA D2421</td><td class="what">Checked that the new home screen stayed after several restarts and changes to the look.</td></tr>
+        <tr><td class="who"><a href="https://github.com/AmexSaad">AmexSaad</a></td><td>unifi-TV</td><td class="what">Confirmed the fix with photos of the TV.</td></tr>
+        <tr><td class="who"><a href="https://github.com/navinmaxx">navinmaxx</a></td><td>MarQ 4K Android TV</td><td class="what">Confirmed it works and asked for apps that can be moved anywhere on the home screen.</td></tr>
+        <tr><td class="who"><a href="https://github.com/jullianoleitte22-maker">jullianoleitte22-maker</a></td><td>AIWA 4K Smart TV</td><td class="what">Confirmed the app worked on their TV.</td></tr>
+        <tr><td class="who"><a href="https://github.com/kaboulay714-gif">kaboulay714-gif</a></td><td>TD Systems Android TV</td><td class="what">Confirmed it works and asked for wallpapers shared by others.</td></tr>
+        <tr><td class="who"><a href="https://github.com/kjntl007">kjntl007</a></td><td>Xiaomi Mi TV 4i</td><td class="what">Tried the 0.4.6 test build within minutes and sent the report that showed why the home screen stayed: another home screen app on the TV.</td></tr>
+        <tr><td class="who"><a href="https://github.com/lonkijs">lonkijs</a></td><td>TCL Percee TV</td><td class="what">Sent a report showing the new home screen was still refused on a TV with its own list, which led us to a bug.</td></tr>
+        <tr><td class="who"><a href="https://github.com/manitosa">manitosa</a></td><td>Xiaomi Mi Box S</td><td class="what">Sent a report showing the same refusal on Android 12, which helped us find the cause.</td></tr>
+        <tr><td class="who"><a href="https://github.com/devudibidda">devudibidda</a></td><td>Hisense Smart TV</td><td class="what">Sent a full report from the 0.4.6 test build.</td></tr>
+        <tr><td class="who"><a href="https://github.com/ian910814">ian910814</a></td><td>CHIMEI TL-43-G100</td><td class="what">Tried the 0.4.6 test build on a TV with no list of its own and confirmed the new home screen works.</td></tr>
+        <tr><td class="who"><a href="https://github.com/semi561">semi561</a></td><td>TCL Smart TV Pro</td><td class="what">Tried it again after the Wi-Fi fix and confirmed the new home screen works.</td></tr>
+        <tr><td class="who"><a href="https://github.com/8217095-hub">8217095-hub</a></td><td>Motorola CSV4K</td><td class="what">Confirmed the new home screen works and asked for apps that can be placed anywhere on it.</td></tr>
+        <tr><td class="who"><a href="https://github.com/tvfaker">tvfaker</a></td><td>Homatics Box R 4K Plus</td><td class="what">Checked the new home screen held after a restart with the setup wizard left on, and found that the look did not change on this box.</td></tr>
+        <tr><td class="who"><a href="https://github.com/tupac55">tupac55</a></td><td>KINHANK G1</td><td class="what">Tried the 0.4.6 test build and confirmed it works, and that the TV feels more fluid.</td></tr>
+        <tr><td class="who"><a href="https://github.com/ajcarmody">ajcarmody</a></td><td>Hisense HiSmart 4K ATV4</td><td class="what">Tried the 0.4.6 test build and confirmed it fixed the home screen.</td></tr>
+        <tr><td class="who"><a href="https://github.com/aleksandrprotor-sys">aleksandrprotor-sys</a></td><td>Xiaomi MiTV-MZTU1</td><td class="what">Confirmed the new home screen loads and everything works.</td></tr>
+        <tr><td class="who"><a href="https://github.com/lejapa">lejapa</a></td><td>SW SWTV-20SA</td><td class="what">Ran the 0.4.6 test build and kept watching for errors, with a photo of the result.</td></tr>
+        <tr><td class="who"><a href="https://github.com/mailboxshr-bit">mailboxshr-bit</a></td><td>THOMSON SPPL 2K Android TV</td><td class="what">Confirmed the 0.4.6 test build works and the TV is clean.</td></tr>
+        <tr><td class="who"><a href="https://github.com/RentreX">RentreX</a></td><td>EKO 2K Android TV</td><td class="what">Confirmed it works on one EKO and sent the reports that show a connection problem on another.</td></tr>
+        <tr><td class="who"><a href="https://github.com/insurancefraudster">insurancefraudster</a></td><td>Xiaomi MiTV-MOOQ1</td><td class="what">Checked the new home screen, voice input and every app after a restart, and found an app missing from the dock list.</td></tr>
+        <tr><td class="who"><a href="https://github.com/Skirttles">Skirttles</a></td><td>Cecotec QLED 55" V1</td><td class="what">Confirmed the 0.4.6 test build works with every change made.</td></tr>
+        <tr><td class="who"><a href="https://github.com/pcbgmipanayi-debug">pcbgmipanayi-debug</a></td><td>IMPEX GRANDE FHD TV</td><td class="what">Confirmed the new home screen replaced the stock one.</td></tr>
+        <tr><td class="who"><a href="https://github.com/david77david00">david77david00</a></td><td>realme AI PONT</td><td class="what">Confirmed the new home screen installs and stays after a restart, with a photo.</td></tr>
+        <tr><td class="who"><a href="https://github.com/birthday-wish00">birthday-wish00</a></td><td>realme AI PONT</td><td class="what">Confirmed it works after a restart and told us how the TV behaves at start-up and standby.</td></tr>
+        <tr><td class="who"><a href="https://github.com/Nisekameko">Nisekameko</a></td><td>Hisense HiSmart 2K ATV4</td><td class="what">Confirmed it works and told us what Live TV and USB users will notice.</td></tr>
+        <tr><td class="who"><a href="https://github.com/hellowgarci01">hellowgarci01</a></td><td>Xiaomi MiTV-AYFR0</td><td class="what">Confirmed the home screen issue is resolved.</td></tr>
+        <tr><td class="who"><a href="https://github.com/bharadwajk1">bharadwajk1</a></td><td>NOKIA R4</td><td class="what">Confirmed the new home screen works on a Nokia set with its own vendor start-up screen.</td></tr>
+        <tr><td class="who"><a href="https://github.com/Davitrindade">Davitrindade</a></td><td>PHILCO 4K Smart TV</td><td class="what">Tried the 0.4.6 test build and confirmed everything works, and asked for Portuguese in the app.</td></tr>
+        <tr><td class="who"><a href="https://github.com/muamfi">muamfi</a></td><td>TCL Q6C</td><td class="what">Followed the Wi-Fi steps on a TCL Google TV and confirmed the new home screen.</td></tr>
+        <tr><td class="who"><a href="https://github.com/Birdfodo">Birdfodo</a></td><td>Skyworth TV Stick</td><td class="what">Tried the 0.4.6 test build and confirmed it works.</td></tr>
+        <tr><td class="who"><a href="https://github.com/nbalakumar2005">nbalakumar2005</a></td><td>Xiaomi Mi TV 4i</td><td class="what">Tried the 0.4.6 test build on an eight year old Mi TV 4i: new home screen and customising both work.</td></tr>
+        <tr><td class="who"><a href="https://github.com/demoncska14-collab">demoncska14-collab</a></td><td>Xiaomi MiTV-MSSP0</td><td class="what">Confirmed everything worked on the first try.</td></tr>
+        <tr><td class="who"><a href="https://github.com/sfe667">sfe667</a></td><td>Sony BRAVIA 4K GB ATV3</td><td class="what">Checked the new home screen held through a restart and found an app missing from the app list.</td></tr>
+        <tr><td class="who"><a href="https://github.com/j2wznw5k7h-ui">j2wznw5k7h-ui</a></td><td>SHARP 2K EU Android TV</td><td class="what">Tried the 0.4.6 test build on Android 14 and confirmed the new home screen installs.</td></tr>
+        <tr><td class="who"><a href="https://github.com/GabrielZinatoSP">GabrielZinatoSP</a></td><td>Philco AI PONT</td><td class="what">Confirmed the 0.4.6 test build gives this TV the new home screen.</td></tr>
+        <tr><td class="who"><a href="https://github.com/lenrig">lenrig</a></td><td>SHARP AQUOS TVE19A</td><td class="what">Confirmed the 0.4.6 test build changes the home screen with no problems.</td></tr>
+        <tr><td class="who"><a href="https://github.com/chehabkha">chehabkha</a></td><td>Sony BRAVIA 4K UR3</td><td class="what">Ran the 0.4.5 list again and confirmed it works.</td></tr>
+        <tr><td class="who"><a href="https://github.com/ThomasBates1">ThomasBates1</a></td><td>Kogan AI PONT</td><td class="what">Checked the new home screen stays after a restart.</td></tr>
+        <tr><td class="who"><a href="https://github.com/IworiKoso">IworiKoso</a></td><td>Nokia Android TV</td><td class="what">Confirmed the 0.4.6 test build works on this TV.</td></tr>
+        <tr><td class="who"><a href="https://github.com/dwapir">dwapir</a></td><td>Philips 55PUS7334</td><td class="what">Found the home screen kept reverting, then confirmed the 0.4.6 test build fixed it.</td></tr>
+        <tr><td class="who"><a href="https://github.com/timav97-byte">timav97-byte</a></td><td>Xiaomi MiTV-MZTU1</td><td class="what">Confirmed the new home screen works on the 0.4.6 test build.</td></tr>
+        <tr><td class="who"><a href="https://github.com/nahos2585">nahos2585</a></td><td>Sony BRAVIA Android TV 9</td><td class="what">Dug into a connection failure until we found the bug, then confirmed the fix.</td></tr>
+        <tr><td class="who"><a href="https://github.com/napfkuchen1">napfkuchen1</a></td><td>PHILIPS QM163E</td><td class="what">Checked the new home screen survives a cold boot.</td></tr>
+        <tr><td class="who"><a href="https://github.com/cesarbuzatto">cesarbuzatto</a></td><td>Homatics Box R 4K Plus</td><td class="what">Confirmed the 0.4.6 test build installs and applies the new home screen.</td></tr>
+        <tr><td class="who"><a href="https://github.com/Mystic135">Mystic135</a></td><td>WALTON Android TV</td><td class="what">Checked the switch holds after a restart and found a dock bug.</td></tr>
+        <tr><td class="who"><a href="https://github.com/sonicatu">sonicatu</a></td><td>Horizon TV</td><td class="what">Confirmed the 0.4.6 test build works and told us Live TV was hard to find.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    </noscript>
+
+    <section class="t-join">
+      <h2>Your TV isn't here yet?</h2>
+      <p class="t-muted">Become a tester. When there is a test list for your TV, we'll point you to it in your issue.</p>
+      <div class="t-steps">
+        <span class="t-st"><span class="t-n">1</span>Install the app</span>
+        <span class="t-st"><span class="t-n">2</span>Manage, then Help add this TV</span>
+        <span class="t-st"><span class="t-n">3</span>Tick "I can test"</span>
+      </div>
+      <div class="t-acts">
+        <a class="t-btn" href="https://github.com/udhaykumarbala/cleanyourtv-app/releases/latest">Get the app</a>
+        <a class="t-btn ghost" href="https://github.com/udhaykumarbala/cleanyourtv-app/issues">See the issues</a>
+      </div>
+      <p class="t-muted" style="margin-top:18px">On this list and want a change, or would rather not be listed? Open an issue or comment on yours and we will update it the same day.</p>
+    </section>
+  </main>
+  <footer style="padding:40px 0 30px;color:var(--muted);font-size:15px">
+    <p>Clean Your TV app &middot; MIT licence &middot; <a href="https://cleanyour.tv/app/android/privacy">Privacy</a> &middot; <a href="https://github.com/udhaykumarbala/cleanyourtv-app">GitHub</a></p>
+  </footer>
+</div>
+
+<dialog id="card" aria-labelledby="cardName">
+  <button class="t-close" id="closeCard" aria-label="Close">&#x2715;</button>
+  <div class="t-dh"><img id="cardImg" alt=""><div><b id="cardName"></b><small id="cardTv"></small></div></div>
+  <div id="cardBadge"></div>
+  <p class="t-what" id="cardWhat"></p>
+  <div class="t-acts">
+    <a class="t-btn" id="cardGh" target="_blank" rel="noopener">GitHub profile</a>
+    <a class="t-btn ghost" id="cardIssue" target="_blank" rel="noopener"></a>
+  </div>
+</dialog>
+
+<script>
+const REPO = 'https://github.com/udhaykumarbala/cleanyourtv-app';
+const avatar = (u, s) => `https://avatars.githubusercontent.com/${encodeURIComponent(u)}?s=${s}`;
+const TOP = 8;  // brands with their own chip; the rest share "Other"
+let all = [], brand = 'All';
+
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) k === 'text' ? (e.textContent = v) : e.setAttribute(k, v);
+  kids.forEach(k => e.append(k));
+  return e;
+}
+
+function render() {
+  const counts = {};
+  all.forEach(t => counts[t.brand] = (counts[t.brand] || 0) + 1);
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, TOP).map(e => e[0]);
+  const group = t => top.includes(t.brand) ? t.brand : 'Other';
+
+  document.getElementById('stats').replaceChildren(
+    ...[[all.length, 'testers'], [new Set(all.map(t => t.tv)).size, 'TV models'],
+        [Object.keys(counts).length, 'brands'], [all.filter(t => t.foundBug).length, 'reports that found a bug']]
+      .map(([n, l]) => el('span', {}, el('b', { text: n }), l)));
+
+  const names = ['All', ...top, 'Other'];
+  document.getElementById('chips').replaceChildren(...names.map(n => {
+    const c = n === 'All' ? all.length : all.filter(t => group(t) === n).length;
+    const b = el('button', { class: 't-chip', 'aria-pressed': String(n === brand) }, n, el('span', { text: c }));
+    b.onclick = () => { brand = n; render(); };
+    return b;
+  }));
+
+  const shown = all.filter(t => brand === 'All' || group(t) === brand).sort((a, b) => b.joined - a.joined);
+  document.getElementById('wall').replaceChildren(...shown.map(t => {
+    const b = el('button', { class: 't-pill', 'aria-label': `${t.login}, ${t.tv}` },
+      el('img', { src: avatar(t.login, 96), alt: '', width: 44, height: 44 }),
+      el('span', { class: 't-tx' }, el('b', { text: t.login }), el('small', { text: t.tv })));
+    if (t.foundBug) b.append(el('span', { class: 't-bug', title: 'Found a bug', text: '★' }));
+    b.onclick = () => openCard(t);
+    return b;
+  }));
+}
+
+function openCard(t) {
+  document.getElementById('cardImg').src = avatar(t.login, 160);
+  document.getElementById('cardName').textContent = t.login;
+  document.getElementById('cardTv').textContent = t.tv;
+  document.getElementById('cardWhat').textContent = t.what;
+  document.getElementById('cardBadge').replaceChildren(...(t.foundBug ? [el('span', { class: 't-badge', text: '★ Found a bug' })] : []));
+  document.getElementById('cardGh').href = `https://github.com/${encodeURIComponent(t.login)}`;
+  const iss = document.getElementById('cardIssue');
+  iss.hidden = !t.issue;
+  if (t.issue) { iss.href = `${REPO}/issues/${t.issue}`; iss.textContent = `Their report #${t.issue}`; }
+  document.getElementById('card').showModal();
+}
+
+document.getElementById('closeCard').onclick = () => document.getElementById('card').close();
+document.getElementById('card').addEventListener('click', e => { if (e.target.id === 'card') e.target.close(); });
+
+fetch('testers.json').then(r => r.json()).then(d => { all = d.testers; render(); });
+</script>
+</body>
+</html>

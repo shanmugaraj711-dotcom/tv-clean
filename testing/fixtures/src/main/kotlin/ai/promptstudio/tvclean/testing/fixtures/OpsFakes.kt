@@ -1,0 +1,110 @@
+package ai.promptstudio.tvclean.testing.fixtures
+
+import ai.promptstudio.tvclean.core.model.BlobRef
+import ai.promptstudio.tvclean.core.model.Component
+import ai.promptstudio.tvclean.core.model.FileRoute
+import ai.promptstudio.tvclean.core.model.Op
+import ai.promptstudio.tvclean.core.model.PackageName
+import ai.promptstudio.tvclean.core.model.Prior
+import ai.promptstudio.tvclean.core.model.RawShell
+import ai.promptstudio.tvclean.core.model.RemoteDir
+import ai.promptstudio.tvclean.core.model.Sha256
+import ai.promptstudio.tvclean.core.model.ShellLine
+import ai.promptstudio.tvclean.core.ops.ConfigTransport
+import ai.promptstudio.tvclean.core.ops.ConfigTransportKind
+import ai.promptstudio.tvclean.core.ops.OpRenderer
+import ai.promptstudio.tvclean.core.ops.Privilege
+import ai.promptstudio.tvclean.core.ops.RenderRefused
+import ai.promptstudio.tvclean.core.ops.Rendered
+import ai.promptstudio.tvclean.core.ops.Transfer
+import ai.promptstudio.tvclean.core.ops.VerifyResult
+import ai.promptstudio.tvclean.core.session.TvSession
+import java.util.concurrent.CopyOnWriteArrayList
+
+// NOT the renderer. Renders every op as one readable "fake ..." line (RestartHome as two, Settle as
+// none, PushAsset and InstallStream as transfers) so planner, engine and flow tests can run before
+// W3's renderer exists. Never use it for golden files or anything that reaches a TV.
+@OptIn(RawShell::class)
+class FakeOpRenderer(
+    var privilegeOf: (Op) -> Privilege = ::defaultPrivilege,
+    var refuse: (Op) -> String? = { null },
+    var verifyMismatch: (Op, String) -> VerifyResult.Mismatch? = { _, _ -> null },
+) : OpRenderer {
+    val rendered = CopyOnWriteArrayList<Op>()
+
+    override fun render(op: Op): Rendered {
+        refuse(op)?.let { throw RenderRefused(op, it) }
+        rendered += op
+        val (lines, transfer) = when (op) {
+            is Op.Settle -> emptyList<String>() to null
+            is Op.PushAsset -> emptyList<String>() to Transfer.Push(op.src, op.dest)
+            is Op.InstallStream -> emptyList<String>() to Transfer.StreamInstall(op.blob, op.blob.size)
+            is Op.RestartHome -> listOf("fake force-stop ${op.component.pkg.value}", "fake start ${op.component.flat}") to null
+            else -> listOf("fake $op") to null
+        }
+        return Rendered(op, lines.map { ShellLine(it) }, transfer, privilegeOf(op), verify = null, timeoutMs = 30_000, stdoutCap = 256 * 1024)
+    }
+
+    override fun inverse(op: Op, prior: Prior): Op? = when (op) {
+        is Op.Disable -> Op.Enable(op.pkg)
+        is Op.Enable -> Op.Disable(op.pkg)
+        is Op.SettingsPut -> Op.SettingsPut(op.key, prior.settingValue)
+        is Op.SetHome -> prior.home?.let { Op.SetHome(it) }
+        is Op.Install -> if (prior.present == false) Op.Uninstall(op.pkg) else null
+        is Op.InstallStream -> if (prior.present == false) Op.Uninstall(op.pkg) else null
+        is Op.PushAsset -> if (prior.present == false) Op.RemoveFile(op.dest, op.route) else null
+        is Op.ArmHomeWatchdog -> Op.KillWatchdog(op.token)
+        else -> null
+    }
+
+    override fun check(op: Op, verifyOutput: String, prior: Prior?): VerifyResult = verifyMismatch(op, verifyOutput) ?: VerifyResult.Ok
+
+    // The 5.2 definition (R0: 5): every rendered line then "\n", a transfer as one sync line.
+    override fun planHash(rendered: List<Rendered>): Sha256 {
+        val sb = StringBuilder()
+        for (r in rendered) {
+            r.lines.forEach { sb.append(it.text).append('\n') }
+            when (val t = r.transfer) {
+                is Transfer.Push -> sb.append("sync:${t.dest.absolute} ${t.src.sha256.hex}\n")
+                is Transfer.Pull -> sb.append("sync:${t.src.absolute} ${t.maxBytes}\n")
+                is Transfer.StreamInstall -> sb.append("sync:${t.src.path} ${t.size}\n")
+                null -> {}
+            }
+        }
+        return sha256Of(sb.toString())
+    }
+
+    companion object {
+        fun defaultPrivilege(op: Op): Privilege = when (op) {
+            is Op.Read, is Op.VerifyHome, is Op.Settle -> Privilege.READ
+            is Op.DebugOff -> Privilege.SESSION_END
+            is Op.SetHome, is Op.ArmHomeWatchdog, is Op.ConfirmHome, is Op.KillWatchdog, is Op.PressHome -> Privilege.TAKEOVER
+            else -> Privilege.PROFILE_STEP
+        }
+    }
+}
+
+// Overlay transport stand-in: returns fixed step lists and a settable digest.
+class FakeConfigTransport(
+    override val kind: ConfigTransportKind = ConfigTransportKind.FILE_OVERLAY,
+    @Volatile var digest: Sha256? = null,
+    private val launcher: Component = Component(PackageName("ai.promptstudio.tvclean.launcher"), ".MainActivity"),
+) : ConfigTransport {
+    val writes = CopyOnWriteArrayList<Pair<BlobRef, BlobRef?>>()
+    val routes = CopyOnWriteArrayList<FileRoute>()   // RFC-THEME-1: the route of each write, in order
+    @Volatile var resets = 0
+        private set
+
+    override suspend fun readDigest(session: TvSession): Sha256? = digest
+
+    override fun writePlanSteps(config: BlobRef, wallpaper: BlobRef?, route: FileRoute): List<Op> {
+        writes += config to wallpaper
+        routes += route
+        return listOf(Op.Mkdir(RemoteDir.OVERLAY), Op.RestartHome(launcher))
+    }
+
+    override fun resetPlanSteps(route: FileRoute): List<Op> {
+        resets++
+        return listOf(Op.RestartHome(launcher))
+    }
+}

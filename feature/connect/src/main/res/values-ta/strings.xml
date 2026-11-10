@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TV Clean, :feature:connect. Tamil translations of the main flow.
+  Only the strings on the Connect path are here; the rest fall back to English.
+  ICU MessageFormat is kept exactly as in the English source: the {name} and
+  {count, plural, ...} parts must not be changed. Menu names the TV itself shows
+  (Settings, Build, Developer options, USB debugging) stay in English, because
+  that is what the TV shows on its screen.
+-->
+<resources>
+
+    <!-- Shared button words -->
+    <string name="action_back">பின்செல்</string>
+    <string name="action_cancel">ரத்து செய்</string>
+    <string name="action_ok">சரி</string>
+
+    <!-- S1 Welcome -->
+    <string name="welcome_title">உங்கள் டிவி, சுத்தமாக.</string>
+    <string name="welcome_body">தேவையில்லாததை அணைத்துவிடுங்கள், நீங்கள் பயன்படுத்தும் ஆப்களை வைத்துக்கொள்ளுங்கள், அமைதியான ஹோம் ஸ்கிரீன் கிடைக்கும். ஐந்து நிமிடம். எல்லாவற்றையும் திரும்பப் பெறலாம்.</string>
+    <string name="welcome_hero_cd">விளம்பரங்கள் நிறைந்த டிவி ஹோம் ஸ்கிரீன், கீழே நான்கு ஆப்களுடன் சுத்தமான ஸ்கிரீனாக மாறுகிறது</string>
+    <string name="welcome_looking">உங்கள் வைஃபையில் டிவிகளைத் தேடுகிறோம்...</string>
+    <string name="welcome_found_one">{name} ({room}) கிடைத்தது</string>
+    <string name="welcome_found_one_noroom">{name} கிடைத்தது</string>
+    <string name="welcome_found_many">{count, plural, one {# டிவி கிடைத்தது} other {# டிவிகள் கிடைத்தன}}</string>
+    <string name="welcome_none_yet">இன்னும் டிவி இல்லை. தொடருங்கள், நாங்கள் தேடிக்கொண்டே இருக்கிறோம்.</string>
+    <string name="welcome_start">தொடங்கு</string>
+    <string name="welcome_returning">நான் ஏற்கனவே ஒரு டிவியை அமைத்திருக்கிறேன்</string>
+
+    <!-- S1b Which TV? -->
+    <string name="picker_title">எந்த டிவி?</string>
+    <string name="picker_body">தெரியவில்லையா? நீங்கள் தேர்ந்த டிவி சிறிது நேரத்தில் தன் திரையில் ஒரு செய்தியைக் காட்டும்.</string>
+    <string name="picker_row">{name}, {room} · {platform}</string>
+    <string name="picker_row_noroom">{name} · {platform}</string>
+    <string name="picker_platform_android_tv">Android TV {version}</string>
+    <string name="picker_platform_google_tv">Google TV {version}</string>
+    <string name="picker_platform_fire_tv">Fire TV</string>
+    <string name="picker_footer">போனும் டிவியும் ஒரே வைஃபையில் இருக்க வேண்டும்.</string>
+    <string name="picker_primary">{name} ஐப் பயன்படுத்து</string>
+    <string name="picker_tertiary">டிவியின் முகவரியைத் தட்டச்சு செய்</string>
+
+    <!-- S2a Let the phone in (steps) -->
+    <string name="door_title">போனை உள்ளே விடுங்கள்</string>
+    <string name="door_body">டிவி ரிமோட்டை எடுங்கள். இது சுமார் ஒரு நிமிடம் ஆகும், இதுதான் ஒரே சிரமமான பகுதி.</string>
+    <string name="door_step_cd">படி {current} / {total}</string>
+    <string name="door_next">அடுத்து</string>
+    <string name="door_menu_names_vary">உங்கள் டிவியில் மெனு பெயர்கள் சிறிது வேறுபடலாம்.</string>
+    <string name="door_same_wifi">போனும் டிவியும் ஒரே வைஃபையில் இருக்க வேண்டும்.</string>
+    <string name="door_waiting">டிவிக்காகக் காத்திருக்கிறோம்...</string>
+    <string name="door_connecting">இணைக்கிறோம்...</string>
+    <string name="door_still_waiting">இன்னும் காத்திருக்கிறோம். USB debugging ஆன் ஆகியிருக்கிறதா? சில டிவிகளில் Network debugging-ம் தேவை.</string>
+    <string name="door_still_waiting_show_me">காட்டு</string>
+    <string name="door_change_model">{model} இல்லையா? மாடலை மாற்று</string>
+    <string name="door_change_model_generic">இது இல்லையா? மாடலை மாற்று</string>
+    <string name="door_not_this_tv">இது இல்லையா? டிவியின் முகவரியைத் தட்டச்சு செய்</string>
+    <string name="door_brand_prompt">எந்த பிராண்ட்?</string>
+    <string name="door_brand_other">மற்றவை</string>
+    <!-- Brand names stay in Latin script, as they are written in Tamil Nadu. -->
+    <string name="door_brand_oneplus">OnePlus</string>
+    <string name="door_brand_vu">Vu</string>
+    <string name="door_brand_realme">Realme</string>
+    <string name="door_brand_acer">Acer</string>
+    <string name="door_brand_nokia">Nokia</string>
+    <string name="door_brand_infinix">Infinix</string>
+    <string name="door_brand_kodak">Kodak</string>
+    <string name="door_brand_iffalcon">iFFALCON</string>
+    <string name="door_brand_cloudwalker">CloudWalker</string>
+    <string name="door_brand_blaupunkt">Blaupunkt</string>
+    <string name="door_connect_failed_title">டிவி பதில் சொன்னது, ஆனால் இந்த போனால் இணைக்க முடியவில்லை</string>
+    <string name="door_connect_failed_body">இணைப்பு தோல்வியடைந்தது ({kind}). இந்தத் திரை திறந்திருக்கும்போது நாங்கள் தொடர்ந்து முயற்சிப்போம்.</string>
+    <string name="door_connect_failed_hint">கணினியிலிருந்து ADB வேலை செய்தாலும் இந்த ஆப்பால் டிவியை அடைய முடியவில்லை என்றால், போனில் ஏதோ தடுக்கிறது: ஒரு ஆப்புக்கான நெட்வொர்க் வரம்பு (MIUI, Samsung), VPN, Private DNS அல்லது மொபைல் டேட்டா. சிறிது நேரம் ஆஃப் செய்து மீண்டும் முயலுங்கள்.</string>
+    <string name="door_connect_refused_title">டிவியில் debugging ஆஃப்</string>
+    <string name="door_connect_refused_body">டிவி இணைப்பை மறுத்தது ({kind}), அதாவது அதில் debugging ஆஃப். அமைப்பு முடிந்ததும் நாங்களே அதை ஆஃப் செய்வோம், அதனால் நாங்கள் முன்பு அமைத்த டிவியில் இது எதிர்பார்த்ததுதான்.</string>
+    <string name="door_connect_refused_hint">மீண்டும் ஆன் செய்ய: டிவியில் Settings ஐத் திறந்து, பிறகு Device Preferences அல்லது System, பிறகு Developer options என்று சென்று USB debugging ஐ ஆன் செய்யுங்கள். இந்தத் திரை திறந்திருக்கும்போது நாங்கள் தொடர்ந்து முயற்சிப்போம்.</string>
+    <string name="door_copy_error">பிழையை நகலெடு</string>
+    <string name="door_error_copied">நகலெடுக்கப்பட்டது. உங்கள் பிரச்சனையில் ஒட்டுங்கள்.</string>
+    <string name="connect_report">ஒரு பிரச்சனையைத் தெரிவி</string>
+    <string name="door_unknown_note">இந்த டிவியை நாங்கள் இதுவரை சந்தித்ததில்லை. படிகள் பொதுவாக ஒன்றுதான்.</string>
+
+    <!-- S2a step cards by platform family -->
+    <!-- Android TV 9 to 11 -->
+    <string name="family_atv_step1">டிவியில் Settings (மேல் வலதில் உள்ள கியர்) ஐத் திறந்து, பிறகு Device Preferences &gt; About என்று செல்லுங்கள். \"Build\" மீது OK ஐ ஏழு முறை அழுத்துங்கள், டிவி \"You are now a developer\" என்று சொல்லும் வரை.</string>
+    <string name="family_atv_step2">ஒரு திரை பின் செல்லுங்கள். Developer options ஐத் திறந்து USB debugging ஐ ஆன் செய்யுங்கள். \"Network debugging\" அல்லது \"ADB debugging\" என்றும் இருந்தால், அதையும் ஆன் செய்யுங்கள்.</string>
+    <string name="family_atv_step3">டிவியை இந்தத் திரையிலேயே விடுங்கள். உங்கள் போன் தானாக இணைந்துவிடும்.</string>
+    <!-- Google TV 12 to 14 -->
+    <string name="family_gtv_step1">டிவியில் Settings ஐத் திறந்து, பிறகு System &gt; About என்று செல்லுங்கள். \"Android TV OS build\" மீது OK ஐ ஏழு முறை அழுத்துங்கள், டிவி \"You are now a developer\" என்று சொல்லும் வரை.</string>
+    <string name="family_gtv_step2">ஒரு திரை பின் செல்லுங்கள். System &gt; Developer options ஐத் திறந்து USB debugging ஐ ஆன் செய்யுங்கள், பிறகு Wireless debugging ஐயும் ஆன் செய்யுங்கள்.</string>
+    <string name="family_gtv_step3">டிவியை இந்தத் திரையிலேயே விடுங்கள். உங்கள் போன் தானாக இணைந்துவிடும்.</string>
+    <!-- Fire TV (Fire OS 7) -->
+    <string name="family_fire_step1">டிவியில் Settings &gt; My Fire TV &gt; About என்று செல்லுங்கள். டிவி \"You are now a developer\" என்று சொல்லும் வரை சாதனத்தின் பெயரை ஏழு முறை தேர்ந்தெடுங்கள்.</string>
+    <string name="family_fire_step2">ஒரு திரை பின் செல்லுங்கள். Developer options ஐத் திறந்து ADB debugging ஐ ஆன் செய்யுங்கள்.</string>
+    <string name="family_fire_step3">டிவியை இந்தத் திரையிலேயே விடுங்கள். உங்கள் போன் தானாக இணைந்துவிடும்.</string>
+    <!-- Unknown brand: the generic Android TV path -->
+    <string name="family_unknown_step1">டிவியில் Settings (மேல் வலதில் உள்ள கியர்) ஐத் திறந்து, பிறகு Device Preferences &gt; About என்று செல்லுங்கள். \"Build\" மீது OK ஐ ஏழு முறை அழுத்துங்கள், டிவி \"You are now a developer\" என்று சொல்லும் வரை.</string>
+    <string name="family_unknown_step2">ஒரு திரை பின் செல்லுங்கள். Developer options ஐத் திறந்து USB debugging ஐ ஆன் செய்யுங்கள். \"Network debugging\" அல்லது \"ADB debugging\" என்றும் இருந்தால், அதையும் ஆன் செய்யுங்கள்.</string>
+    <string name="family_unknown_step3">டிவியை இந்தத் திரையிலேயே விடுங்கள். உங்கள் போன் தானாக இணைந்துவிடும்.</string>
+
+    <!-- S2a profile banners -->
+    <string name="banner_fire">Fire TV விளம்பரங்களையும் tracking ஐயும் அணைக்க விடும், ஆனால் தன் சொந்த ஹோம் ஸ்கிரீனை வைத்திருக்கும். சுத்தம் உங்களுக்குக் கிடைக்கும்.</string>
+    <string name="banner_tcl">இந்த டிவி தன் சொந்த ஹோம் ஸ்கிரீனை வைத்திருக்கும் (TCL வேறொன்றை அனுமதிப்பதில்லை). சுத்தம் உங்களுக்குக் கிடைக்கும்.</string>
+    <string name="banner_mibox_usb">Debugging ஆன் இருக்கும்போது, இந்த பாக்ஸ் தன் USB போர்ட்டை அணைத்துவிடும். USB ஸ்பீக்கர் அல்லது டிரைவ் நாங்கள் முடிக்கும் வரை நிற்கும் (முடிவில் debugging ஐ மீண்டும் ஆஃப் செய்வோம்).</string>
+
+    <!-- S2c Look at the TV (Allow) -->
+    <string name="allow_title">டிவியைப் பாருங்கள்</string>
+    <string name="allow_body">இந்த போனை நம்பலாமா என்று டிவி கேட்கிறது. \"Always allow\" என்பதை டிக் செய்து, பிறகு OK.</string>
+    <string name="allow_body_emphasis_always">\"Always allow\"</string>
+    <string name="allow_body_emphasis_ok">OK.</string>
+    <string name="allow_code_label">டிவியில் உள்ள குறியீடு இதில் முடிகிறது</string>
+    <string name="allow_code_caption">இதுதான் இந்த போன்.</string>
+    <string name="allow_waiting">டிவியில் நீங்கள் தட்டுவதற்காகக் காத்திருக்கிறோம்...</string>
+    <string name="allow_still_waiting">டிவியில் OK க்காக இன்னும் காத்திருக்கிறோம்.</string>
+    <string name="allow_trusted">நம்பப்பட்டது</string>
+    <string name="allow_dont_see">டிவியில் எனக்குத் தெரியவில்லை</string>
+    <string name="allow_art_cd">டிவியின் Allow USB debugging பெட்டி. கைரேகை {tail} இல் முடிகிறது.</string>
+
+    <!-- S2c sheet: I don't see it on the TV -->
+    <string name="notseen_title">டிவியில் எனக்குத் தெரியவில்லை</string>
+    <string name="notseen_hidden">அந்தப் பெட்டி வேறொரு திரையின் பின் மறைந்திருக்கலாம். ரிமோட்டில் Home ஐ அழுத்தி, பிறகு Back ஐ ஒரு முறை அழுத்துங்கள். அப்பொழுதும் இல்லையெனில், நாங்கள் டிவியை மீண்டும் கேட்போம்.</string>
+    <string name="notseen_cancelled">யாராவது Cancel ஐத் தேர்ந்திருந்தால்: டிவியில் USB debugging ஐ ஆஃப் செய்து மீண்டும் ஆன் செய்து, பிறகு \"Ask the TV again\" என்பதைத் தட்டுங்கள்.</string>
+    <string name="notseen_greyed">\"Always allow\" சாம்பல் நிறத்தில் இருந்தால், OK மட்டும் போதும்; அடுத்த முறை மீண்டும் கேட்போம்.</string>
+    <string name="notseen_ask_again">டிவியை மீண்டும் கேள்</string>
+    <string name="notseen_asking">டிவியை மீண்டும் கேட்கிறோம்...</string>
+    <string name="notseen_restart">டிவி போனை ஏற்கவில்லை. டிவி முழுமையாக ஸ்டார்ட் ஆவதற்கு முன்பே debugging ஆன் செய்யப்பட்ட சில மாடல்களில் இது நடக்கும். டிவியை ரீஸ்டார்ட் செய்து, debugging ஐ மீண்டும் ஆன் செய்து, திரும்பி வாருங்கள்.</string>
+    <string name="notseen_restarted">நான் ரீஸ்டார்ட் செய்துவிட்டேன்</string>
+
+    <!-- S2d Connected, and the identity check "Is this your TV?" -->
+    <string name="connected_title">{tv} உடன் இணைக்கப்பட்டது</string>
+    <string name="connected_cd">இணைக்கப்பட்டது</string>
+    <string name="identity_question">இது உங்கள் டிவியா?</string>
+    <string name="identity_detail">{name}, சீரியல் {serial} இல் முடிகிறது</string>
+    <string name="identity_body">படம் இப்போது உங்கள் டிவி காட்டுவதுதானா என்று பாருங்கள்.</string>
+    <string name="identity_screenshot_cd">டிவி இப்போது காட்டுவது</string>
+    <string name="identity_yes">ஆம், இது என்னுடையதுதான்</string>
+    <string name="identity_no">இல்லை</string>
+
+    <!-- S2x Pairing needed (TV Clean 0.2: the phone pairs with the code itself) -->
+    <string name="pairing_title">இந்த டிவிக்கு pairing குறியீடு தேவை</string>
+    <string name="pairing_body">டிவி ஆறு இலக்க pairing குறியீட்டைக் காட்டுகிறது. அதைக் கீழே தட்டச்சு செய்யுங்கள், போன் டிவியுடன் இணைந்துவிடும் — கணினி தேவையில்லை.</string>
+    <string name="pairing_code_label">Pairing குறியீடு</string>
+    <string name="pairing_submit">டிவியுடன் இணை</string>
+    <string name="pairing_show_steps">கணினியிலிருந்து இணை</string>
+    <string name="pairing_steps_title">கணினியிலிருந்து ஒரு முறை இணை</string>
+    <string name="pairing_steps_intro">டிவியில், Developer options &gt; Wireless debugging &gt; Pair device with pairing code என்பதைத் திறங்கள். பிறகு கணினியில் இந்த மூன்று கட்டளைகளையும் ஒவ்வொன்றாக இயக்குங்கள்.</string>
+    <string name="pairing_steps_note">டிவி காட்டும் முகவரி, போர்ட்கள், ஆறு இலக்கக் குறியீட்டைப் பயன்படுத்துங்கள். கடைசி கட்டளை முடிந்ததும், இந்த ஆப்புக்குத் திரும்பி வாருங்கள். டிவி ரீஸ்டார்ட் ஆன பிறகு, அப்போது டிவி காட்டும் போர்ட்டுடன் கடைசி இரண்டு கட்டளைகளையும் மீண்டும் இயக்குங்கள்; மீண்டும் இணைக்கத் தேவையில்லை.</string>
+
+    <!-- Stop: TV not found -->
+    <string name="stop_tv_not_found_title">இன்னும் டிவி கிடைக்கவில்லை</string>
+    <string name="stop_tv_not_found_body">டிவி ஆன் ஆகி, இந்த போனின் அதே வைஃபையில் இருக்கிறதா என்று பாருங்கள். டிவிகள் எழுந்த பிறகு காட்ட ஒரு நிமிடம் ஆகலாம்.</string>
+    <string name="stop_tv_not_found_primary">தொடர்ந்து தேடு</string>
+    <string name="stop_tv_not_found_secondary">டிவியின் முகவரியைத் தட்டச்சு செய்</string>
+    <string name="stop_tv_not_found_tertiary">உதவி</string>
+    <string name="stop_tv_not_found_help_title">டிவி ஏன் காட்டாமல் போகலாம்</string>
+    <string name="stop_tv_not_found_help_isolation">Guest வைஃபை, அல்லது சாதனங்களைத் தனித்தனியாக வைக்கும் ரவுட்டர். ரவுட்டரில் \"AP isolation\" அல்லது \"client isolation\" என்பதைத் தேடி ஆஃப் செய்யுங்கள்.</string>
+    <string name="stop_tv_not_found_help_ethernet">டிவி Ethernet-இல் இருக்க, போன் வைஃபையில் இருக்கிறது. பெரும்பாலான ரவுட்டர்களில் இது பரவாயில்லை, ஆனால் சில இரண்டையும் தனித்தனியாக வைக்கும். டிவியின் முகவரியைத் தட்டச்சு செய்தால் இது தீரும்.</string>
+    <string name="stop_tv_not_found_help_mesh">தனி guest நெட்வொர்க் கொண்ட mesh சிஸ்டம். போனை முக்கிய நெட்வொர்க்கில் சேருங்கள்.</string>
+
+    <!-- Stop: wrong network -->
+    <string name="stop_wrong_network_title">போனும் டிவியும் வெவ்வேறு நெட்வொர்க்கில்</string>
+    <string name="stop_wrong_network_body">டிவி கடைசியாக வேறொரு நெட்வொர்க்கில் காணப்பட்டது. டிவியின் அதே வைஃபையில் சேர்ந்து, நாங்கள் தொடருவோம்.</string>
+    <string name="stop_wrong_network_primary">வைஃபை அமைப்புகளைத் திற</string>
+    <string name="stop_wrong_network_secondary">நான் சரியான நெட்வொர்க்கில்தான் இருக்கிறேன், மீண்டும் பார்</string>
+    <string name="stop_wrong_network_off_title">இந்த போனில் வைஃபை இல்லை</string>
+    <string name="stop_wrong_network_off_body">வைஃபை ஆஃப். டிவியை அதே வைஃபை மூலம்தான் அடைய முடியும்.</string>
+
+    <!-- Stop: identity changed -->
+    <string name="stop_identity_changed_title">இந்த முகவரியில் வேறொரு டிவி பதில் சொன்னது</string>
+    <string name="stop_identity_changed_body">இந்த முகவரியில் உள்ள டிவி நாங்கள் {name} என்று அமைத்த டிவி இல்லை. அதன் முகவரி மாறியிருக்கலாம், அல்லது வேறொரு டிவி அதை எடுத்திருக்கலாம். எதையும் மாற்றும் முன் நாங்கள் நிறுத்திவிட்டோம்.</string>
+    <string name="stop_identity_changed_primary">மீண்டும் தேடு</string>
+    <string name="stop_identity_changed_secondary">பின்செல்</string>
+
+    <!-- Stop: shell v2 missing -->
+    <string name="stop_tv_not_supported_title">இந்த டிவியை இன்னும் போனிலிருந்து அமைக்க முடியாது</string>
+    <string name="stop_tv_not_supported_body">இந்த டிவியின் debugging இணைப்பு மிகவும் அடிப்படையானது, அதனால் போனால் பாதுகாப்பாக மாற்ற முடியாது, அதனால் எதையும் தொடும் முன் நாங்கள் நிறுத்திவிட்டோம். டிவியில் எதுவும் மாற்றப்படவில்லை.</string>
+    <string name="stop_tv_not_supported_primary">பின்செல்</string>
+
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Every word the TV launcher shows. English only in 0.1. -->
+<resources>
+    <string name="app_name">TV Clean</string>
+</resources>

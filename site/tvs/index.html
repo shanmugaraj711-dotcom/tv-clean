@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TV list - Clean Your TV</title>
+<meta name="description" content="Every TV the Clean Your TV phone app has seen, and what it does on each: the new home screen, the next test build, coming soon, or the clean-up only and why.">
+<meta name="theme-color" content="#050507">
+<meta name="color-scheme" content="dark">
+<link rel="icon" type="image/png" href="../assets/icon.png">
+<link rel="preload" href="../assets/outfit.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+:root{color-scheme:dark;--surface2:#15161d;--new:#6fd39a;--test:#9aa5ff;--soon:#E8A84C;--cleanup:#8d93a3;--no:#e8877e}
+.s-new{--c:var(--new)}.s-test{--c:var(--test)}.s-soon{--c:var(--soon)}.s-cleanup{--c:var(--cleanup)}.s-no{--c:var(--no)}
+h1.v-h1{font-size:clamp(34px,6vw,52px)}
+
+/* Hero: the numbers and the coverage chart */
+.v-hero{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px;margin:8px 0 30px}
+.v-big{display:flex;flex-direction:column;gap:22px}
+.v-n{display:block;font-size:clamp(56px,9vw,84px);font-weight:600;line-height:1;letter-spacing:-.03em;color:var(--new)}
+.v-nl{display:block;font-size:19px;color:var(--text);margin-top:8px;max-width:300px}
+.v-two{display:flex;gap:30px;flex-wrap:wrap}
+.v-two b{display:block;font-size:38px;font-weight:600;line-height:1;letter-spacing:-.02em}
+.v-two span{display:block;font-size:15px;color:var(--muted);margin-top:6px}
+.v-src{font-size:14px;color:var(--muted);margin:0}
+.v-chart{display:flex;align-items:center;gap:22px}
+.v-donut{width:180px;height:180px;flex:none}
+.v-donut text{fill:var(--text);font-family:Outfit,system-ui,sans-serif}
+.v-legend{list-style:none;margin:0;padding:0;display:grid;gap:4px;flex:1;min-width:0}
+.v-leg{display:grid;grid-template-columns:12px 1fr auto auto;align-items:center;gap:10px;width:100%;min-height:40px;background:transparent;border:1px solid transparent;border-radius:12px;padding:6px 10px;color:var(--text);font:inherit;font-size:15px;text-align:left;cursor:pointer}
+.v-leg:hover{background:var(--surface2)}
+.v-leg[aria-pressed=true]{border-color:var(--c);background:var(--surface2)}
+.v-leg i{width:12px;height:12px;border-radius:3px;background:var(--c);display:block}
+.v-leg b{font-weight:600}
+.v-leg span{color:var(--muted);font-size:14px;min-width:36px;text-align:right}
+.v-reset{background:none;border:0;color:var(--accent-soft);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px 10px}
+.v-reset[hidden]{display:none}
+
+/* Search and brands */
+.v-lab{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.v-search{position:relative;margin:0 0 16px}
+.v-search input{width:100%;font:inherit;font-size:18px;font-weight:400;color:var(--text);background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:13px 48px 13px 20px;outline:none;-webkit-appearance:none;appearance:none}
+.v-search input::placeholder{color:#8d91a0}
+.v-search input:focus{border-color:var(--accent);background:var(--surface2)}
+.v-search input::-webkit-search-cancel-button{display:none}
+.v-clear{position:absolute;right:6px;bottom:4px;width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer}
+.v-clear:hover{color:#fff}
+.v-clear[hidden]{display:none}
+.v-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.v-chip{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:transparent;color:var(--text);border-radius:999px;padding:6px 14px;font:inherit;font-size:15px;cursor:pointer;min-height:40px}
+.v-chip span{color:var(--muted)}
+.v-chip[aria-pressed=true]{border-color:rgba(232,168,76,.6);background:rgba(232,168,76,.12);color:var(--accent-soft)}
+.v-chip[aria-pressed=true] span{color:var(--accent-soft)}
+.v-chip:hover{border-color:#3a3e4a}
+.v-chip.more{border-style:dashed;color:var(--muted)}
+.v-count{font-size:15px;color:var(--muted);margin:14px 0 10px;min-height:24px}
+
+/* The list: one container, rows with thin dividers */
+.v-list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.v-list>li+li{border-top:1px solid var(--line)}
+.r-b{display:grid;grid-template-columns:1fr auto 20px;align-items:center;gap:4px 12px;width:100%;min-height:44px;padding:12px 16px;background:transparent;border:0;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.r-b:hover{background:var(--surface2)}
+.r-b:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.r-t{min-width:0;display:block}
+.r-n{display:block;font-size:17px;line-height:1.3;overflow-wrap:anywhere}
+.r-n b{font-weight:600}
+.r-m{display:block;font-size:13px;color:var(--muted);margin-top:1px;overflow-wrap:anywhere}
+.r-s{display:block;font-size:15px;color:#cfd2db;margin-top:3px}
+.st{display:inline-flex;align-items:center;gap:7px;flex:none;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:500;color:var(--c);border:1px solid var(--c);white-space:nowrap}
+.st i{width:7px;height:7px;border-radius:50%;background:var(--c);display:block}
+.r-c{width:20px;height:20px;color:var(--muted);transition:transform .15s}
+.r-b[aria-expanded=true] .r-c{transform:rotate(180deg)}
+.r-d{padding:0 16px 16px;font-size:15px;color:var(--muted)}
+.r-d[hidden]{display:none}
+.r-d p{margin:0 0 8px}
+.r-d b{color:var(--text);font-weight:500}
+.r-l{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:4px}
+.r-l a{overflow-wrap:anywhere}
+.v-empty{padding:20px;color:var(--muted)}
+.v-empty p{margin:0 0 8px}
+.v-more{display:flex;justify-content:center;margin:18px 0 0}
+.v-more[hidden]{display:none}
+.v-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:11px 22px;min-height:44px;font-weight:600;font-size:15px;background:transparent;color:var(--text);border:1.5px solid var(--line);font-family:inherit;cursor:pointer}
+.v-btn:hover{border-color:var(--accent);color:#fff}
+
+/* Status key and coming soon */
+.v-key{display:grid;gap:10px;margin-top:14px}
+.v-key div{display:flex;gap:12px;align-items:flex-start}
+.v-key .st{margin-top:2px;min-width:150px}
+.v-key p{margin:0;color:var(--muted);font-size:16px}
+.v-soon{list-style:none;margin:14px 0 0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.v-soon li{padding:14px 16px}
+.v-soon li+li{border-top:1px solid var(--line)}
+.v-soon b{font-weight:600}
+.v-soon em{font-style:normal;color:var(--soon);font-size:14px;margin-left:8px;white-space:nowrap}
+.v-soon p{margin:4px 0 0;color:var(--muted);font-size:15px}
+.v-soon button{background:none;border:0;padding:0;color:var(--accent-soft);font:inherit;font-size:15px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:32px}
+.ns-h{font-size:22px;margin:26px 0 4px}.ns-h span{color:var(--muted);font-weight:400}
+.ns-m{color:var(--muted);font-size:15px}
+.ns{padding-left:20px;font-size:16px}.ns li{margin-bottom:4px}.ns small{color:var(--muted)}
+
+@media (max-width:760px){
+ .v-hero{grid-template-columns:1fr;padding:22px 18px;gap:24px}
+}
+@media (max-width:560px){
+ .v-chart{flex-direction:column;align-items:stretch}
+ .v-donut{margin:0 auto;width:170px;height:170px}
+ .r-b{padding:12px 14px;gap:0 8px;grid-template-columns:1fr 20px;grid-template-areas:"n c" "m c" "p p" "s s"}
+ .r-t{display:contents}
+ .r-n{grid-area:n}.r-m{grid-area:m}.r-s{grid-area:s}.r-b>.st{grid-area:p;justify-self:start;margin-top:6px}.r-c{grid-area:c;align-self:start;margin-top:2px}
+ .r-d{padding:0 14px 14px}
+ .v-key div{flex-direction:column;gap:4px}
+ .v-key .st{min-width:0}
+}
+@media (prefers-reduced-motion:reduce){.r-c{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="../"><img src="../assets/icon.png" alt="" width="36" height="36">Clean Your TV</a>
+    <nav class="top" aria-label="Main"><a href="../">Home</a><a class="opt" href="../testers/">Testers</a><a href="https://github.com/udhaykumarbala/cleanyourtv-app">GitHub</a></nav>
+  </header>
+  <main>
+    <h1 class="v-h1">What the app does on your TV</h1>
+    <p class="lead">Every TV the app has seen, from its tested lists and from the reports people sent. Find yours to see whether it gets the new home screen, and if not, why.</p>
+
+    <section class="v-hero" aria-label="Coverage">
+      <div class="v-big">
+        <div><b class="v-n" id="nNew"></b><span class="v-nl">TVs get the new home screen today</span></div>
+        <div class="v-two">
+          <div><b id="nMore"></b><span>being worked on</span></div>
+          <div><b id="nAll"></b><span>TVs seen</span></div>
+        </div>
+        <p class="v-src" id="src"></p>
+      </div>
+      <div class="v-chart">
+        <svg class="v-donut" id="donut" viewBox="0 0 120 120" role="img" aria-labelledby="donutTitle"><title id="donutTitle">TVs by status</title></svg>
+        <div style="flex:1;min-width:0">
+          <ul class="v-legend" id="legend" aria-label="Filter by status"></ul>
+          <button class="v-reset" id="reset" type="button" hidden>Show every status</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="v-search" role="search">
+      <label class="v-lab" for="q">Find your TV</label>
+      <input id="q" type="search" placeholder="Brand, model or codename" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-describedby="count">
+      <button class="v-clear" id="clear" type="button" aria-label="Clear the search" hidden>&#x2715;</button>
+    </div>
+    <span class="v-lab" id="brandLab">Brand</span>
+    <div class="v-chips" id="brandChips" role="group" aria-labelledby="brandLab"></div>
+
+    <p class="v-count" id="count" aria-live="polite"></p>
+    <ul class="v-list" id="list"></ul>
+    <div class="v-more" id="more" hidden><button class="v-btn" id="moreBtn" type="button"></button></div>
+
+    <noscript id="tvlist">
+<h2 class="ns-h">New home screen <span>149</span></h2>
+<p class="ns-m">The released app cleans up the TV and puts the new home screen on.</p>
+<ul class="ns">
+<li><b>AIWA AI PONT SA</b> <small>osaka, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20SA">issues</a></li>
+<li><b>Allwinner C5 pro</b> <small>athena-p7, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=C5%20pro">issues</a></li>
+<li><b>AQUA AQUA MatrixTV EE</b> <small>omonia, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUA%20MatrixTV%20EE">issues</a></li>
+<li><b>BenQ E55 735</b> <small>Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>BenQ E55 750</b> <small>Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>BYINTEK T5 Max</b> <small>YYT, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Google%20TV%20Stick">issues</a></li>
+<li><b>Changhong AI PONT</b> <small>redwood, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>CHiQ AI PONT</b> <small>longshan, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>CHiQ GTVU65</b> <small>dangni, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>Compac ATV R2</b> <small>R2, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ATV%20R2">issues</a></li>
+<li><b>EKO 2K Google TV Tennoji</b> <small>tennoji, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20Google%20TV%20Tennoji">issues</a></li>
+<li><b>Epson HA90</b> <small>sti6202d101, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HA90">issues</a></li>
+<li><b>ExpressLUCK AIPRO2K</b> <small>dongnae, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AIPRO2K">issues</a></li>
+<li><b>Haier H32S80EFX</b> <small>deto, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20MatrixTV%20CE">issues</a></li>
+<li><b>Haier Haier MatrixTV DE</b> <small>omonia, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20MatrixTV%20DE">issues</a></li>
+<li><b>Haier Haier MatrixTV EE</b> <small>omonia, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20MatrixTV%20EE">issues</a></li>
+<li><b>Hisense HG9</b> <small>laohushan, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HG9">issues</a></li>
+<li><b>Hisense HiSmart 4K ATV4</b> <small>xinhaoshan, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HiSmart%204K%20ATV4">issues</a></li>
+<li><b>Hisense Hismarttv A4</b> <small>xiaoyushan, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Hismarttv%20A4">issues</a></li>
+<li><b>Hisense Hismarttv A4 ANDROID11</b> <small>xiaoyushan, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Hismarttv%20A4%20ANDROID11">issues</a></li>
+<li><b>Hisense SmartTV 4K</b> <small>lushan, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV%204K">issues</a></li>
+<li><b>Hisense SmartTV 4K FFM</b> <small>hengshan, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV%204K%20FFM">issues</a></li>
+<li><b>Hisense SmartTV 4K FFM</b> <small>huangshan, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV%204K%20FFM">issues</a></li>
+<li><b>Hisense Smarttv 4K Ffm ANDROID11</b> <small>songshan, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smarttv%204K%20Ffm%20ANDROID11">issues</a></li>
+<li><b>Hitachi 65QLEDSM20</b> <small>bangbae, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=65QLEDSM20">issues</a></li>
+<li><b>Homatics Box R 4K Plus</b> <small>YYJ, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Box%20R%204K%20Plus">issues</a></li>
+<li><b>Homatics Dongle R 4K</b> <small>YQB, Android 11, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Dongle%20R%204K">issues</a></li>
+<li><b>HVCL Vu 4K Lushan</b> <small>lushan, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=VU%204K">issues</a></li>
+<li><b>JMGO N1S Holan</b> <small>holan, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=K80A">issues</a></li>
+<li><b>JVC Android TV Menlo</b> <small>menlo, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Android%20TV%20Menlo">issues</a></li>
+<li><b>JVC SA 4K Android TV</b> <small>seocho, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SA%204K%20Android%20TV">issues</a></li>
+<li><b>Kogan GTVU65KG</b> <small>dangni, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=GTVU65KG">issues</a></li>
+<li><b>LUMIO LUMIO VISION</b> <small>khardi, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=LUMIO%20VISION">issues</a></li>
+<li><b>M96-TVstick M96-TVstick</b> <small>M96-TVstick, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=M96-TVstick">issues</a></li>
+<li><b>MECOOL 4K Android TV Box</b> <small>YYC, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Android%20TV%20Box">issues</a></li>
+<li><b>MECOOL LEAP-S1</b> <small>LAS, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=LEAP-S1">issues</a></li>
+<li><b>MECOOL TV Stick</b> <small>BOS, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TV%20Stick">issues</a></li>
+<li><b>MI MiProjM05</b> <small>eva, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiProjM05">issues</a></li>
+<li><b>Micromax AI PONT</b> <small>ikebukuro, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>Motorola MotorolaTV</b> <small>hayward, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MotorolaTV">issues</a></li>
+<li><b>Motorola Swtv 24AE FHD</b> <small>beomil, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Swtv%2024AE%20FHD">issues</a></li>
+<li><b>MTC UK 2K Android TV</b> <small>tabata, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=UK%202K%20Android%20TV">issues</a></li>
+<li><b>My Android TV</b> <small>shandao, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Android%20TV">issues</a></li>
+<li><b>My Android TV</b> <small>tokyo, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Android%20TV">issues</a></li>
+<li><b>My Android TV</b> <small>yeoksam, Android 9, 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Android%20TV">issues</a></li>
+<li><b>Nokia Android TV</b> <small>shandao, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Android%20TV">issues</a></li>
+<li><b>NVIDIA SHIELD Android TV</b> <small>darcy, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SHIELD%20Android%20TV">issues</a></li>
+<li><b>NVIDIA SHIELD TV 2019</b> <small>sif, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=P3430">issues</a></li>
+<li><b>NVIDIA SHIELD TV Pro 2019</b> <small>mdarcy, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=P2897">issues</a></li>
+<li><b>OnePlus C00</b> <small>Cebu, Android 10, 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=C00">issues</a></li>
+<li><b>OnePlus D00</b> <small>Dubai, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=D00">issues</a></li>
+<li><b>OnePlus Oneplus_Dosa_IN</b> <small>Oneplus_Dosa_IN, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Oneplus_Dosa_IN">issues</a></li>
+<li><b>Onn 4K Plus 2025</b> <small>coffey, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=onn.%204K%20Plus%20Streaming">issues</a></li>
+<li><b>Onn 4K Streaming Box 2023</b> <small>YOC, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Streaming%20Box%202023">issues</a></li>
+<li><b>PANASONIC 4KTV 0SU</b> <small>SW4H, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4KTV-0SU">issues</a></li>
+<li><b>PANASONIC 4KTV Jup</b> <small>Jupiter_PA, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4KTV-JUP">issues</a></li>
+<li><b>PANASONIC Th 40HS550K</b> <small>shibuya, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Th%2040HS550K">issues</a></li>
+<li><b>Philips 2020/2021 UHD Android TV</b> <small>PH0M_EA_T32, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2020/2021%20UHD%20Android%20TV">issues</a></li>
+<li><b>Philips 50PUS8517</b> <small>PH1M_EA_9970A, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2021_22_Philips_UHD_Android_TV">issues</a></li>
+<li><b>Philips 55OLED707</b> <small>PH1M_EA_9970A, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2021/22%20Philips%20UHD%20Android%20TV">issues</a></li>
+<li><b>Philips 65PUS8102</b> <small>PH7M_EU_5596, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=65PUS8102">issues</a></li>
+<li><b>Philips PHILIPS 4k TV</b> <small>guui, Android 9, 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=PHILIPS%204k%20TV">issues</a></li>
+<li><b>Philips Philips Google TV TA1</b> <small>PH1M_WW_9972, Android 12, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Philips%20Google%20TV%20TA1">issues</a></li>
+<li><b>Philips Philips Google TV TA5</b> <small>PH1M_WW_9972, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Philips%20Google%20TV%20TA5">issues</a></li>
+<li><b>Philips R8G Google TV</b> <small>whitefield, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R8G">issues</a></li>
+<li><b>Philips Smart 4K Google TV</b> <small>eleonas, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Philips%20Smart%204K%20TV">issues</a></li>
+<li><b>POLYTRON 2K Hayward</b> <small>hayward, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20Hayward">issues</a></li>
+<li><b>RCA AI PONT</b> <small>redwood, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20SA">issues</a></li>
+<li><b>Realme AI PONT</b> <small>ikebukuro, Android 9, 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>Redmi MiTV-AXFR0</b> <small>rango, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AXFR0">issues</a></li>
+<li><b>Redmi MiTV-MOOQ3</b> <small>tarzan, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MOOQ3">issues</a></li>
+<li><b>SANYO ATV R2</b> <small>R2, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ATV%20R2">issues</a></li>
+<li><b>SHARP AQUOS TVE21F</b> <small>banqiao, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVE21F">issues</a></li>
+<li><b>SHARP SHARP 2K EU Android TV</b> <small>martin, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SHARP%202K%20EU%20Android%20TV">issues</a></li>
+<li><b>Skyworth Swtv 24NA 4K Nf</b> <small>eleonas, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-24NA-4K%20NF">issues</a></li>
+<li><b>Skyworth SWTV-22AE-FHD</b> <small>umeda, Android 11, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-22AE-FHD">issues</a></li>
+<li><b>Skyworth SWTV-22NA-FHD</b> <small>umeda, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-22NA-FHD">issues</a></li>
+<li><b>SkyworthDigital Wanbo X5 Pro</b> <small>YYT, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Google%20TV%20Stick">issues</a></li>
+<li><b>Sony BRAVIA 4K AE2</b> <small>BRAVIA_AE2, Android 12, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20AE2">issues</a></li>
+<li><b>Sony BRAVIA 4K GB</b> <small>BRAVIA_ATV2, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20GB">issues</a></li>
+<li><b>Sony BRAVIA 4K GB ATV3</b> <small>BRAVIA_ATV3_4K, Android 8, 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20GB%20ATV3">issues</a></li>
+<li><b>Sony BRAVIA 4K Gb US</b> <small>BRAVIA_ATV2, BRAVIA_ATV2_UC, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20GB">issues</a></li>
+<li><b>Sony BRAVIA 4K UR2</b> <small>BRAVIA_UR2_4K, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA_UR2_4K">issues</a></li>
+<li><b>Sony BRAVIA 4K UR3</b> <small>BRAVIA_UR3, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20UR3">issues</a></li>
+<li><b>Sony BRAVIA 4K VH2</b> <small>BRAVIA_VH2, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20VH2">issues</a></li>
+<li><b>Sony BRAVIA 4K VH21</b> <small>BRAVIA_VH21, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20VH21">issues</a></li>
+<li><b>Sony BRAVIA 4K VH22</b> <small>BRAVIA_VH22, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20VH22">issues</a></li>
+<li><b>Sony BRAVIA 9 Ii</b> <small>BRAVIA_AE3, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%209%20II">issues</a></li>
+<li><b>Sony BRAVIA TL2</b> <small>OD0M_EA_T32, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20TL2">issues</a></li>
+<li><b>Sony BRAVIA VH1</b> <small>BRAVIA_VH1, Android 10, 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20VH1">issues</a></li>
+<li><b>Sony BRAVIA VU31</b> <small>BRAVIA_VU31_4K, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20VU31">issues</a></li>
+<li><b>Sony Kd 55XE8596</b> <small>BRAVIA_ATV2, BRAVIA_ATV2_EU, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20GB">issues</a></li>
+<li><b>Sony Kd 65X80J</b> <small>BRAVIA_VH2, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20VH2">issues</a></li>
+<li><b>Sony Kd 65X9300D</b> <small>SVP-DTV15, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%202015">issues</a></li>
+<li><b>Sony Xbr X900E</b> <small>Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA_ATV2">issues</a></li>
+<li><b>Strong LEAP-S1</b> <small>LAS, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=LEAP-S1">issues</a></li>
+<li><b>TCL 40S5400A</b> <small>C06, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=40S5400A">issues</a></li>
+<li><b>TCL 43S5K</b> <small>G13, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=43S5K">issues</a></li>
+<li><b>TCL 55C715</b> <small>BeyondTV, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BeyondTV2">issues</a></li>
+<li><b>TCL 55C815</b> <small>BeyondTV, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BeyondTV2">issues</a></li>
+<li><b>TCL 55S470G</b> <small>G10, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=55S470G">issues</a></li>
+<li><b>TCL Beyondtv</b> <small>Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BeyondTV">issues</a></li>
+<li><b>TCL Beyondtv RT2851</b> <small>BeyondTV, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BeyondTV">issues</a></li>
+<li><b>TCL BEYONDTV2 Latin America</b> <small>BeyondTV, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BeyondTV2">issues</a></li>
+<li><b>TCL G03 Google TV</b> <small>BeyondTV4, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV%20Pro">issues</a></li>
+<li><b>TCL G05 Google TV</b> <small>G05, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV%20Pro">issues</a></li>
+<li><b>TCL G10 Google TV</b> <small>G10, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=G10%20Google%20TV">issues</a></li>
+<li><b>TCL Percee TV</b> <small>tcl_eu, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Percee%20TV">issues</a></li>
+<li><b>TCL QM6K Google TV</b> <small>G08, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV%20Pro">issues</a></li>
+<li><b>TCL Smart TV</b> <small>C06, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV">issues</a></li>
+<li><b>TCL Smart TV</b> <small>G07, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV">issues</a></li>
+<li><b>TCL Smart TV Pro</b> <small>G05, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV%20Pro">issues</a></li>
+<li><b>TCL Smart TV Pro</b> <small>G08, Android 12, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV%20Pro">issues</a></li>
+<li><b>TCL Smart TV Pro</b> <small>G09, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV%20Pro">issues</a></li>
+<li><b>TCL Smart TV Pro</b> <small>G10, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV%20Pro">issues</a></li>
+<li><b>TCL Uniontv Latin America</b> <small>UnionTV, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=UnionTV">issues</a></li>
+<li><b>Telesystem ONT2HD</b> <small>Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ONT2HD">issues</a></li>
+<li><b>Thomson 32HE5800</b> <small>UnionTV, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=UnionTV">issues</a></li>
+<li><b>Thomson SPPL 2K ANDROID TV</b> <small>sauve, Android 11, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SPPL%202K%20ANDROID%20TV">issues</a></li>
+<li><b>Thomson T32RTL6000</b> <small>R1, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ATV%20R1">issues</a></li>
+<li><b>Toshiba HiSmart 2K ATV4</b> <small>hamamatsucho, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HiSmart%202K%20ATV4">issues</a></li>
+<li><b>Toshiba Smart TV</b> <small>hamamatsucho, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV">issues</a></li>
+<li><b>Vestel Cecotec Shandao</b> <small>shandao, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Cecotec%20Shandao">issues</a></li>
+<li><b>Vestel Toshiba Cosmos Android TV</b> <small>yeoksam, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Toshiba%20Cosmos%20Android%20TV">issues</a></li>
+<li><b>XGIMI Horizon S Pro</b> <small>xgimigalileo, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=XK03H">issues</a></li>
+<li><b>XGIMI MoGo 2</b> <small>xgimiapollo, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MoGo%202">issues</a></li>
+<li><b>Xiaomi MIBOX3</b> <small>once, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MIBOX3">issues</a></li>
+<li><b>Xiaomi MIBOX4</b> <small>oneday, Android 9, 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MIBOX4">issues</a></li>
+<li><b>Xiaomi MiTV ASTP1</b> <small>maverick, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-ASTP1">issues</a></li>
+<li><b>Xiaomi MiTV MOSR4</b> <small>irobot, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MOSR4">issues</a></li>
+<li><b>Xiaomi MiTV MSSP3</b> <small>machuca, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MSSP3">issues</a></li>
+<li><b>Xiaomi MiTV MSSP3 ANDROID9</b> <small>machuca, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MSSP3">issues</a></li>
+<li><b>Xiaomi MiTV-AESP0</b> <small>aquaman, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AESP0">issues</a></li>
+<li><b>Xiaomi MiTV-AFKR0</b> <small>jaws, Android 11, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AFKR0">issues</a></li>
+<li><b>Xiaomi MiTV-AFMU0</b> <small>twilight, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AFMU0">issues</a></li>
+<li><b>Xiaomi MiTV-AXSO0</b> <small>dangal, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AXSO0">issues</a></li>
+<li><b>Xiaomi MiTV-AXSO1</b> <small>dangalFHD, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AXSO1">issues</a></li>
+<li><b>Xiaomi MiTV-AXSO2</b> <small>dangalUHD, Android 9, 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AXSO2">issues</a></li>
+<li><b>Xiaomi MiTV-AYFR0</b> <small>soul, Android 11, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AYFR0">issues</a></li>
+<li><b>Xiaomi MiTV-MOEU1</b> <small>lalaland, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MOEU1">issues</a></li>
+<li><b>Xiaomi MiTV-MOOQ0</b> <small>croods, Android 10, 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MOOQ0">issues</a></li>
+<li><b>Xiaomi MiTV-MOOQ1</b> <small>tarzan, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MOOQ1">issues</a></li>
+<li><b>Xiaomi MiTV-MOSR1</b> <small>hermano, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MOSR1">issues</a></li>
+<li><b>Xiaomi MiTV-MSSP0</b> <small>amelie, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MSSP0">issues</a></li>
+<li><b>Xiaomi MiTV-MSSP1</b> <small>nino, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MSSP1">issues</a></li>
+<li><b>Xiaomi MiTV-MSSP2</b> <small>volver, Android 9, 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MSSP2">issues</a></li>
+<li><b>Xiaomi MiTV-MZTU1</b> <small>stepup, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MZTU1">issues</a></li>
+<li><b>Xiaomi MiTV4I</b> <small>magnolia, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV4I">issues</a></li>
+<li><b>Xiaomi TV A Pro 2026</b> <small>river, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MZTU0">issues</a></li>
+</ul>
+<h2 class="ns-h">Next test build <span>113</span></h2>
+<p class="ns-m">Works in our test builds; coming to everyone in a later release once testers confirm it on your brand.</p>
+<ul class="ns">
+<li><b>ACONATIC ACONATIC 4K Android TV</b> <small>shilin, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ACONATIC%204K%20Android%20TV">issues</a></li>
+<li><b>ADSUN 2K SMART TV</b> <small>stanford, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20SMART%20TV">issues</a></li>
+<li><b>AIWA 4K SMART TV</b> <small>zhongshan, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20SMART%20TV">issues</a></li>
+<li><b>AIWA AI PONT</b> <small>sindorim, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>AIWA SMART TV</b> <small>stanford, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SMART%20TV">issues</a></li>
+<li><b>Allwinner LemonTV MINI</b> <small>apollo-p7, Android 12, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=LemonTV%20MINI">issues</a></li>
+<li><b>Allwinner ohh</b> <small>ohh, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ohh">issues</a></li>
+<li><b>AQUA AQUA Android TV 2K</b> <small>nippori, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUA%20Android%20TV%202K">issues</a></li>
+<li><b>ASHIMA SmartTV</b> <small>hayward, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV">issues</a></li>
+<li><b>BLAUPUNKT Blaupunkt 2K Android TV</b> <small>stanford, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Blaupunkt%202K%20Android%20TV">issues</a></li>
+<li><b>BPL AI PONT</b> <small>samseong, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>Bravis AI PONT</b> <small>longshan, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>CHALLENGER 40DCOL</b> <small>stanford, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=40DCOL">issues</a></li>
+<li><b>CHALLENGER 43FCOL</b> <small>zhongshan, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=43FCOL">issues</a></li>
+<li><b>Changhong AI PONT</b> <small>samseong, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>Changhong AI PONT PLUS</b> <small>hapjeong, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20PLUS">issues</a></li>
+<li><b>CHIMEI 4K SMART TV</b> <small>zhongshan, Android 14, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20SMART%20TV">issues</a></li>
+<li><b>Continental Continental Android TV</b> <small>tamachi, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Continental%20Android%20TV">issues</a></li>
+<li><b>COOKIE YS-CK0001</b> <small>YS-CK0001, Android 10, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=YS-CK0001">issues</a></li>
+<li><b>Dyon Dyon 2K Android TV</b> <small>komagome, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Dyon%202K%20Android%20TV">issues</a></li>
+<li><b>EKO EKO 2K Android TV</b> <small>stanford, Android 14, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=EKO%202K%20Android%20TV">issues</a></li>
+<li><b>EKO EKO 4K Android TV</b> <small>shilin, Android 14, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=EKO%204K%20Android%20TV">issues</a></li>
+<li><b>EKO EKO Android TV</b> <small>yeongdeungpo, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=EKO%20Android%20TV">issues</a></li>
+<li><b>Elsys ETRI02</b> <small>tai, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ETRI02">issues</a></li>
+<li><b>ENGEL 2K AI Smart TV</b> <small>osaki, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20AI%20Smart%20TV">issues</a></li>
+<li><b>eSTREAM4K TiVo Stream 4K</b> <small>SEI400TV, Android 12, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TiVo%20Stream%204K">issues</a></li>
+<li><b>Fengmi MiProjL1</b> <small>angleeUHD, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiProjL1">issues</a></li>
+<li><b>Flipkart FlipkartTV</b> <small>shibuya, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=FlipkartTV">issues</a></li>
+<li><b>FLOW FlowBox-F1</b> <small>HP40A2, Android 12, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=FlowBox-F1">issues</a></li>
+<li><b>Formovie Formovie Laser 4K projector</b> <small>hanlla, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Formovie%20Laser%204K%20projector">issues</a></li>
+<li><b>Funai PHILIPS 4K TV</b> <small>freesia, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=PHILIPS%204K%20TV">issues</a></li>
+<li><b>GAZER 2K SMART TV</b> <small>stanford, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20SMART%20TV">issues</a></li>
+<li><b>globe_ATV globe</b> <small>globe_ap, Android 8, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=globe">issues</a></li>
+<li><b>globe_ATV globe</b> <small>globe_sa, Android 8, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=globe">issues</a></li>
+<li><b>Google TV Stick</b> <small>titan-p1, Android 10, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TV%20Stick">issues</a></li>
+<li><b>Google TX68</b> <small>raven, Android 12, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TX68">issues</a></li>
+<li><b>Google VISION XS107MINI</b> <small>athena-p7, Android 12, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=VISION%20XS107MINI">issues</a></li>
+<li><b>Google XS100MINI</b> <small>titan-p1, Android 10, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=XS100MINI">issues</a></li>
+<li><b>GRUNDIG Grundig Android TV</b> <small>sinchon, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Grundig%20Android%20TV">issues</a></li>
+<li><b>Haier Haier Android TV FF Pro</b> <small>daan, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20Android%20TV%20FF%20Pro">issues</a></li>
+<li><b>Haier haierATV</b> <small>hanyang, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=haierATV">issues</a></li>
+<li><b>Haier haierATVnippori</b> <small>nippori, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=haierATVnippori">issues</a></li>
+<li><b>HAKO HAKO mini</b> <small>GMP, Android 12, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HAKO%20mini">issues</a></li>
+<li><b>HAKO HAKO Pro</b> <small>YXU, Android 14, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HAKO%20Pro">issues</a></li>
+<li><b>Hisense HiSmart 2K ATV4</b> <small>hamamatsucho, Android 11, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HiSmart%202K%20ATV4">issues</a></li>
+<li><b>Hisense HiSmart 2K ATV4</b> <small>harajuku, Android 11, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HiSmart%202K%20ATV4">issues</a></li>
+<li><b>Hisense HiSmart TV</b> <small>hayward, Android 11, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HiSmart%20TV">issues</a></li>
+<li><b>HYUNDAI AI PONT NA</b> <small>redwood, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20NA">issues</a></li>
+<li><b>IMPEX GRANDE FHD TV</b> <small>takao, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=GRANDE%20FHD%20TV">issues</a></li>
+<li><b>JVC 4K AI Smart TV</b> <small>gangbyeon, Android 11, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20AI%20Smart%20TV">issues</a></li>
+<li><b>JVC COL 4K SMART TV</b> <small>zhongshan, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=COL%204K%20SMART%20TV">issues</a></li>
+<li><b>JVC JVC2KAndroid TV</b> <small>bruno, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=JVC2KAndroid%20TV">issues</a></li>
+<li><b>KINHANK G1</b> <small>YEG, Android 14, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=G1">issues</a></li>
+<li><b>KIVI KIVI 2K Android TV</b> <small>komagome, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=KIVI%202K%20Android%20TV">issues</a></li>
+<li><b>KIVI KIVI 4K Android TV</b> <small>bangbae, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=KIVI%204K%20Android%20TV">issues</a></li>
+<li><b>KIVI KIVI 4K Android TV</b> <small>shilin, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=KIVI%204K%20Android%20TV">issues</a></li>
+<li><b>Kogan AI PONT</b> <small>samseong, Android 11, 2 of 3 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>MarQ DV6067H</b> <small>DV6067H, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=DV6067H">issues</a></li>
+<li><b>MarQ MarQ 4K Android TV</b> <small>bangbae, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MarQ%204K%20Android%20TV">issues</a></li>
+<li><b>MECOOL KM1</b> <small>KM1, Android 10, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=KM1">issues</a></li>
+<li><b>MECOOL KM9PRO</b> <small>KM9PRO, Android 10, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=KM9PRO">issues</a></li>
+<li><b>Model Model-X2</b> <small>X2CUBE, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Model-X2">issues</a></li>
+<li><b>Motorola CSV4K</b> <small>zhongshan, Android 14, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=CSV4K">issues</a></li>
+<li><b>Motorola DVM4KA01</b> <small>GMP, Android 12, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=DVM4KA01">issues</a></li>
+<li><b>NEBULA D2421</b> <small>DM8261, Android 9, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=D2421">issues</a></li>
+<li><b>Nokia DVN2KA01</b> <small>DV6068H_Nokia, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=DVN2KA01">issues</a></li>
+<li><b>Nokia Nokia Streaming Box 8000</b> <small>HND, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Nokia%20Streaming%20Box%208000">issues</a></li>
+<li><b>OnePlus Y Series</b> <small>shibuya, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Y%20Series">issues</a></li>
+<li><b>Onn B860H V5.0</b> <small>B860HV5_Telkom, Android 10, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=B860H%20V5.0">issues</a></li>
+<li><b>Onn sti6140d360</b> <small>sti6140d360, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=sti6140d360">issues</a></li>
+<li><b>open_fhd_ATV open_fhd</b> <small>open_fhd_ap, Android 8, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=open_fhd">issues</a></li>
+<li><b>Philco 4K SMART TV</b> <small>zhongshan, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20SMART%20TV">issues</a></li>
+<li><b>Philco AI PONT</b> <small>sindorim, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>Philips Philips UHD Android TV</b> <small>PH0M_EA_T32, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Philips%20UHD%20Android%20TV">issues</a></li>
+<li><b>Philips QM163E</b> <small>QM16XE_U, Android 8, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=QM163E">issues</a></li>
+<li><b>Philips TPM191E</b> <small>PH9M_EA_5599, Android 11, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TPM191E">issues</a></li>
+<li><b>POLYTRON 2K AI Smart TV</b> <small>osaki, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20AI%20Smart%20TV">issues</a></li>
+<li><b>POLYTRON 2K PA Smart TV</b> <small>mateo, Android 14, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20PA%20Smart%20TV">issues</a></li>
+<li><b>Realme AI PONT</b> <small>redwood, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>Realme TV Stick</b> <small>BOS, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TV%20Stick">issues</a></li>
+<li><b>SANSUI SANSUITV UHD</b> <small>SW4H, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SANSUITV%20UHD">issues</a></li>
+<li><b>SHARP AQUOS-TVE19G</b> <small>ewha, Android 11, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVE19G">issues</a></li>
+<li><b>SHARP AQUOS-TVE21A2</b> <small>sindang, Android 11, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVE21A2">issues</a></li>
+<li><b>SHARP AQUOS_TVE19A</b> <small>sindang, Android 11, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS_TVE19A">issues</a></li>
+<li><b>SHINON AI PONT</b> <small>longshan, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>SINGER SINGER ANDROID TV</b> <small>sunnyvale, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SINGER%20ANDROID%20TV">issues</a></li>
+<li><b>SIRAGON SMART TV</b> <small>zhongshan, Android 14, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SMART%20TV">issues</a></li>
+<li><b>Skyworth SWTV</b> <small>shibuya, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV">issues</a></li>
+<li><b>Skyworth SWTV-21AE</b> <small>sunnyvale, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-21AE">issues</a></li>
+<li><b>Skyworth TV Stick</b> <small>BOS, Android 11, 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TV%20Stick">issues</a></li>
+<li><b>Sony BRAVIA 4K UR1</b> <small>BRAVIA_UR1_4K, Android 10, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%20UR1">issues</a></li>
+<li><b>SriLankaTelecom DV8040</b> <small>DV8040, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=DV8040">issues</a></li>
+<li><b>Strong 4K Android TV Box</b> <small>YYC, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Android%20TV%20Box">issues</a></li>
+<li><b>SW SWTV-20AE</b> <small>SW4H, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-20AE">issues</a></li>
+<li><b>SW SWTV-20SA</b> <small>SW4H, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-20SA">issues</a></li>
+<li><b>Syinix AI PONT</b> <small>samseong, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>TDSYSTEMS TD SYSTEMS Android TV</b> <small>dundas, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TD%20SYSTEMS%20Android%20TV">issues</a></li>
+<li><b>TDSYSTEMS TD SYSTEMS Android TV</b> <small>redwood, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TD%20SYSTEMS%20Android%20TV">issues</a></li>
+<li><b>Technicolor AirTV Player</b> <small>uiw4010ech, Android 8, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AirTV%20Player">issues</a></li>
+<li><b>Tesla Tesla 2K TV</b> <small>shinagawa, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Tesla%202K%20TV">issues</a></li>
+<li><b>Theham AI PONT</b> <small>sindorim, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>THOMSON_KODAK PATH_7XPRO</b> <small>LEDTV32HD, Android 9, 2 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=PATH_7XPRO">issues</a></li>
+<li><b>Toshiba Toshiba TV</b> <small>hayward, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Toshiba%20TV">issues</a></li>
+<li><b>unifi-TV unifi-TV</b> <small>HP40A3, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=unifi-TV">issues</a></li>
+<li><b>VISIO VISIO TV</b> <small>shinagawa, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=VISIO%20TV">issues</a></li>
+<li><b>Vodafone Vodafone TV</b> <small>uiw4030vha, Android 9, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Vodafone%20TV">issues</a></li>
+<li><b>VU HAT4KDTV</b> <small>laoshan, Android 8, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HAT4KDTV">issues</a></li>
+<li><b>WALTON WALTON Android TV</b> <small>tamachi, Android 9, 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=WALTON%20Android%20TV">issues</a></li>
+<li><b>WALTON WALTON Android TV</b> <small>yeongdeungpo, Android 11, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=WALTON%20Android%20TV">issues</a></li>
+<li><b>WANSA AI PONT</b> <small>redwood, Android 11, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>Xiaomi B860H V5.0</b> <small>B860HV5_Telkom, Android 12, 1 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=B860H%20V5.0">issues</a></li>
+<li><b>Xiaomi MiTV-AXFU1</b> <small>furiosa, Android 14, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AXFU1">issues</a></li>
+<li><b>XLAxiata AX512</b> <small>DV8252, Android 10, 0 of 2 confirmations</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AX512">issues</a></li>
+</ul>
+<h2 class="ns-h">Coming soon <span>104</span></h2>
+<p class="ns-m">Being worked on for the version shown; until then the app does the clean-up.</p>
+<ul class="ns">
+<li><b>ACER ACR4KR75P</b> <small>chester, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ACR4KR75P">issues</a></li>
+<li><b>ACER M1G</b> <small>dahu, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=M1G">issues</a></li>
+<li><b>ACERPURE ACP75P</b> <small>chester, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ACP75P">issues</a></li>
+<li><b>ACERPURE DAC51U</b> <small>waiawa, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=DAC51U">issues</a></li>
+<li><b>AIWA AIWA 4K GOOGLE TV</b> <small>hongkong, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AIWA%204K%20GOOGLE%20TV">issues</a></li>
+<li><b>AURZEN BOOMAIR</b> <small>himalaya, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BOOMAIR">issues</a></li>
+<li><b>BLAUPUNKT 2K SMART TV</b> <small>mountbaker, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20SMART%20TV">issues</a></li>
+<li><b>Caixun AiPro4K TV</b> <small>sepolia, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AiPro4K%20TV">issues</a></li>
+<li><b>CHiQ AI PONT MAX FF</b> <small>ventura, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20MAX%20FF">issues</a></li>
+<li><b>CosMedia 4K Google TV Stick</b> <small>YYT, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Google%20TV%20Stick">issues</a></li>
+<li><b>DAMASCO 2K SMART TV</b> <small>mountbaker, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20SMART%20TV">issues</a></li>
+<li><b>Dynalink DL-Google TV36</b> <small>YOC, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=DL-Google%20TV36">issues</a></li>
+<li><b>ECOSTAR 4K SMART TV</b> <small>elliniko, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20SMART%20TV">issues</a></li>
+<li><b>EKO 4K EKO Google TV</b> <small>expo, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20EKO%20Google%20TV">issues</a></li>
+<li><b>ERGO ERGO4KSMARTTV</b> <small>SW6H, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ERGO4KSMARTTV">issues</a></li>
+<li><b>FPD EcoTV Pro A</b> <small>hongkong, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=EcoTV%20Pro%20A">issues</a></li>
+<li><b>FPD EcoTV Pro D</b> <small>hongkong, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=EcoTV%20Pro%20D">issues</a></li>
+<li><b>FPD EcoTV Ultra</b> <small>templeton, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=EcoTV%20Ultra">issues</a></li>
+<li><b>FPD EcoTV1 Plus</b> <small>elliniko, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=EcoTV1%20Plus">issues</a></li>
+<li><b>Google B866F V1.1</b> <small>oppen, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=B866F%20V1.1">issues</a></li>
+<li><b>Google Chromecast</b> <small>sabrina, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Chromecast">issues</a></li>
+<li><b>Google Chromecast HD</b> <small>boreal, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Chromecast%20HD">issues</a></li>
+<li><b>Google Google TV Streamer</b> <small>kirkwood, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Google%20TV%20Streamer">issues</a></li>
+<li><b>GRUNDIG Grundig Google TV QLED</b> <small>wanchai, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Grundig%20Google%20TV%20QLED">issues</a></li>
+<li><b>GRUNDIG Grundig Google UHD TV</b> <small>akropoli, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Grundig%20Google%20UHD%20TV">issues</a></li>
+<li><b>Haier Haier MatrixTV AEL</b> <small>irvine, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20MatrixTV%20AEL">issues</a></li>
+<li><b>Haier Haier MatrixTV BE</b> <small>jordan, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20MatrixTV%20BE">issues</a></li>
+<li><b>Haier Haier OLED TV AE</b> <small>irvine, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20OLED%20TV%20AE">issues</a></li>
+<li><b>Hisense SmartTV</b> <small>hirano, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV">issues</a></li>
+<li><b>Hisense SmartTV 4K FFM</b> <small>wutaishan, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV%204K%20FFM">issues</a></li>
+<li><b>Hisense SmartTV 4K FFM</b> <small>wuyishan, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV%204K%20FFM">issues</a></li>
+<li><b>Hisense SmartTV 4K FFM SE</b> <small>wutaishan, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV%204K%20FFM%20SE">issues</a></li>
+<li><b>HKC 4K PA Google TV</b> <small>lakeside, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20PA%20Google%20TV">issues</a></li>
+<li><b>Homatics Box 4K V2</b> <small>HPH, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Box%204K%20V2">issues</a></li>
+<li><b>IMPEX AI PONT</b> <small>osaka, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>INNOVA INNOVA GOOGLE TV 4K</b> <small>elliniko, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=INNOVA%20GOOGLE%20TV%204K">issues</a></li>
+<li><b>JAM 4K SMART TV</b> <small>elliniko, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20SMART%20TV">issues</a></li>
+<li><b>JVC 4K SMART TV</b> <small>elliniko, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20SMART%20TV">issues</a></li>
+<li><b>JVC JVC 2K ISDB TV</b> <small>mountbaker, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=JVC%202K%20ISDB%20TV">issues</a></li>
+<li><b>JVC JVC 4K Smart TV Plus</b> <small>anaheim, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=JVC%204K%20Smart%20TV%20Plus">issues</a></li>
+<li><b>KAJITO KAJITO Google TV</b> <small>alimos, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=KAJITO%20Google%20TV">issues</a></li>
+<li><b>KENWOOD 4K SMART TV</b> <small>elliniko, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20SMART%20TV">issues</a></li>
+<li><b>Kogan AI PONT PLUS FF</b> <small>bridgeport, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20PLUS%20FF">issues</a></li>
+<li><b>LUMIO Lumio Arc 5</b> <small>himalaya, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Lumio%20Arc%205">issues</a></li>
+<li><b>LUMIO LUMIO VISION</b> <small>templeton, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=LUMIO%20VISION">issues</a></li>
+<li><b>Motorola MOT41F</b> <small>landen, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MOT41F">issues</a></li>
+<li><b>NEBULA D2200</b> <small>taihang, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=D2200">issues</a></li>
+<li><b>NEBULA D2342</b> <small>lavasa, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=D2342">issues</a></li>
+<li><b>Next 4K Google TV Box</b> <small>YDA, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Google%20TV%20Box">issues</a></li>
+<li><b>oboni AI PONT</b> <small>alimos, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>OK AI PONT DE</b> <small>changi, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20DE">issues</a></li>
+<li><b>OK AI PONT DE</b> <small>osaka, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20DE">issues</a></li>
+<li><b>OnePlus E00</b> <small>Edinburgh, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=E00">issues</a></li>
+<li><b>Onn onn 4K Pro Streaming Device</b> <small>jarvis2, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=onn%204K%20Pro%20Streaming%20Device">issues</a></li>
+<li><b>Onn onn. Full HD Streaming Device</b> <small>XNA, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=onn.%20Full%20HD%20Streaming%20Device">issues</a></li>
+<li><b>Onn onn. Streaming Device 4K pro</b> <small>SNA, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=onn.%20Streaming%20Device%204K%20pro">issues</a></li>
+<li><b>ONVO ONVO TV</b> <small>sepolia, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ONVO%20TV">issues</a></li>
+<li><b>Philips EcoTV Ultra</b> <small>templeton, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=EcoTV%20Ultra">issues</a></li>
+<li><b>Philips Philips 4K A1</b> <small>queenstown, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Philips%204K%20A1">issues</a></li>
+<li><b>Philips Philips 4K GA1</b> <small>cottongreen, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Philips%204K%20GA1">issues</a></li>
+<li><b>Philips Philips Google TV TA6 LT</b> <small>kujo, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Philips%20Google%20TV%20TA6%20LT">issues</a></li>
+<li><b>Philips Philips Google TV TA7</b> <small>PH3M_AL_T32, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Philips%20Google%20TV%20TA7">issues</a></li>
+<li><b>POLYTRON POLYTRON 4K</b> <small>lakeside, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=POLYTRON%204K">issues</a></li>
+<li><b>POLYTRON POLYTRON2K</b> <small>hirano, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=POLYTRON2K">issues</a></li>
+<li><b>PrismPlus PrismPlus P4KA</b> <small>SW6H, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=PrismPlus%20P4KA">issues</a></li>
+<li><b>RCA RCA 4K SMART TV</b> <small>marina, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=RCA%204K%20SMART%20TV">issues</a></li>
+<li><b>realmeTechLife REA75P</b> <small>chester, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=REA75P">issues</a></li>
+<li><b>realmeTechLife RMI41F</b> <small>landen, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=RMI41F">issues</a></li>
+<li><b>RockTek RT-G2 Next</b> <small>HPH, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=RT-G2%20Next">issues</a></li>
+<li><b>RockTek UHD Google TV STB</b> <small>RMQ, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=UHD%20Google%20TV%20STB">issues</a></li>
+<li><b>SHARP 4K Sharp Google TV</b> <small>expo, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Sharp%20Google%20TV">issues</a></li>
+<li><b>SHARP AQUOS-TVW24C</b> <small>egaleo, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVW24C">issues</a></li>
+<li><b>SHARP AQUOS-TVX22A</b> <small>namba, Android 11, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVX22A">issues</a></li>
+<li><b>SHARP SHARP 2K Smart TV</b> <small>umeda, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SHARP%202K%20Smart%20TV">issues</a></li>
+<li><b>SHARP SHARP 2K Smart TV-A</b> <small>beomil, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SHARP%202K%20Smart%20TV-A">issues</a></li>
+<li><b>SIRAGON SIRAGON 4K SMART TV</b> <small>elliniko, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SIRAGON%204K%20SMART%20TV">issues</a></li>
+<li><b>Skyworth 4K Google TV Box</b> <small>YDA, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Google%20TV%20Box">issues</a></li>
+<li><b>Skyworth SWTV-22SA-FHD</b> <small>umeda, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-22SA-FHD">issues</a></li>
+<li><b>Skyworth SWTV-24AE-FHD</b> <small>beomil, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-24AE-FHD">issues</a></li>
+<li><b>Skyworth SWTV-24SA-FHD</b> <small>beomil, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-24SA-FHD">issues</a></li>
+<li><b>Sony BRAVIA BF1</b> <small>BRAVIA_BF1, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20BF1">issues</a></li>
+<li><b>Sony BRAVIA CT1</b> <small>BRAVIA_CT1, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20CT1">issues</a></li>
+<li><b>STREAM Stream TV G4K</b> <small>sepolia, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Stream%20TV%20G4K">issues</a></li>
+<li><b>Strong 4K Google TV Box</b> <small>YDA, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Google%20TV%20Box">issues</a></li>
+<li><b>Strong AI PONT</b> <small>alimos, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>SW SW-22AE NF</b> <small>SW6H, Android 11, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SW-22AE%20NF">issues</a></li>
+<li><b>SW SWTV-22AE</b> <small>SW6H, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SWTV-22AE">issues</a></li>
+<li><b>Syinix Glory TV</b> <small>SW6H, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Glory%20TV">issues</a></li>
+<li><b>TCL ProjectorC1</b> <small>himalaya, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ProjectorC1">issues</a></li>
+<li><b>TCL Smart TV</b> <small>G06, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV">issues</a></li>
+<li><b>TCL Smart TV</b> <small>G08, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV">issues</a></li>
+<li><b>TCL Smart TV</b> <small>G10, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV">issues</a></li>
+<li><b>TCL Smart TV Pro</b> <small>BeyondTV4, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV%20Pro">issues</a></li>
+<li><b>Thomson 4K Google TV Box</b> <small>YDA, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4K%20Google%20TV%20Box">issues</a></li>
+<li><b>Thomson Thomson TV</b> <small>cottongreen, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Thomson%20TV">issues</a></li>
+<li><b>VU VU 4K Google TV</b> <small>keoneae, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=VU%204K%20Google%20TV">issues</a></li>
+<li><b>WANSA AI PONT</b> <small>alimos, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT">issues</a></li>
+<li><b>XGIMI MoGo 3 Pro</b> <small>altai, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=G0035">issues</a></li>
+<li><b>XGIMI XR13A</b> <small>kasol, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=XR13A">issues</a></li>
+<li><b>Xiaomi C025RGN</b> <small>tianshan, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=C025RGN">issues</a></li>
+<li><b>Xiaomi MiTV-AXFR2</b> <small>watchmen, Android 11, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AXFR2">issues</a></li>
+<li><b>Xiaomi MiTV-AXFU0</b> <small>arctictale, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AXFU0">issues</a></li>
+<li><b>Xiaomi MiTV-MOEU0</b> <small>ladybird, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MOEU0">issues</a></li>
+<li><b>Xiaomi MiTV-MOOR2</b> <small>venom, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MOOR2">issues</a></li>
+</ul>
+<h2 class="ns-h">Clean-up only <span>146</span></h2>
+<p class="ns-m">The app switches the clutter off and keeps the TV&#x27;s own home screen, for the reason shown.</p>
+<ul class="ns">
+<li><b>ACCESSTYLE H32EY1500B</b> <small>H32EY1500B.V320BJ8-Q01-C1, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=H32EY1500B">issues</a></li>
+<li><b>ACER ATV R2</b> <small>R2, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ATV%20R2">issues</a></li>
+<li><b>ACER R3</b> <small>R3, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R3">issues</a></li>
+<li><b>ACER R4</b> <small>R4, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R4">issues</a></li>
+<li><b>ACER R4G</b> <small>R4_GTV, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R4G">issues</a></li>
+<li><b>ADT-3 ADT-3</b> <small>adt3, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ADT-3">issues</a></li>
+<li><b>ADT-3 adt3</b> <small>adt3, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=adt3">issues</a></li>
+<li><b>ADT-3 B860H V5.0</b> <small>B860HV5_Telkom, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=B860H%20V5.0">issues</a></li>
+<li><b>ADT-3 POR-9101</b> <small>adt3, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=POR-9101">issues</a></li>
+<li><b>AKARI SMART_TV_32</b> <small>SMART_TV_32, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SMART_TV_32">issues</a></li>
+<li><b>ALHAFIDH R4</b> <small>R4, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R4">issues</a></li>
+<li><b>Amlogic B866F V1.1</b> <small>oppen, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=B866F%20V1.1">issues</a></li>
+<li><b>Amlogic ross</b> <small>ross, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ross">issues</a></li>
+<li><b>Amlogic TX3</b> <small>newton, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TX3">issues</a></li>
+<li><b>Amlogic TX6</b> <small>p281, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TX6">issues</a></li>
+<li><b>Amlogic X96Max_Plus_A2</b> <small>franklin, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=X96Max_Plus_A2">issues</a></li>
+<li><b>Caixun Apollo Premium TV</b> <small>nagata, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Apollo%20Premium%20TV">issues</a></li>
+<li><b>Caixun Apollo Premium2K TV</b> <small>nagata, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Apollo%20Premium2K%20TV">issues</a></li>
+<li><b>CANDY CANDY Android TV</b> <small>hanyang, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=CANDY%20Android%20TV">issues</a></li>
+<li><b>Casper Casper AndroidTV</b> <small>barking, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Casper%20AndroidTV">issues</a></li>
+<li><b>CHiQ AI PONT SA</b> <small>ahua, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AI%20PONT%20SA">issues</a></li>
+<li><b>ContinentalEdison CDI SMART TV</b> <small>nagata, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=CDI%20SMART%20TV">issues</a></li>
+<li><b>Coocaa 3H352_C10</b> <small>Hi3751V350, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=3H352_C10">issues</a></li>
+<li><b>CVT_NULL DA320Q</b> <small>mt5867, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=DA320Q">issues</a></li>
+<li><b>CVT_NULL SMART_TV</b> <small>mt5867, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SMART_TV">issues</a></li>
+<li><b>CVTE MT9633</b> <small>mt9633, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MT9633">issues</a></li>
+<li><b>DAEWOO 55DSL-SMART TV-R2VR1</b> <small>DAEWOO, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=55DSL-SMART%20TV-R2VR1">issues</a></li>
+<li><b>DEXP F32G8000C</b> <small>F32G8000C.PT320CT01-1-BPH, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=F32G8000C">issues</a></li>
+<li><b>DEXP F43F8000Q-G</b> <small>F43F8000Q-G.HV430FHB-F90, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=F43F8000Q-G">issues</a></li>
+<li><b>Dom-ru_MOVIX Movix Pro</b> <small>SEI200, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Movix%20Pro">issues</a></li>
+<li><b>Droidlogic X96MINI_11</b> <small>oppen, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=X96MINI_11">issues</a></li>
+<li><b>EAS-ELECTRIC ATV R1</b> <small>R1, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ATV%20R1">issues</a></li>
+<li><b>EON_Smart_Box SDOTT0202</b> <small>DV8519, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SDOTT0202">issues</a></li>
+<li><b>eroc TV Stick</b> <small>BOS, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TV%20Stick">issues</a></li>
+<li><b>everfine TV848DTMB</b> <small>everfine, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TV848DTMB">issues</a></li>
+<li><b>EVVOLI ATV R2</b> <small>R2, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=ATV%20R2">issues</a></li>
+<li><b>ExpressLUCK SMART2KTVSE</b> <small>am30az, Android 13</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SMART2KTVSE">issues</a></li>
+<li><b>Flipkart FlipkartTV</b> <small>SW4H, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=FlipkartTV">issues</a></li>
+<li><b>Formovie nemo</b> <small>nemo, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=nemo">issues</a></li>
+<li><b>Freebox Player Pop</b> <small>fbx8am, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Player%20Pop">issues</a></li>
+<li><b>Google eros_p3</b> <small>eros-p3, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=eros_p3">issues</a></li>
+<li><b>Google T-STAR</b> <small>titan-p1, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=T-STAR">issues</a></li>
+<li><b>Google t950s_be311</b> <small>t950s_be311, Android 13</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=t950s_be311">issues</a></li>
+<li><b>Google TV BOX</b> <small>titan-p1, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TV%20BOX">issues</a></li>
+<li><b>Google X96Q</b> <small>eros-p1, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=X96Q">issues</a></li>
+<li><b>Haier Haier Android TV DVB2K</b> <small>broadway, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20Android%20TV%20DVB2K">issues</a></li>
+<li><b>Haier Haier Android TV PRO</b> <small>daan, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20Android%20TV%20PRO">issues</a></li>
+<li><b>Haier Haier MatrixTV FR</b> <small>nanaimo, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Haier%20MatrixTV%20FR">issues</a></li>
+<li><b>Haier HRH812_ALI7G_A</b> <small>HRH812_ALI7G_A, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HRH812_ALI7G_A">issues</a></li>
+<li><b>HiDPT AndroidTV</b> <small>Hi3751V560, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AndroidTV">issues</a></li>
+<li><b>HiDPT hi352l_zsn4in</b> <small>Hi3751V350, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=hi352l_zsn4in">issues</a></li>
+<li><b>HiDPT hi352t</b> <small>Hi3751V350, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=hi352t">issues</a></li>
+<li><b>HiDPT HiDPTAndroid Hi3751V350</b> <small>Hi3751V350, Android 9, 12, 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HiDPTAndroid%20Hi3751V350">issues</a></li>
+<li><b>HiDPT Projector</b> <small>Hi3751V350, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Projector">issues</a></li>
+<li><b>HiDPT Smart</b> <small>SmartTV256X, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart">issues</a></li>
+<li><b>HiDPT SMART TV</b> <small>Hi3751V350, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SMART%20TV">issues</a></li>
+<li><b>Hisense E5Q Pro</b> <small>MT9653, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=E5Q%20Pro">issues</a></li>
+<li><b>Hisense VIDAA_TV</b> <small>MT9603, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=VIDAA_TV">issues</a></li>
+<li><b>HYUNDAI H-LED65BU7003</b> <small>H-LED65BU7003.ST6451D06-3-23, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=H-LED65BU7003">issues</a></li>
+<li><b>IndiHome HG680_FJ</b> <small>HG680, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HG680_FJ">issues</a></li>
+<li><b>Jio JHSA400</b> <small>HSTB, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=JHSA400">issues</a></li>
+<li><b>KALLEY R10G</b> <small>R10G, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R10G">issues</a></li>
+<li><b>KALLEY R4G</b> <small>R4_GTV, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R4G">issues</a></li>
+<li><b>LLOYD R3</b> <small>R3, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R3">issues</a></li>
+<li><b>MagentaTV MagentaTV ONE</b> <small>HY44G, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MagentaTV%20ONE">issues</a></li>
+<li><b>MECOOL B866F V1.1</b> <small>B866FV1_1, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=B866F%20V1.1">issues</a></li>
+<li><b>MECOOL KD1</b> <small>KD1, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=KD1">issues</a></li>
+<li><b>MediaTek OBE_R3Ultra</b> <small>mt5879, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=OBE_R3Ultra">issues</a></li>
+<li><b>MOKA Kalley 43G200</b> <small>R3_GTV, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Kalley%2043G200">issues</a></li>
+<li><b>MOKA Prismplus Q65 Ultra R10G</b> <small>R10G, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Prismplus%20Q65%20Ultra%20R10G">issues</a></li>
+<li><b>Motorola MOTOROLA GOOGLE TV</b> <small>mountbaker, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MOTOROLA%20GOOGLE%20TV">issues</a></li>
+<li><b>MYSTIC R3</b> <small>R3, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R3">issues</a></li>
+<li><b>Newlink HiDPTAndroid Hi3751V350</b> <small>LT6XX, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=HiDPTAndroid%20Hi3751V350">issues</a></li>
+<li><b>Nokia R4</b> <small>R4, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R4">issues</a></li>
+<li><b>NPC SMART2KTVSE</b> <small>am30ap, Android 13</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SMART2KTVSE">issues</a></li>
+<li><b>ONIDA R4G</b> <small>R4_GTV, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R4G">issues</a></li>
+<li><b>PANASONIC 4KTV-3MUP</b> <small>R4_GTV, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=4KTV-3MUP">issues</a></li>
+<li><b>PANASONIC PANASONIC TV</b> <small>R1, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=PANASONIC%20TV">issues</a></li>
+<li><b>PANASONIC PANASONIC TV</b> <small>R2, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=PANASONIC%20TV">issues</a></li>
+<li><b>PANASONIC PANASONIC TV</b> <small>R4, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=PANASONIC%20TV">issues</a></li>
+<li><b>POLYTRON POLYTRON 2K</b> <small>nagai, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=POLYTRON%202K">issues</a></li>
+<li><b>RANGS 2K SMART TV</b> <small>mountbaker, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20SMART%20TV">issues</a></li>
+<li><b>Realme realme Smart TV</b> <small>SW4H_FF, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=realme%20Smart%20TV">issues</a></li>
+<li><b>Rockchip H96_Max_M9</b> <small>rk3576_box, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=H96_Max_M9">issues</a></li>
+<li><b>Rockchip X88pro10.r1.D2020</b> <small>rk3328_box, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=X88pro10.r1.D2020">issues</a></li>
+<li><b>Rokid RES102</b> <small>Station, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=RES102">issues</a></li>
+<li><b>SaluteTV SaluteTV</b> <small>at30a6, Android 13</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SaluteTV">issues</a></li>
+<li><b>SaluteTV SaluteTV</b> <small>m5621, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SaluteTV">issues</a></li>
+<li><b>SaluteTV SaluteTV</b> <small>m7332_eu, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SaluteTV">issues</a></li>
+<li><b>SberDevices SBDV-00006</b> <small>sberbox_y4, Android 13</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SBDV-00006">issues</a></li>
+<li><b>SFR Connect TV de SFR</b> <small>DV8555-SFR, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Connect%20TV%20de%20SFR">issues</a></li>
+<li><b>SHARP AQUOS-TVU19A</b> <small>guro, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVU19A">issues</a></li>
+<li><b>SHARP AQUOS-TVX19A</b> <small>ebisu, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVX19A">issues</a></li>
+<li><b>SHARP AQUOS-TVX19B</b> <small>gangnam, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVX19B">issues</a></li>
+<li><b>SHARP AQUOS-TVX21B</b> <small>banqiao, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-TVX21B">issues</a></li>
+<li><b>SINGER R3</b> <small>R3, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=R3">issues</a></li>
+<li><b>Skyworth 5S851_E392G</b> <small>sky848_9s60, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=5S851_E392G">issues</a></li>
+<li><b>Skyworth 6H70_G25</b> <small>Hi3751V560, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=6H70_G25">issues</a></li>
+<li><b>Skyworth 7AA49_A3F</b> <small>T963, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=7AA49_A3F">issues</a></li>
+<li><b>Skyworth 7S711_A9</b> <small>sky848_9s60, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=7S711_A9">issues</a></li>
+<li><b>Skyworth 7T652_D4</b> <small>mt9633, Android 13</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=7T652_D4">issues</a></li>
+<li><b>Skyworth 8H723_G7D</b> <small>Hi3751V811M, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=8H723_G7D">issues</a></li>
+<li><b>Smart LX352</b> <small>SmartTV350, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=LX352">issues</a></li>
+<li><b>Smart TV Smart TV</b> <small>Smart TV, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV">issues</a></li>
+<li><b>Smarttech AiPro4K</b> <small>sepolia, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AiPro4K">issues</a></li>
+<li><b>Smarttech Apollo Premium4K TV</b> <small>marina, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Apollo%20Premium4K%20TV">issues</a></li>
+<li><b>SmartTV SmartTV</b> <small>SmartTV, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SmartTV">issues</a></li>
+<li><b>SONIQ 2K AI Smart TV</b> <small>osaki, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=2K%20AI%20Smart%20TV">issues</a></li>
+<li><b>Sony BRAVIA 2K GB ATV3</b> <small>BRAVIA_ATV3_2K, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%202K%20GB%20ATV3">issues</a></li>
+<li><b>Sony BRAVIA VU1</b> <small>BRAVIA_VU1, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20VU1">issues</a></li>
+<li><b>Sony BRAVIA VU2</b> <small>BRAVIA_VU1_2K, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20VU2">issues</a></li>
+<li><b>Sony BRAVIA VU2</b> <small>BRAVIA_VU1_4K, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20VU2">issues</a></li>
+<li><b>Sony BRAVIA VU3</b> <small>BRAVIA_VU3_4K, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%20VU3">issues</a></li>
+<li><b>STARWIND SW-LED32SG300</b> <small>SW-LED32SG300.ST3151A07-2, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SW-LED32SG300">issues</a></li>
+<li><b>STARWIND SW-LED43UG403</b> <small>SW-LED43UG403.ST4251D01-B, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SW-LED43UG403">issues</a></li>
+<li><b>Stellamore T950S</b> <small>r34a1, Android 13</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=T950S">issues</a></li>
+<li><b>STREAM STR-D2 G4K</b> <small>YYR, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=STR-D2%20G4K">issues</a></li>
+<li><b>SunDirectMax SunDirectMax</b> <small>SEI730SUN, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SunDirectMax">issues</a></li>
+<li><b>TCL BeyondTV</b> <small>BeyondTV, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BeyondTV">issues</a></li>
+<li><b>TCL Smart TV</b> <small>BeyondTV, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Smart%20TV">issues</a></li>
+<li><b>Technicolor TIM_BOX</b> <small>uzw4010tim, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TIM_BOX">issues</a></li>
+<li><b>Telia Telia Nordic STB</b> <small>DV8919-KST, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Telia%20Nordic%20STB">issues</a></li>
+<li><b>TELSTAR TELSTAR 2K Google TV</b> <small>capitolhill, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TELSTAR%202K%20Google%20TV">issues</a></li>
+<li><b>Thomson Thomson TV</b> <small>nagata, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Thomson%20TV">issues</a></li>
+<li><b>TIM TIMVISIONBOX</b> <small>m393gena_tim, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TIMVISIONBOX">issues</a></li>
+<li><b>Toshiba Toshiba_TV</b> <small>NOVA72691, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Toshiba_TV">issues</a></li>
+<li><b>TPLAY Telecentro 4K</b> <small>SEI800TCT, Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Telecentro%204K">issues</a></li>
+<li><b>TUVIO TD32HFBSV1</b> <small>TD32HFBSV1.ST3151A11-08-ZXBD, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=TD32HFBSV1">issues</a></li>
+<li><b>Vidda MT9653</b> <small>MT9653, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MT9653">issues</a></li>
+<li><b>waiputv waipu tv stick</b> <small>SEI700WP, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=waipu%20tv%20stick">issues</a></li>
+<li><b>waiputv waipu.tv Box</b> <small>SEID00BWP, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=waipu.tv%20Box">issues</a></li>
+<li><b>wnc Verizon Stream TV</b> <small>Android 12</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Stream%20TV">issues</a></li>
+<li><b>Xiaomi MiTV ANSP0</b> <small>jobs, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-ANSP0">issues</a></li>
+<li><b>Xiaomi MiTV MFFU0</b> <small>finch, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MFFU0">issues</a></li>
+<li><b>Xiaomi MiTV-AFZP0</b> <small>moderntimes, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-AFZP0">issues</a></li>
+<li><b>Xiaomi MiTV-ASTP0</b> <small>mulan, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-ASTP0">issues</a></li>
+<li><b>Xiaomi MiTV-ASTR0</b> <small>blueplanet, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-ASTR0">issues</a></li>
+<li><b>Xiaomi MiTV-MFTP0</b> <small>alita, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MFTP0">issues</a></li>
+<li><b>Xiaomi MiTV-MFTR0</b> <small>freeguy, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MFTR0">issues</a></li>
+<li><b>Xiaomi MiTV-MFZP0</b> <small>walle, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MFZP0">issues</a></li>
+<li><b>Xiaomi MiTV-MSOR0</b> <small>martian, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MSOR0">issues</a></li>
+<li><b>Xiaomi MiTV-MTEQ0</b> <small>baymax, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MTEQ0">issues</a></li>
+<li><b>Xiaomi MiTV-MTSU0</b> <small>interstellar, Android 14</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-MTSU0">issues</a></li>
+<li><b>Xiaomi MiTV-NSOP0</b> <small>furyroad, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=MiTV-NSOP0">issues</a></li>
+<li><b>XLAxiata SDN200</b> <small>lte_siden, Android 10</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=SDN200">issues</a></li>
+<li><b>ZTE B860H V1.2</b> <small>B860HV12_DENSTV, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=B860H%20V1.2">issues</a></li>
+</ul>
+<h2 class="ns-h">Not possible <span>28</span></h2>
+<p class="ns-m">This TV does not allow another home screen, so the clean-up is all the app can do.</p>
+<ul class="ns">
+<li><b>Amazon AFTBOXE1</b> <small>juliana, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTBOXE1">issues</a></li>
+<li><b>Amazon AFTBR92D74</b> <small>ginzaeu, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTBR92D74">issues</a></li>
+<li><b>Amazon AFTBTX4</b> <small>shelly, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTBTX4">issues</a></li>
+<li><b>Amazon AFTCIBFBD1</b> <small>coyote, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTCIBFBD1">issues</a></li>
+<li><b>Amazon AFTDE70DFC</b> <small>shine, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTDE70DFC">issues</a></li>
+<li><b>Amazon AFTHA002</b> <small>hector, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTHA002">issues</a></li>
+<li><b>Amazon AFTHY7ABBA</b> <small>ginza, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTHY7ABBA">issues</a></li>
+<li><b>Amazon AFTJULI1</b> <small>juliana, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTJULI1">issues</a></li>
+<li><b>Amazon AFTNE4E43F</b> <small>ginzaeu, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTNE4E43F">issues</a></li>
+<li><b>Amazon AFTR</b> <small>raven, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTR">issues</a></li>
+<li><b>Amazon AFTSO001</b> <small>sophia, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTSO001">issues</a></li>
+<li><b>Amazon AFTSSS</b> <small>sheldonp, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTSSS">issues</a></li>
+<li><b>Amazon Fire TV AFTTIFF43</b> <small>brandenburg, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTTIFF43">issues</a></li>
+<li><b>Amazon Fire TV Stick 4K 2018</b> <small>mantis, Android 7.1</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTMM">issues</a></li>
+<li><b>Amazon Fire TV Stick 4K 2023</b> <small>karat, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTKM">issues</a></li>
+<li><b>Amazon Fire TV Stick 4K Max 2021</b> <small>kara, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTKA">issues</a></li>
+<li><b>Amazon Fire TV Stick Lite 2020</b> <small>sheldon, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTSS">issues</a></li>
+<li><b>Amazon Insignia NS55F301NA25</b> <small>duckie, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTDCT31">issues</a></li>
+<li><b>Amazon Toshiba Fire TV AFTHA004</b> <small>hazel, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AFTHA004">issues</a></li>
+<li><b>CHALLENGER 32T22BT</b> <small>cvt_mt5863_col, Android 7</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=32T22BT">issues</a></li>
+<li><b>FFalcon 65S585C Pro</b> <small>tcl_mt5879_cn, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=65S585C%20Pro">issues</a></li>
+<li><b>Realtek Gazer_TV</b> <small>RealtekATV, Android 7.1</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Gazer_TV">issues</a></li>
+<li><b>SHARP AQUOS-4KTVX17</b> <small>lc_theux, Android 7</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AQUOS-4KTVX17">issues</a></li>
+<li><b>Sony Kd 55X8509C</b> <small>SVP-DTV15, Android 7</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=BRAVIA%204K%202015">issues</a></li>
+<li><b>TCL AK30A5</b> <small>ak30a5, Android 9</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AK30A5">issues</a></li>
+<li><b>TCL Q10G Pro</b> <small>tcl_mt5879_cn, Android 11</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=Q10G%20Pro">issues</a></li>
+<li><b>TCL sugarcane</b> <small>sugarcane, Android 8</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=sugarcane">issues</a></li>
+<li><b>Telkom AOSP on r33a0</b> <small>DV8219, Android 7.1</small> <a href="https://github.com/udhaykumarbala/cleanyourtv-app/issues?q=AOSP%20on%20r33a0">issues</a></li>
+</ul>
+</noscript>
+
+    <section id="key" style="padding-top:46px">
+      <h2>What each status means</h2>
+      <div class="v-key" id="keyList"></div>
+    </section>
+
+    <section id="soon" style="padding-top:20px">
+      <h2>Coming soon</h2>
+      <p class="small">What the next versions bring, and to which TVs.</p>
+      <ul class="v-soon" id="soonList"></ul>
+    </section>
+
+    <section style="padding-top:20px">
+      <h2>Your TV isn't here, or it's wrong?</h2>
+      <p class="small">Send a report from the app: Manage, then Help add this TV. It tells us the model and its home screen, nothing about you. Tick "I can test" if you can try a list for a few days.</p>
+      <p class="small"><a href="https://github.com/udhaykumarbala/cleanyourtv-app/releases/latest">Get the app</a> &middot; <a href="../testers/">The testers who made these lists safer</a></p>
+      <p class="small">Models and statuses only. The tested lists come from <a href="https://github.com/Gathin23/cleanyourtv">Clean Your TV</a> by Gathin and its community.</p>
+    </section>
+  </main>
+  <footer style="padding:40px 0 30px;color:var(--muted);font-size:15px">
+    <p>Clean Your TV app &middot; MIT licence &middot; <a href="https://cleanyour.tv/app/android/privacy">Privacy</a> &middot; <a href="https://github.com/udhaykumarbala/cleanyourtv-app">GitHub</a> &middot; <a href="../testers/">Testers</a></p>
+  </footer>
+</div>
+
+<script>
+(() => {
+const ORDER = ['new', 'test', 'soon', 'cleanup', 'no'];
+const TOP = 10;      // brands shown before "More brands"
+const PAGE = 40;     // TVs drawn at a time
+const SVG = 'http://www.w3.org/2000/svg';
+// Other names people use for a brand.
+const ALIASES = {
+  xiaomi: ['mi', 'redmi', 'mitv', 'mibox'], redmi: ['xiaomi', 'mi', 'mitv'], nvidia: ['shield'], amazon: ['fire', 'firetv', 'firestick'],
+  google: ['chromecast', 'googletv'], sony: ['bravia'], skyworth: ['sw'], sw: ['skyworth'], oneplus: ['one plus'], hisense: ['vidaa'],
+  tcl: ['ffalcon'], ffalcon: ['tcl'], philips: ['ambilight'], sharp: ['aquos'], panasonic: ['viera'], realme: ['realme tech life']
+};
+const $ = id => document.getElementById(id);
+let D, all = [], byId = {}, status = 'all', brand = 'All', shown = PAGE, brandsOpen = false, open = new Set();
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === 'text') e.textContent = v; else if (k === 'class') e.className = v; else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null && k !== false) e.append(k);
+  return e;
+}
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const label = s => D.statuses.find(x => x.id === s).label;
+const pill = s => el('span', { class: `st s-${s}` }, el('i'), label(s));
+const soonOf = id => D.coming_soon.find(x => x.id === id);
+
+/* Search: every field normalised once. A term is a whole field squashed to letters and digits
+   ("mitvmztu1"), each word of it ("mitv", "mztu1") and each letter or digit run ("mztu", "1"). */
+const fold = s => (s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '');
+const squash = s => fold(s).replace(/[^a-z0-9]/g, '');
+const runs = w => w.match(/[a-z]+|[0-9]+/g) || [];
+function termsOf(s) {
+  const out = new Set(), sq = squash(s);
+  if (sq) out.add(sq);
+  for (const w of fold(s).split(/[^a-z0-9]+/)) if (w) { out.add(w); runs(w).forEach(r => out.add(r)); }
+  return out;
+}
+function queryTokens(q) {
+  const out = [];
+  for (const w of fold(q).split(/[^a-z0-9]+/)) if (w) out.push(w);
+  return out;
+}
+// One edit apart: a letter changed, added, dropped, or two neighbours swapped.
+function oneEdit(a, b) {
+  if (a === b) return true;
+  const la = a.length, lb = b.length;
+  if (Math.abs(la - lb) > 1) return false;
+  let i = 0;
+  while (i < la && i < lb && a[i] === b[i]) i++;
+  if (la === lb) return a.slice(i + 1) === b.slice(i + 1) || (a[i] === b[i + 1] && a[i + 1] === b[i] && a.slice(i + 2) === b.slice(i + 2));
+  return la > lb ? a.slice(i + 1) === b.slice(i) : a.slice(i) === b.slice(i + 1);
+}
+function subseq(t, s) {
+  let j = 0;
+  for (let i = 0; i < s.length && j < t.length; i++) if (s[i] === t[j]) j++;
+  return j === t.length;
+}
+// The best score of one query token against a TV: exact 10 (12 on the model), prefix 7, inside a field 5,
+// one typo from a whole word 4 or from its start 3, letters in order 1.
+function tokenScore(t, tv) {
+  let best = 0;
+  for (const term of tv._terms) {
+    if (term === t) return tv._model.has(term) ? 12 : 10;
+    if (term.startsWith(t)) best = Math.max(best, 7);
+    else if (best < 5 && term.length > t.length && term.includes(t)) best = 5;
+    else if (best < 4 && t.length >= 4) {
+      if (oneEdit(t, term)) best = 4;
+      else if (best < 3) for (const L of [t.length - 1, t.length, t.length + 1]) if (term.length >= L && oneEdit(t, term.slice(0, L))) { best = 3; break; }
+    }
+  }
+  if (!best && t.length >= 3) for (const sq of tv._squashed) if (subseq(t, sq)) { best = 1; break; }
+  return best;
+}
+function score(tv, tokens, whole) {
+  let sum = 0;
+  for (const t of tokens) {
+    const s = tokenScore(t, tv);
+    if (!s) return 0;
+    sum += s;
+  }
+  if (whole && tv._modelSq.has(whole)) sum += 100;
+  return sum;
+}
+
+function prepare(t, i) {
+  const aliases = ALIASES[t.brand.toLowerCase()] || [];
+  const fields = [t.brand, t.name, ...t.models, ...t.codenames, ...(t.lists || []), ...(t.test_lists || []), ...aliases];
+  t._terms = new Set();
+  fields.forEach(f => termsOf(f).forEach(x => t._terms.add(x)));
+  t._squashed = fields.map(squash).filter(Boolean);
+  t._model = new Set();
+  [t.name, ...t.models].forEach(f => termsOf(f).forEach(x => t._model.add(x)));
+  t._modelSq = new Set([t.name, ...t.models, ...t.codenames].map(squash));
+  t._i = i;
+  byId[t.id] = t;
+  return t;
+}
+
+/* A TV's one line, and what opens under it. */
+const confirms = t => t.confirm ? ` ${t.confirm.have} of ${t.confirm.need} confirmations.` : '';
+function short(t) {
+  const r = t.reason && D.reasons[t.reason];
+  const s = t.soon && soonOf(t.soon);
+  if (t.status === 'new') return t.some ? 'Gets the new home screen on most sets.' : 'Gets the new home screen.';
+  if (t.status === 'test') return "Keeps its own home screen for now: works in our test builds." + confirms(t);
+  if (t.status === 'soon' && s) return `Coming in ${s.version}: ${s.short}` + confirms(t);
+  if (t.status === 'no') return 'Clean-up only: ' + (r ? r.short : 'no other home screen.');
+  return 'Keeps its own home screen: ' + (r ? r.short : "we don't know it yet.");
+}
+function details(t) {
+  const d = el('div', { class: 'r-d', id: 'd-' + t.id });
+  const r = t.reason && D.reasons[t.reason];
+  const s = t.soon && soonOf(t.soon);
+  const some = t.some && D.reasons[t.some];
+  let why, next;
+  if (t.status === 'new') {
+    why = some ? 'Some sets of this model keep their own home screen: ' + some.short
+      : t.reports ? 'Its reports show the switch is safe on it.' : 'Its tested list plans the switch; no report from this model yet.';
+    next = s ? `Coming in ${s.version}: ${s.what}` : 'Run Setup in the app.';
+  } else if (t.status === 'test') {
+    why = 'Our test builds switch it with the setup wizard left on, and a release follows once testers confirm it.';
+    next = s ? `Coming in ${s.version}: ${s.what}` : 'Coming to everyone in a later release once testers confirm it on this brand.';
+  } else if (t.status === 'soon') {
+    why = r ? r.why : "The released app keeps the TV's own home screen for now.";
+    next = s ? `Coming in ${s.version}: ${s.what}` : null;
+  } else {
+    why = r ? r.why : null;
+    next = r && r.change ? r.change : null;
+  }
+  if (why) d.append(el('p', {}, el('b', { text: 'Why: ' }), why));
+  if (next) d.append(el('p', {}, el('b', { text: 'Next: ' }), next));
+  if (t.confirm) d.append(el('p', {}, el('b', { text: 'Confirmations: ' }),
+    `${t.confirm.have} of ${t.confirm.need} for ${t.confirm.sets ? 'this model' : t.brand} on Android ${t.confirm.android}.${t.confirm.sets ? ` Release ${D.release} gives it to other ${t.brand} models on Android ${t.confirm.android}; their confirmations count for those models only.` : ''} One counts when a tester says the new home screen was still there after a restart of the TV, on a test build.`));
+  const links = el('p', { class: 'r-l' });
+  for (const n of t.lists || []) links.append(el('a', { href: D.links.list + encodeURIComponent(n), target: '_blank', rel: 'noopener', text: `Tested list: ${n}` }));
+  for (const n of t.test_lists || []) links.append(el('a', { href: D.links.list + encodeURIComponent(n), target: '_blank', rel: 'noopener', text: `Untested list: ${n}` }));
+  if (t.status === 'test' && D.links.test_build) links.append(el('a', { href: D.links.test_build, target: '_blank', rel: 'noopener', text: 'The test build' }));
+  links.append(el('a', { href: D.links.issues + encodeURIComponent(t.models[0] || t.name), target: '_blank', rel: 'noopener', text: 'Issues about this model' }));
+  d.append(links);
+  return d;
+}
+function chevron() {
+  const s = document.createElementNS(SVG, 'svg');
+  s.setAttribute('viewBox', '0 0 20 20'); s.setAttribute('class', 'r-c'); s.setAttribute('aria-hidden', 'true');
+  const p = document.createElementNS(SVG, 'path');
+  p.setAttribute('d', 'M5 7.5l5 5 5-5'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor');
+  p.setAttribute('stroke-width', '1.8'); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+  s.append(p);
+  return s;
+}
+function row(t) {
+  const isOpen = open.has(t.id);
+  const meta = [];
+  if (t.android.length) meta.push('Android ' + t.android.join(', '));
+  if (t.codenames.length) meta.push(t.codenames[0] + (t.codenames.length > 1 ? ` +${t.codenames.length - 1}` : ''));
+  meta.push(t.reports ? plural(t.reports, 'report', 'reports') : 'tested list');
+  const b = el('button', { class: 'r-b', type: 'button', 'aria-expanded': String(isOpen), 'aria-controls': 'd-' + t.id },
+    el('span', { class: 'r-t' },
+      el('span', { class: 'r-n' }, t.brand + ' ', el('b', { text: t.name })),
+      el('span', { class: 'r-m', text: meta.join(' · ') }),
+      el('span', { class: 'r-s', text: short(t) })),
+    pill(t.status), chevron());
+  const li = el('li', { id: t.id }, b);
+  const d = details(t);
+  d.hidden = !isOpen;
+  li.append(d);
+  b.onclick = () => {
+    const now = b.getAttribute('aria-expanded') !== 'true';
+    b.setAttribute('aria-expanded', String(now));
+    d.hidden = !now;
+    now ? open.add(t.id) : open.delete(t.id);
+  };
+  return li;
+}
+
+/* The hero: numbers and the donut, whose legend filters by status. */
+function hero() {
+  const n = s => (D.statuses.find(x => x.id === s) || {}).tvs || 0;
+  $('nNew').textContent = n('new');
+  $('nMore').textContent = n('test') + n('soon');
+  $('nAll').textContent = all.length;
+  $('src').textContent = `From ${D.sources.lists} tested lists and ${D.sources.reports} TV reports. Release ${D.release}, updated ${D.generated_at}.`;
+  const svg = $('donut');
+  const r = 46, C = 2 * Math.PI * r, gap = 0.9;
+  let at = 0;
+  for (const s of ORDER) {
+    const len = n(s) / all.length * C;
+    if (!len) continue;
+    const c = document.createElementNS(SVG, 'circle');
+    c.setAttribute('cx', 60); c.setAttribute('cy', 60); c.setAttribute('r', r);
+    c.setAttribute('fill', 'none'); c.setAttribute('stroke-width', 16);
+    c.setAttribute('class', `s-${s}`); c.style.stroke = 'var(--c)';
+    c.setAttribute('stroke-dasharray', `${Math.max(len - gap, 0.5)} ${C}`);
+    c.setAttribute('stroke-dashoffset', -at);
+    c.setAttribute('transform', 'rotate(-90 60 60)');
+    c.dataset.s = s;
+    svg.append(c);
+    at += len;
+  }
+  const t1 = document.createElementNS(SVG, 'text');
+  t1.setAttribute('x', 60); t1.setAttribute('y', 62); t1.setAttribute('text-anchor', 'middle');
+  t1.setAttribute('font-size', 24); t1.setAttribute('font-weight', 600); t1.textContent = all.length;
+  const t2 = document.createElementNS(SVG, 'text');
+  t2.setAttribute('x', 60); t2.setAttribute('y', 78); t2.setAttribute('text-anchor', 'middle');
+  t2.setAttribute('font-size', 10); t2.setAttribute('fill-opacity', .7); t2.textContent = 'TVs';
+  svg.append(t1, t2);
+  $('donutTitle').textContent = 'TVs by status: ' + ORDER.map(s => `${label(s)} ${n(s)}`).join(', ');
+}
+function legend() {
+  const n = s => (D.statuses.find(x => x.id === s) || {}).tvs || 0;
+  $('legend').replaceChildren(...ORDER.map(s => {
+    const b = el('button', { class: `v-leg s-${s}`, type: 'button', 'aria-pressed': String(status === s) },
+      el('i'), label(s), el('b', { text: n(s) }), el('span', { text: Math.round(n(s) / all.length * 100) + '%' }));
+    b.onclick = () => { status = status === s ? 'all' : s; render(); sync(); };
+    return el('li', {}, b);
+  }));
+  $('reset').hidden = status === 'all';
+  for (const c of $('donut').querySelectorAll('circle')) c.style.opacity = status === 'all' || c.dataset.s === status ? 1 : .25;
+}
+function key() {
+  $('keyList').replaceChildren(...D.statuses.map(s => el('div', {}, pill(s.id), el('p', { text: `${s.means} ${plural(s.tvs, 'TV', 'TVs')}.` }))));
+  $('soonList').replaceChildren(...D.coming_soon.map(i => {
+    const count = all.filter(t => t.soon === i.id).length;
+    const li = el('li', {}, el('b', { text: i.title }), el('em', { text: i.version }), el('p', { text: i.what }));
+    if (count) {
+      const b = el('button', { type: 'button', text: `See the ${plural(count, 'TV', 'TVs')}` });
+      b.onclick = () => showSoon(i.id);
+      li.append(el('p', {}, b));
+    }
+    return li;
+  }));
+}
+function showSoon(id) {
+  const list = all.filter(t => t.soon === id);
+  $('list').replaceChildren(...list.map(row));
+  $('count').textContent = `${plural(list.length, 'TV', 'TVs')} for ${soonOf(id).title}`;
+  $('more').hidden = true;
+  $('count').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function brands(pool) {
+  const counts = {};
+  pool.forEach(t => counts[t.brand] = (counts[t.brand] || 0) + 1);
+  const order = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(e => e[0]);
+  let names = brandsOpen ? order : order.slice(0, TOP);
+  if (brand !== 'All' && !names.includes(brand)) names = [...names, brand];
+  const chip = (name, n) => {
+    const b = el('button', { class: 'v-chip', type: 'button', 'aria-pressed': String(name === brand) }, name, el('span', { text: n }));
+    b.onclick = () => { brand = name === brand ? 'All' : name; render(); sync(); };
+    return b;
+  };
+  const kids = [chip('All', pool.length), ...names.map(b => chip(b, counts[b] || 0))];
+  if (order.length > TOP) {
+    const m = el('button', { class: 'v-chip more', type: 'button', 'aria-expanded': String(brandsOpen) },
+      brandsOpen ? 'Fewer brands' : `More brands`, el('span', { text: brandsOpen ? '' : order.length - TOP }));
+    m.onclick = () => { brandsOpen = !brandsOpen; render(true); };
+    kids.push(m);
+  }
+  $('brandChips').replaceChildren(...kids);
+}
+
+function render(keep) {
+  if (!keep) shown = PAGE;
+  const q = $('q').value;
+  $('clear').hidden = !q;
+  const tokens = queryTokens(q);
+  let found = all;
+  if (tokens.length) {
+    const whole = squash(q);
+    found = all.map(t => [t, score(t, tokens, whole)]).filter(x => x[1] > 0)
+      .sort((a, b) => b[1] - a[1] || a[0]._i - b[0]._i).map(x => x[0]);
+  }
+  const byStatus = found.filter(t => status === 'all' || t.status === status);
+  brands(byStatus);
+  const list = byStatus.filter(t => brand === 'All' || t.brand === brand);
+  legend();
+  const what = list.length === all.length ? `All ${all.length} TVs` : `${plural(list.length, 'TV', 'TVs')} of ${all.length}`;
+  $('count').textContent = list.length ? what + (tokens.length ? ` for “${q.trim()}”, best match first` : '') : '';
+  if (!list.length) {
+    $('list').replaceChildren(el('li', { class: 'v-empty' },
+      el('p', { text: tokens.length ? `No TV matches “${q.trim()}” with these filters.` : 'No TV with these filters.' }),
+      el('p', { text: 'Try the model name from the TV’s Settings, About, or its codename. If it is not here yet, the app still does a careful clean-up; send a report from Manage, then Help add this TV.' })));
+  } else {
+    $('list').replaceChildren(...list.slice(0, shown).map(row));
+  }
+  const rest = list.length - shown;
+  $('more').hidden = rest <= 0;
+  $('moreBtn').textContent = `Show ${Math.min(rest, PAGE * 2)} more`;
+  $('moreBtn').onclick = () => { shown += PAGE * 2; render(true); };
+}
+
+function sync() {
+  const p = new URLSearchParams();
+  const q = $('q').value.trim();
+  if (q) p.set('q', q);
+  if (status !== 'all') p.set('status', status);
+  if (brand !== 'All') p.set('brand', brand);
+  const s = p.toString();
+  try { history.replaceState(null, '', s ? '?' + s : location.pathname); } catch (e) { /* file: or sandboxed */ }
+}
+
+let timer;
+$('q').addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { render(); sync(); }, 60); });
+$('q').addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('q').value) { e.preventDefault(); $('q').value = ''; render(); sync(); }
+  if (e.key === 'Enter') { e.preventDefault(); $('q').blur(); }
+});
+$('clear').onclick = () => { $('q').value = ''; render(); sync(); $('q').focus(); };
+$('reset').onclick = () => { status = 'all'; render(); sync(); };
+document.addEventListener('keydown', e => {
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  if (e.key === '/' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); $('q').focus(); }
+});
+
+fetch('tvs.json').then(r => r.json()).then(d => {
+  D = d;
+  all = d.tvs.map(prepare);
+  const p = new URLSearchParams(location.search);
+  if (p.get('q')) $('q').value = p.get('q');
+  if (ORDER.includes(p.get('status'))) status = p.get('status');
+  if (p.get('brand') && all.some(t => t.brand === p.get('brand'))) brand = p.get('brand');
+  hero(); key(); render();
+}).catch(() => {
+  $('count').textContent = 'The TV list could not be loaded. Reload the page to try again.';
+});
+})();
+</script>
+</body>
+</html>

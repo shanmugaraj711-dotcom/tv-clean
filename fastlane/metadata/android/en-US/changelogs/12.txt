@@ -1,0 +1,1 @@
+0.3.7: 17 more TVs with a tested list, from Clean Your TV v2.7.0, among them Sony, Xiaomi, Hisense, Skyworth and Philips sets. The home screen app is updated to 2.7: fixes, with its new options off for now. Vendor setup wizards and home screens, TalkBack and text-to-speech, the remote's services, the Xiaomi TV service and TCL Live are never switched off.

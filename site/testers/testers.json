@@ -1,0 +1,599 @@
+{
+ "updated": "2026-10-28",
+ "testers": [
+  {
+   "login": "clayauld",
+   "tv": "AURZEN BOOMAIR projector",
+   "brand": "Aurzen",
+   "what": "Tried the very first test build and confirmed everything still worked.",
+   "issue": 9,
+   "foundBug": false,
+   "joined": 0
+  },
+  {
+   "login": "juancarlosjimenezarg-tech",
+   "tv": "Philips 2020/2021 UHD Android TV",
+   "brand": "Philips",
+   "what": "Checked Live TV, the remote buttons and HDMI after the clean-up.",
+   "issue": 89,
+   "foundBug": false,
+   "joined": 1
+  },
+  {
+   "login": "iasdev",
+   "tv": "Philips 2020/2021 UHD Android TV",
+   "brand": "Philips",
+   "what": "Confirmed the clean-up and told us the home screen had stayed, which we explain better now.",
+   "issue": 39,
+   "foundBug": false,
+   "joined": 2
+  },
+  {
+   "login": "harashoo1",
+   "tv": "SHARP AQUOS TVE19A",
+   "brand": "Sharp",
+   "what": "Tested the list and confirmed the TV worked fine afterwards.",
+   "issue": 17,
+   "foundBug": false,
+   "joined": 3
+  },
+  {
+   "login": "vjlu",
+   "tv": "Smarttech Apollo Premium4K",
+   "brand": "Smarttech",
+   "what": "Told us the test list changed nothing on this TV, which shaped the notes in the next build.",
+   "issue": 15,
+   "foundBug": false,
+   "joined": 4
+  },
+  {
+   "login": "quest99812",
+   "tv": "Xiaomi MiTV-AESP0",
+   "brand": "Xiaomi",
+   "what": "Confirmed the app list works and reported where the home screen did not change.",
+   "issue": 43,
+   "foundBug": true,
+   "joined": 5
+  },
+  {
+   "login": "wbsaputra",
+   "tv": "Xiaomi MiTV-AESP0",
+   "brand": "Xiaomi",
+   "what": "Tested a beta and confirmed everything worked.",
+   "issue": 43,
+   "foundBug": false,
+   "joined": 6
+  },
+  {
+   "login": "Ganeshgoud9374",
+   "tv": "Redmi MiTV-MOOQ3",
+   "brand": "Xiaomi",
+   "what": "Tried the test version and reported back, which shaped the notes in the next build.",
+   "issue": 295,
+   "foundBug": false,
+   "joined": 7
+  },
+  {
+   "login": "Alinator13",
+   "tv": "TCL Smart TV (BeyondTV)",
+   "brand": "TCL",
+   "what": "Checked casting and streaming after the clean-up.",
+   "issue": 79,
+   "foundBug": false,
+   "joined": 8
+  },
+  {
+   "login": "nanip42-ui",
+   "tv": "Xiaomi Mi TV 4i",
+   "brand": "Xiaomi",
+   "what": "Found that the remote's PatchWall button stopped working. PatchWall is now the owner's choice on every Xiaomi TV.",
+   "issue": 363,
+   "foundBug": true,
+   "joined": 9
+  },
+  {
+   "login": "zjt48162",
+   "tv": "TCL Smart TV (G06)",
+   "brand": "TCL",
+   "what": "Checked every remote button, Wi-Fi reconnecting and Live TV.",
+   "issue": 139,
+   "foundBug": false,
+   "joined": 10
+  },
+  {
+   "login": "DragonSin09",
+   "tv": "Skyworth SWTV-22SA-FHD",
+   "brand": "Skyworth",
+   "what": "Confirmed the list works on a fresh Setup.",
+   "issue": 216,
+   "foundBug": false,
+   "joined": 11
+  },
+  {
+   "login": "syed-talha-amaan",
+   "tv": "OnePlus TV C00",
+   "brand": "OnePlus",
+   "what": "Sent a full report from a test build that showed the test list worked.",
+   "issue": 258,
+   "foundBug": false,
+   "joined": 12
+  },
+  {
+   "login": "VikR225",
+   "tv": "OnePlus TV C00",
+   "brand": "OnePlus",
+   "what": "Tried a beta and told us what improved and what was still missing.",
+   "issue": 568,
+   "foundBug": false,
+   "joined": 13
+  },
+  {
+   "login": "EseLoKo",
+   "tv": "Sony BRAVIA 4K VH22",
+   "brand": "Sony",
+   "what": "Tested the list and confirmed it worked.",
+   "issue": 297,
+   "foundBug": false,
+   "joined": 14
+  },
+  {
+   "login": "chaitanyamestry13",
+   "tv": "Xiaomi Mi TV 4i",
+   "brand": "Xiaomi",
+   "what": "Tested several builds and kept reporting back, which helped us find what was missing on this TV.",
+   "issue": 1046,
+   "foundBug": false,
+   "joined": 15
+  },
+  {
+   "login": "morgangiubbolini75-source",
+   "tv": "Hisense HiSmart 2K ATV4",
+   "brand": "Hisense",
+   "what": "Tried the 0.4.6 test build and confirmed the new home screen works with the setup wizard left on, the first TV outside Xiaomi to show it.",
+   "issue": 346,
+   "foundBug": false,
+   "joined": 16
+  },
+  {
+   "login": "dineshkoravi",
+   "tv": "Xiaomi Mi TV 4A",
+   "brand": "Xiaomi",
+   "what": "Tried the 0.4.6 test build and confirmed it works.",
+   "issue": 54,
+   "foundBug": false,
+   "joined": 17
+  },
+  {
+   "login": "YMJ1123",
+   "tv": "Philips TPM191E",
+   "brand": "Philips",
+   "what": "Tried the 0.4.6 test build and confirmed it works.",
+   "issue": 1409,
+   "foundBug": false,
+   "joined": 18
+  },
+  {
+   "login": "StyvennDevilliers",
+   "tv": "MY Android TV",
+   "brand": "MY",
+   "what": "Tested the new home screen and confirmed it works.",
+   "issue": 673,
+   "foundBug": false,
+   "joined": 19
+  },
+  {
+   "login": "samr6714-dotcom",
+   "tv": "NEBULA D2421",
+   "brand": "Nebula",
+   "what": "Checked that the new home screen stayed after several restarts and changes to the look.",
+   "issue": 1216,
+   "foundBug": false,
+   "joined": 20
+  },
+  {
+   "login": "AmexSaad",
+   "tv": "unifi-TV",
+   "brand": "unifi",
+   "what": "Confirmed the fix with photos of the TV.",
+   "issue": 1092,
+   "foundBug": false,
+   "joined": 21
+  },
+  {
+   "login": "navinmaxx",
+   "tv": "MarQ 4K Android TV",
+   "brand": "MarQ",
+   "what": "Confirmed it works and asked for apps that can be moved anywhere on the home screen.",
+   "issue": 1039,
+   "foundBug": false,
+   "joined": 22
+  },
+  {
+   "login": "jullianoleitte22-maker",
+   "tv": "AIWA 4K Smart TV",
+   "brand": "AIWA",
+   "what": "Confirmed the app worked on their TV.",
+   "issue": 451,
+   "foundBug": false,
+   "joined": 23
+  },
+  {
+   "login": "kaboulay714-gif",
+   "tv": "TD Systems Android TV",
+   "brand": "TD Systems",
+   "what": "Confirmed it works and asked for wallpapers shared by others.",
+   "issue": 1476,
+   "foundBug": false,
+   "joined": 24
+  },
+  {
+   "login": "kjntl007",
+   "tv": "Xiaomi Mi TV 4i",
+   "brand": "Xiaomi",
+   "what": "Tried the 0.4.6 test build within minutes and sent the report that showed why the home screen stayed: another home screen app on the TV.",
+   "issue": 1119,
+   "foundBug": true,
+   "joined": 25
+  },
+  {
+   "login": "lonkijs",
+   "tv": "TCL Percee TV",
+   "brand": "TCL",
+   "what": "Sent a report showing the new home screen was still refused on a TV with its own list, which led us to a bug.",
+   "issue": 701,
+   "foundBug": true,
+   "joined": 26
+  },
+  {
+   "login": "manitosa",
+   "tv": "Xiaomi Mi Box S",
+   "brand": "Xiaomi",
+   "what": "Sent a report showing the same refusal on Android 12, which helped us find the cause.",
+   "issue": 1273,
+   "foundBug": true,
+   "joined": 27
+  },
+  {
+   "login": "devudibidda",
+   "tv": "Hisense Smart TV",
+   "brand": "Hisense",
+   "what": "Sent a full report from the 0.4.6 test build.",
+   "issue": 258,
+   "foundBug": false,
+   "joined": 28
+  },
+  {
+   "login": "ian910814",
+   "tv": "CHIMEI TL-43-G100",
+   "brand": "CHIMEI",
+   "what": "Tried the 0.4.6 test build on a TV with no list of its own and confirmed the new home screen works.",
+   "issue": 1410,
+   "foundBug": false,
+   "joined": 29
+  },
+  {
+   "login": "semi561",
+   "tv": "TCL Smart TV Pro",
+   "brand": "TCL",
+   "what": "Tried it again after the Wi-Fi fix and confirmed the new home screen works.",
+   "issue": 1228,
+   "foundBug": false,
+   "joined": 30
+  },
+  {
+   "login": "8217095-hub",
+   "tv": "Motorola CSV4K",
+   "brand": "Motorola",
+   "what": "Confirmed the new home screen works and asked for apps that can be placed anywhere on it.",
+   "issue": 485,
+   "foundBug": false,
+   "joined": 31
+  },
+  {
+   "login": "tvfaker",
+   "tv": "Homatics Box R 4K Plus",
+   "brand": "Homatics",
+   "what": "Checked the new home screen held after a restart with the setup wizard left on, and found that the look did not change on this box.",
+   "issue": 1094,
+   "foundBug": true,
+   "joined": 32
+  },
+  {
+   "login": "tupac55",
+   "tv": "KINHANK G1",
+   "brand": "Kinhank",
+   "what": "Tried the 0.4.6 test build and confirmed it works, and that the TV feels more fluid.",
+   "issue": 828,
+   "foundBug": false,
+   "joined": 33
+  },
+  {
+   "login": "ajcarmody",
+   "tv": "Hisense HiSmart 4K ATV4",
+   "brand": "Hisense",
+   "what": "Tried the 0.4.6 test build and confirmed it fixed the home screen.",
+   "issue": 1388,
+   "foundBug": false,
+   "joined": 34
+  },
+  {
+   "login": "aleksandrprotor-sys",
+   "tv": "Xiaomi MiTV-MZTU1",
+   "brand": "Xiaomi",
+   "what": "Confirmed the new home screen loads and everything works.",
+   "issue": 1117,
+   "foundBug": false,
+   "joined": 35
+  },
+  {
+   "login": "lejapa",
+   "tv": "SW SWTV-20SA",
+   "brand": "Skyworth",
+   "what": "Ran the 0.4.6 test build and kept watching for errors, with a photo of the result.",
+   "issue": 1298,
+   "foundBug": false,
+   "joined": 36
+  },
+  {
+   "login": "mailboxshr-bit",
+   "tv": "THOMSON SPPL 2K Android TV",
+   "brand": "Thomson",
+   "what": "Confirmed the 0.4.6 test build works and the TV is clean.",
+   "issue": 825,
+   "foundBug": false,
+   "joined": 37
+  },
+  {
+   "login": "RentreX",
+   "tv": "EKO 2K Android TV",
+   "brand": "EKO",
+   "what": "Confirmed it works on one EKO and sent the reports that show a connection problem on another.",
+   "issue": 570,
+   "foundBug": true,
+   "joined": 38
+  },
+  {
+   "login": "insurancefraudster",
+   "tv": "Xiaomi MiTV-MOOQ1",
+   "brand": "Xiaomi",
+   "what": "Checked the new home screen, voice input and every app after a restart, and found an app missing from the dock list.",
+   "issue": 849,
+   "foundBug": true,
+   "joined": 39
+  },
+  {
+   "login": "Skirttles",
+   "tv": "Cecotec QLED 55\" V1",
+   "brand": "Cecotec",
+   "what": "Confirmed the 0.4.6 test build works with every change made.",
+   "issue": 864,
+   "foundBug": false,
+   "joined": 40
+  },
+  {
+   "login": "pcbgmipanayi-debug",
+   "tv": "IMPEX GRANDE FHD TV",
+   "brand": "Impex",
+   "what": "Confirmed the new home screen replaced the stock one.",
+   "issue": 1539,
+   "foundBug": false,
+   "joined": 41
+  },
+  {
+   "login": "david77david00",
+   "tv": "realme AI PONT",
+   "brand": "realme",
+   "what": "Confirmed the new home screen installs and stays after a restart, with a photo.",
+   "issue": 1291,
+   "foundBug": false,
+   "joined": 42
+  },
+  {
+   "login": "birthday-wish00",
+   "tv": "realme AI PONT",
+   "brand": "realme",
+   "what": "Confirmed it works after a restart and told us how the TV behaves at start-up and standby.",
+   "issue": 1385,
+   "foundBug": false,
+   "joined": 43
+  },
+  {
+   "login": "Nisekameko",
+   "tv": "Hisense HiSmart 2K ATV4",
+   "brand": "Hisense",
+   "what": "Confirmed it works and told us what Live TV and USB users will notice.",
+   "issue": 1147,
+   "foundBug": false,
+   "joined": 44
+  },
+  {
+   "login": "hellowgarci01",
+   "tv": "Xiaomi MiTV-AYFR0",
+   "brand": "Xiaomi",
+   "what": "Confirmed the home screen issue is resolved.",
+   "issue": 1067,
+   "foundBug": false,
+   "joined": 45
+  },
+  {
+   "login": "bharadwajk1",
+   "tv": "NOKIA R4",
+   "brand": "Nokia",
+   "what": "Confirmed the new home screen works on a Nokia set with its own vendor start-up screen.",
+   "issue": 512,
+   "foundBug": false,
+   "joined": 46
+  },
+  {
+   "login": "Davitrindade",
+   "tv": "PHILCO 4K Smart TV",
+   "brand": "PHILCO",
+   "what": "Tried the 0.4.6 test build and confirmed everything works, and asked for Portuguese in the app.",
+   "issue": 1175,
+   "foundBug": false,
+   "joined": 47
+  },
+  {
+   "login": "muamfi",
+   "tv": "TCL Q6C",
+   "brand": "TCL",
+   "what": "Followed the Wi-Fi steps on a TCL Google TV and confirmed the new home screen.",
+   "issue": 1157,
+   "foundBug": false,
+   "joined": 48
+  },
+  {
+   "login": "Birdfodo",
+   "tv": "Skyworth TV Stick",
+   "brand": "Skyworth",
+   "what": "Tried the 0.4.6 test build and confirmed it works.",
+   "issue": 341,
+   "foundBug": false,
+   "joined": 49
+  },
+  {
+   "login": "nbalakumar2005",
+   "tv": "Xiaomi Mi TV 4i",
+   "brand": "Xiaomi",
+   "what": "Tried the 0.4.6 test build on an eight year old Mi TV 4i: new home screen and customising both work.",
+   "issue": 1008,
+   "foundBug": false,
+   "joined": 50
+  },
+  {
+   "login": "demoncska14-collab",
+   "tv": "Xiaomi MiTV-MSSP0",
+   "brand": "Xiaomi",
+   "what": "Confirmed everything worked on the first try.",
+   "issue": 543,
+   "foundBug": false,
+   "joined": 51
+  },
+  {
+   "login": "sfe667",
+   "tv": "Sony BRAVIA 4K GB ATV3",
+   "brand": "Sony",
+   "what": "Checked the new home screen held through a restart and found an app missing from the app list.",
+   "issue": 1219,
+   "foundBug": true,
+   "joined": 52
+  },
+  {
+   "login": "j2wznw5k7h-ui",
+   "tv": "SHARP 2K EU Android TV",
+   "brand": "SHARP",
+   "what": "Tried the 0.4.6 test build on Android 14 and confirmed the new home screen installs.",
+   "issue": 194,
+   "foundBug": false,
+   "joined": 53
+  },
+  {
+   "login": "GabrielZinatoSP",
+   "tv": "Philco AI PONT",
+   "brand": "Philco",
+   "what": "Confirmed the 0.4.6 test build gives this TV the new home screen.",
+   "issue": 823,
+   "foundBug": false,
+   "joined": 54
+  },
+  {
+   "login": "lenrig",
+   "tv": "SHARP AQUOS TVE19A",
+   "brand": "SHARP",
+   "what": "Confirmed the 0.4.6 test build changes the home screen with no problems.",
+   "issue": 852,
+   "foundBug": false,
+   "joined": 55
+  },
+  {
+   "login": "chehabkha",
+   "tv": "Sony BRAVIA 4K UR3",
+   "brand": "Sony",
+   "what": "Ran the 0.4.5 list again and confirmed it works.",
+   "issue": 871,
+   "foundBug": false,
+   "joined": 56
+  },
+  {
+   "login": "ThomasBates1",
+   "tv": "Kogan AI PONT",
+   "brand": "Kogan",
+   "what": "Checked the new home screen stays after a restart.",
+   "issue": 881,
+   "foundBug": false,
+   "joined": 57
+  },
+  {
+   "login": "IworiKoso",
+   "tv": "Nokia Android TV",
+   "brand": "Nokia",
+   "what": "Confirmed the 0.4.6 test build works on this TV.",
+   "issue": 1059,
+   "foundBug": false,
+   "joined": 58
+  },
+  {
+   "login": "dwapir",
+   "tv": "Philips 55PUS7334",
+   "brand": "Philips",
+   "what": "Found the home screen kept reverting, then confirmed the 0.4.6 test build fixed it.",
+   "issue": 1232,
+   "foundBug": true,
+   "joined": 59
+  },
+  {
+   "login": "timav97-byte",
+   "tv": "Xiaomi MiTV-MZTU1",
+   "brand": "Xiaomi",
+   "what": "Confirmed the new home screen works on the 0.4.6 test build.",
+   "issue": 1505,
+   "foundBug": false,
+   "joined": 60
+  },
+  {
+   "login": "nahos2585",
+   "tv": "Sony BRAVIA Android TV 9",
+   "brand": "Sony",
+   "what": "Dug into a connection failure until we found the bug, then confirmed the fix.",
+   "issue": 783,
+   "foundBug": true,
+   "joined": 61
+  },
+  {
+   "login": "napfkuchen1",
+   "tv": "PHILIPS QM163E",
+   "brand": "Philips",
+   "what": "Checked the new home screen survives a cold boot.",
+   "issue": 1350,
+   "foundBug": false,
+   "joined": 62
+  },
+  {
+   "login": "cesarbuzatto",
+   "tv": "Homatics Box R 4K Plus",
+   "brand": "Homatics",
+   "what": "Confirmed the 0.4.6 test build installs and applies the new home screen.",
+   "issue": 654,
+   "foundBug": false,
+   "joined": 63
+  },
+  {
+   "login": "Mystic135",
+   "tv": "WALTON Android TV",
+   "brand": "Walton",
+   "what": "Checked the switch holds after a restart and found a dock bug.",
+   "issue": 1166,
+   "foundBug": true,
+   "joined": 64
+  },
+  {
+   "login": "sonicatu",
+   "tv": "Horizon TV",
+   "brand": "Horizon",
+   "what": "Confirmed the 0.4.6 test build works and told us Live TV was hard to find.",
+   "issue": 1370,
+   "foundBug": false,
+   "joined": 65
+  }
+ ]
+}

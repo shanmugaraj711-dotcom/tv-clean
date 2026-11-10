@@ -1,0 +1,170 @@
+# Brand sure sets per brand: 0.4.0 (e42aaf2, lists at 3e34f40), after the base bump to b06ab21 with
+# provisional rows, and after the list review (docs/history/reviews/UP300-lists.md). A full set is a brand
+# with three or more feeding lists; a careful set is a brand with one or two, and holds only the six
+# reviewed packages.
+#
+# Full sets: the same rows at every step. After the review three Amazon notes come from
+# amazon-fire-tv-afttiff43's Omni rows (com.amazon.media.recommendations, com.amazon.client.metrics.api,
+# com.amazon.tv.developer.dataservice), so the 0.3.4 digest in ProfilesTest changed.
+# Base bump: the careful sets lost the five reviewed packages that a provisional ask row named
+# (com.android.printspooler in amazon-fire-tv-afttiff43; com.android.tv.feedbackconsent and the three
+# Privacy Sandbox packages in prismplus-q65-ultra-r10g); MOKA, Stellamore and Vidda lost their sets.
+# Review: com.android.printspooler is default-off on afttiff43 (tested off on the Omni unit), and
+# prismplus-q65-ultra-r10g leaves its new feedbackconsent and Privacy Sandbox lines out (leftOut) until
+# its header records the tested-off reboot, so every careful set is the 0.4.0 one again, row for row.
+
+Amazon (full, 7 lists)
+  unchanged: 26 rows
+
+Hisense (full, 7 lists)
+  unchanged: 11 rows
+
+Panasonic (full, 3 lists)
+  unchanged: 2 rows
+
+Philips (full, 6 lists)
+  unchanged: 12 rows
+
+Sony (full, 17 lists)
+  unchanged: 28 rows
+
+TCL (full, 24 lists)
+  unchanged: 26 rows
+
+XGIMI (full, 3 lists)
+  unchanged: 2 rows
+
+Xiaomi (full, 17 lists)
+  unchanged: 29 rows
+
+AIWA (careful, 1 lists)
+  0.4.0:     tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+BYINTEK (careful, 1 lists)
+  0.4.0:     ads:com.android.adservices.api, ads:com.android.ondevicepersonalization.services, tracking:com.android.federatedcompute.services, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  ads:com.android.adservices.api, ads:com.android.ondevicepersonalization.services, tracking:com.android.federatedcompute.services, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+CHiQ (careful, 2 lists)
+  unchanged: tracking:com.google.android.feedback
+
+Compac (careful, 1 lists)
+  0.4.0:     tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+EKO (careful, 1 lists)
+  0.4.0:     ads:com.android.adservices.api, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  ads:com.android.adservices.api, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+Expressluck (careful, 1 lists)
+  0.4.0:     ads:com.android.adservices.api, ads:com.android.ondevicepersonalization.services, tracking:com.android.federatedcompute.services, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  ads:com.android.adservices.api, ads:com.android.ondevicepersonalization.services, tracking:com.android.federatedcompute.services, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+Freebox (careful, 1 lists)
+  0.4.0:     tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+google (careful, 2 lists)
+  0.4.0:     tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+Haier (careful, 2 lists)
+  unchanged: tracking:com.google.android.feedback
+
+Hitachi (careful, 1 lists)
+  unchanged: tracking:com.google.android.feedback
+
+HVCL (careful, 1 lists)
+  unchanged: tracking:com.google.android.feedback
+
+JMGO (careful, 1 lists)
+  0.4.0:     tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+Jvc (careful, 1 lists)
+  0.4.0:     tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+Kogan (careful, 1 lists)
+  0.4.0:     ads:com.android.adservices.api, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  ads:com.android.adservices.api, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+MOKA (careful, 2 lists)
+  0.4.0:     preloads:com.android.printspooler
+  base bump: no set
+  reviewed:  preloads:com.android.printspooler
+
+Motorola (careful, 1 lists)
+  0.4.0:     ads:com.android.adservices.api, tracking:com.android.federatedcompute.services, tracking:com.android.ondevicepersonalization.services, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  ads:com.android.adservices.api, tracking:com.android.federatedcompute.services, tracking:com.android.ondevicepersonalization.services, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+MTC (careful, 1 lists)
+  unchanged: tracking:com.google.android.feedback
+
+OnePlus (careful, 2 lists)
+  unchanged: tracking:com.google.android.feedback
+
+onn (careful, 2 lists)
+  0.4.0:     tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+Polytron (careful, 1 lists)
+  0.4.0:     tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+RCA (careful, 1 lists)
+  0.4.0:     tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+SANYO (careful, 1 lists)
+  0.4.0:     tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+SHARP (careful, 1 lists)
+  0.4.0:     tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+Skyworth (careful, 2 lists)
+  0.4.0:     tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+  base bump: tracking:com.google.android.feedback
+  reviewed:  tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback
+
+SkyworthDigital (careful, 1 lists)
+  0.4.0:     ads:com.android.adservices.api, ads:com.android.ondevicepersonalization.services, tracking:com.android.federatedcompute.services, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback, preloads:com.android.printspooler
+  base bump: tracking:com.google.android.feedback
+  reviewed:  ads:com.android.adservices.api, ads:com.android.ondevicepersonalization.services, tracking:com.android.federatedcompute.services, tracking:com.android.tv.feedbackconsent, tracking:com.google.android.feedback, preloads:com.android.printspooler
+
+Stellamore (careful, 1 lists)
+  0.4.0:     tracking:com.android.adservices.api, tracking:com.android.ondevicepersonalization.services, preloads:com.android.printspooler
+  base bump: no set
+  reviewed:  tracking:com.android.adservices.api, tracking:com.android.ondevicepersonalization.services, preloads:com.android.printspooler
+
+Telesystem (careful, 1 lists)
+  unchanged: tracking:com.google.android.feedback
+
+Thomson (careful, 2 lists)
+  unchanged: tracking:com.google.android.feedback
+
+vestel (careful, 2 lists)
+  unchanged: tracking:com.google.android.feedback
+
+Vidda (careful, 1 lists)
+  0.4.0:     preloads:com.android.printspooler
+  base bump: no set
+  reviewed:  preloads:com.android.printspooler
