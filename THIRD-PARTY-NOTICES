@@ -1,0 +1,82 @@
+Clean Your TV (phone app): third-party notices
+
+The app is MIT licensed (see LICENSE). It contains, or is built with, the following third-party
+work. The full licence texts are linked or included below.
+
+1. Clean Your TV launcher (bundled TV launcher APK, com.gathin.tvhome)
+   https://github.com/Gathin23/cleanyourtv, upstream main after v3.0.0, commit
+   b06ab21105c49900cb1ed76b24414dba1e21d0db (the third_party/cleanyourtv submodule), launcher 3.0.
+   The APK in android/platform/src/main/assets/bundled is built from that commit without changes
+   and re-signed with this project's launcher key. The
+   upstream repository's per TV clean-up lists, written by its community contributors, are
+   converted into this app's TV profiles, and three of its themes (default, aurora with its
+   wallpaper picture, six-columns) are bundled as they are. Licence: MIT. The aurora wallpaper
+   is the upstream author's own work; he confirmed on 2026-10-23 that it is MIT like the rest.
+   Two more of its pictures are bundled unchanged for the Picture row of the Look sheet, from
+   later releases of the same repository (same MIT licence): themes/glass/wallpaper.jpg (v2.6.0)
+   as core/spec/src/main/resources/tv/cleanyour/core/spec/pictures/glass.jpg, and
+   themes/ruska/wallpaper.jpg (v2.7.0) as .../pictures/ruska.jpg.
+
+     MIT License
+
+     Copyright (c) 2026 Gathin
+
+     Permission is hereby granted, free of charge, to any person obtaining a copy
+     of this software and associated documentation files (the "Software"), to deal
+     in the Software without restriction, including without limitation the rights
+     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+     copies of the Software, and to permit persons to whom the Software is
+     furnished to do so, subject to the following conditions:
+
+     The above copyright notice and this permission notice shall be included in all
+     copies or substantial portions of the Software.
+
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+     SOFTWARE.
+
+   The launcher itself uses AndroidX RecyclerView and DynamicAnimation (Apache License 2.0) and
+   the Outfit typeface (item 3).
+
+2. dadb (ADB protocol code, module :adb:wire)
+   https://github.com/mobile-dev-inc/dadb, version 2.0.0, Copyright (c) 2021 mobile.dev inc.
+   Parts of :adb:wire are derived from it; see adb/wire/NOTICE for the files and the full
+   Apache License 2.0 text. No dadb binary is used.
+
+3. Outfit typeface (the app's and the launcher's font)
+   https://github.com/Outfitio/Outfit-Fonts, Copyright 2021 The Outfit Project Authors.
+   Licence: SIL Open Font License 1.1, full text in
+   ui/design/src/main/res/raw/cyt_outfit_ofl.txt (also shown in the app under Settings, Licences).
+
+4. Libraries compiled into the APK
+   Licence: Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0), unless noted.
+   - Kotlin standard library (JetBrains)
+   - kotlinx.coroutines and kotlinx.serialization (JetBrains)
+   - AndroidX: Activity Compose, Lifecycle, Navigation 3, ProfileInstaller, Core and their
+     transitive AndroidX dependencies (Google)
+   - Jetpack Compose: runtime, UI, foundation, Material 3 (Google)
+   - Bouncy Castle Crypto APIs, bcprov-jdk18on (Ed25519 for the signed module index).
+     Licence: Bouncy Castle Licence (MIT style), https://www.bouncycastle.org/licence.html
+     Copyright (c) 2000 to 2026 The Legion of the Bouncy Castle Inc. (https://www.bouncycastle.org)
+
+   The exact versions are pinned in gradle/libs.versions.toml and verified by
+   gradle/verification-metadata.xml; release builds also publish a CycloneDX SBOM.
+
+5. Look pictures (the wallpapers of the app's own looks)
+   core/spec/src/main/resources/tv/cleanyour/core/spec/looks/*/wallpaper.jpg (Cinema, Console,
+   Horizon, Diwali, Library, Arcade, Mist). Own work of this project, drawn from code (a seeded
+   canvas page, no photos, no third-party material, no AI tools, no fonts) and released under
+   CC0 1.0 Universal (public domain dedication,
+   https://creativecommons.org/publicdomain/zero/1.0/). No credit is needed; this line says where
+   they come from. The looks' config.json files use the launcher's own keys, and the Look sheet's
+   preview follows the launcher's layout numbers (its tile width formula, band and tile sizes),
+   from the same MIT repository as in 1.
+
+6. Build and test tools (not in the APK)
+   Gradle, the Android Gradle Plugin and build tools, Robolectric, Roborazzi, JUnit, Turbine,
+   Kotest, apksig and apksigcopier, each under its own licence (Apache License 2.0, MIT, EPL 1.0
+   for JUnit 4, GPL 3.0 or later for apksigcopier, which only compares release APKs).
