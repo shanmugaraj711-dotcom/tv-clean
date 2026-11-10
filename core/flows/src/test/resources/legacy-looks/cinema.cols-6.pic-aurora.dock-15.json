@@ -1,0 +1,21 @@
+{
+  "dock_apps": ["com.netflix.ninja", "com.google.android.youtube.tv", "com.amazon.amazonvideo.livingroom", "in.startv.hotstar", "com.spotify.tv.android", "com.plexapp.android", "com.sonyliv", "com.graymatrix.did", "com.jio.media.ondemand", "com.example.tvbrowser", "org.videolan.vlc", "tv.twitch.android.app", "com.disney.disneyplus", "com.apple.atve.androidtv.appletv", "com.zattoo.player"],
+  "fill_dock": false,
+  "columns": 6,
+  "rows_below_dock": 0,
+  "animations": true,
+  "advanced_effects": true,
+  "module_cards": false,
+  "reduced_motion": false,
+  "dock_title": true,
+  "dock_row": true,
+  "background_color": "#07060A",
+  "sky_intensity": 0,
+  "cinematic_home": true,
+  "wallpaper": true,
+  "wallpaper_rotation_minutes": 0,
+  "wallpaper_dim": 0,
+  "ambient_glow": false,
+  "cinematic_art": 20,
+  "cinematic_scrim": 45
+}

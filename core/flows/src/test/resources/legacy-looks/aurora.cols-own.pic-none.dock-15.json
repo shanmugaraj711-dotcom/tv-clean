@@ -1,0 +1,10 @@
+{
+  "dock_apps": ["com.netflix.ninja", "com.google.android.youtube.tv", "com.amazon.amazonvideo.livingroom", "in.startv.hotstar", "com.spotify.tv.android", "com.plexapp.android", "com.sonyliv", "com.graymatrix.did", "com.jio.media.ondemand", "com.example.tvbrowser", "org.videolan.vlc", "tv.twitch.android.app"],
+  "fill_dock": false,
+  "rows_below_dock": 2,
+  "module_cards": false,
+  "dock_title": false,
+  "background_color": "#070A14",
+  "wallpaper": false,
+  "wallpaper_rotation_minutes": 0
+}
