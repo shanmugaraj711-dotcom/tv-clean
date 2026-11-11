@@ -18,6 +18,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -63,6 +64,16 @@ class FileJournalTest {
         cold.append(JournalRecord.Begin(open, 0, Op.PressHome, listOf("'input' 'keyevent' '3'"), null, 2L))
         assertEquals(listOf(open), FileJournal(root, EmptyCoroutineContext).openRuns(tvId))
         assertFailsWith<IllegalStateException> { cold.append(JournalRecord.Done(PlanId("01FAKEPLAN0000000000000009"), 0, 0, true, 1)) }
+    }
+
+    // RFC-TRIM-1: `freedMb` survives the journal round-trip, and a line written before it existed
+    // still decodes — with freedMb null, never zero.
+    @Test fun doneWithFreedMbRoundTripsAndOldLinesStillDecode() {
+        val done = JournalRecord.Done(planId, 3, 0, true, 44, freedMb = 500)
+        assertEquals(done, JournalJson.parseLine(JournalJson.line(done)) ?: error("no record"))
+        val old = JournalJson.line(JournalRecord.Done(planId, 3, 0, true, 44))
+        assertFalse("freedMb" in old)
+        assertEquals(JournalRecord.Done(planId, 3, 0, true, 44), JournalJson.parseLine(old))
     }
 
     // Truncate the file at every byte offset of the last record: the torn line is dropped and the

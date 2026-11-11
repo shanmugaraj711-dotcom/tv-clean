@@ -35,9 +35,9 @@ class Issue3221StreamStorageTest {
         assertEquals(h.stock, h.tv.home)
         assertEquals("${DefaultEngine.STREAM_FAILED}$closed [TV storage: 312 MB free]", installFailure(h, plan).error)
         assertEquals(312, InstallStorage.freeMbIn(installFailure(h, plan).error))
-        // One read, after the hash check.
-        assertEquals(1, h.prober.calls.count { it == "freeDataMb" })
-        assertTrue(h.prober.calls.indexOf("freeDataMb") > h.prober.calls.indexOf("installedSha256 ${h.launcher.pkg.value}"))
+        // Three reads: the trim step's before/after, then the one after the hash check.
+        assertEquals(3, h.prober.calls.count { it == "freeDataMb" })
+        assertTrue(h.prober.calls.lastIndexOf("freeDataMb") > h.prober.calls.indexOf("installedSha256 ${h.launcher.pkg.value}"))
     }
 
     // A read that fails leaves the words as they were, with one line that says so.
@@ -56,7 +56,8 @@ class Issue3221StreamStorageTest {
         assertTrue("engine: streamed install of ${h.launcher.pkg.value}: the TV's free storage could not be read (facts)" in lines, lines.toString())
     }
 
-    // A stream that landed before the error is Done, and costs no storage read.
+    // A stream that landed before the error is Done, and costs the install no storage read:
+    // the only two reads are the trim step's before/after.
     @Test fun aStreamThatLandedIsNotAskedAbout() = runTest(timeout = TEST_TIMEOUT) {
         val h = Harness(this)
         h.tv.installStreamError = closed
@@ -65,7 +66,7 @@ class Issue3221StreamStorageTest {
         val plan = h.setupPlan(takeover = false)
         engine.start(plan, h.tv, plan.hash, h.pass())
         assertEquals(RunStatus.COMPLETED, assertIs<RunState.Finished>(h.settle(engine)).status)
-        assertTrue(h.prober.calls.none { it == "freeDataMb" })
+        assertEquals(2, h.prober.calls.count { it == "freeDataMb" })
     }
 
     // The threshold: under 200 MB, or under twice the APK, is clearly low; anything above is not.

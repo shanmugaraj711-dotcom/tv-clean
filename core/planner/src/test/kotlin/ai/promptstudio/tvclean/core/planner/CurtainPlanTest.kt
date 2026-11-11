@@ -65,7 +65,9 @@ class CurtainPlanTest {
         val p = plan(withCurtain(), planner = planner())
         assertEquals(
             head() + cleaning("OTHER") + listOf(
-                "Settle", "cue INSTALL 0/0", "InstallStream com.gathin.tvhome", "cue INSTALLED 0/0", "cue FINALE 0/0", "Settle",
+                // RFC-TRIM-1: the cache clear is the last body step before the settle, after the
+                // last switch-off — the TV must have room before the launcher install.
+                "TrimCaches", "Settle", "cue INSTALL 0/0", "InstallStream com.gathin.tvhome", "cue INSTALLED 0/0", "cue FINALE 0/0", "Settle",
                 "start com.gathin.tvhome/.MainActivity wait", "Mkdir", "ArmHomeWatchdog", "Disable com.google.android.tvlauncher",
                 "SetHome", "VerifyHome", "ConfirmHome", "KillWatchdog", "Uninstall tv.cleanyour.curtain",
             ),

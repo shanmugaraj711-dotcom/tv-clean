@@ -55,8 +55,13 @@ data class StopCard(val case: StopCase, val title: String, val body: String, val
     val tertiary: String? = null)   // W8 addition: S4d and S4e have three buttons
 // `restorePointAtMs`: the restore point Undo everything goes back to, the TV as it was before this
 // app first changed it; `restorePointEarlier` (beta3 QA): it is from an earlier run, not this one.
+// RFC-TRIM-1 (0.5.0): what the cache-clear step did, for Done's line. NONE when the plan had
+// no trim step or it never ran; FREED with the measured MB; EMPTY when it ran and freed
+// nothing; UNKNOWN when it ran but the free-space reads failed; FAILED when the step failed.
+enum class TrimState { NONE, FREED, EMPTY, UNKNOWN, FAILED }
 data class DoneSummary(val switchedOff: Int, val homeScreenOn: Boolean, val restorePointAtMs: Long, val skipped: List<String>, val restartRecommended: Boolean,
-                       val restorePointEarlier: Boolean = false)
+                       val restorePointEarlier: Boolean = false,
+                       val trimState: TrimState = TrimState.NONE, val freedMb: Int? = null)
 sealed interface RestartState { data class Restarting(val sinceMs: Long) : RestartState; data class Back(val afterMs: Long) : RestartState
     data class NotBack(val afterMs: Long) : RestartState }
 sealed interface SetupIntent { data object Start : SetupIntent; data class PickTv(val host: String) : SetupIntent; data class EnterAddress(val ip: String) : SetupIntent

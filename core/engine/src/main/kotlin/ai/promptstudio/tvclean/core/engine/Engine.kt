@@ -15,7 +15,12 @@ import kotlinx.coroutines.flow.StateFlow
 sealed interface JournalRecord { val planId: PlanId
     data class PlanStart(override val planId: PlanId, val tvId: TvId, val base: Sha256, val steps: Int, val hash: Sha256, val app: String, val atMs: Long) : JournalRecord   // R0: 10
     data class Begin(override val planId: PlanId, val i: Int, val op: Op, val lines: List<String>, val prior: Prior?, val atMs: Long) : JournalRecord       // R0: 10
-    data class Done(override val planId: PlanId, val i: Int, val exit: Int, val verified: Boolean, val ms: Long, val resumed: Boolean = false) : JournalRecord
+    // RFC-TRIM-1 (0.5.0): `freedMb` is the MB a finished TrimCaches step freed, measured by the
+    // engine from the TV's free space before and after the step; null on every other step and when
+    // the measurement could not be taken, so old journals (which never wrote the field) still
+    // decode and Done never claims a number it did not measure. The field is optional in
+    // JournalJson for the same reason; nothing downstream may treat a missing field as zero.
+    data class Done(override val planId: PlanId, val i: Int, val exit: Int, val verified: Boolean, val ms: Long, val resumed: Boolean = false, val freedMb: Int? = null) : JournalRecord
     data class Failed(override val planId: PlanId, val i: Int, val exit: Int?, val error: String, val stderrHead: String) : JournalRecord
     data class Section(override val planId: PlanId, val name: String, val token: RunToken, val state: SectionState, val deadlineWallMs: Long) : JournalRecord   // R0: 10
     data class Rollback(override val planId: PlanId, val from: Int) : JournalRecord

@@ -48,6 +48,15 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
     private fun renderOrThrow(op: Op): Rendered = when (op) {
         is Op.Disable -> Rendered(op, lines(line(PM, "disable-user", USER, "0", writePkg(op.pkg))), null, Privilege.PROFILE_STEP,
             Op.Read(ProbeKind.DISABLED), T_PM, CAP_DEFAULT)
+        // RFC-TRIM-1: one `pm trim-caches` line, asked for `bytes` of free space; the TV frees
+        // what it can. The verify read is `df /data` after the trim, so the check below reads
+        // the free space the TV has now (the freed amount itself is measured by the engine,
+        // which reads it before the line too).
+        is Op.TrimCaches -> {
+            require(op.bytes in 1..Op.TrimCaches.MAX_TRIM_CACHES_BYTES) { "trim-caches bytes must be 1 to ${Op.TrimCaches.MAX_TRIM_CACHES_BYTES}" }
+            Rendered(op, lines(line(PM, "trim-caches", op.bytes.toString())), null, Privilege.PROFILE_STEP,
+                Op.Read(ProbeKind.DF_DATA), T_TRIM, CAP_DEFAULT)
+        }
         is Op.Enable -> Rendered(op, lines(line(PM, "enable", USER, "0", pkg(op.pkg))), null, Privilege.PROFILE_STEP,
             Op.Read(ProbeKind.DISABLED), T_PM, CAP_DEFAULT)
         is Op.DefaultState -> Rendered(op, lines(line(PM, "default-state", USER, "0", writePkg(op.pkg))), null, Privilege.PROFILE_STEP,
@@ -247,7 +256,7 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
         is Op.AccessibilityRemove -> null
         is Op.Uninstall, is Op.RemoveFile, is Op.RestartHome, is Op.StartActivity, is Op.Mkdir,
         is Op.ConfirmHome, is Op.KillWatchdog, is Op.VerifyHome, is Op.Read, is Op.Settle,
-        Op.PressHome, Op.Reboot, Op.DebugOff, is Op.CurtainCue -> null
+        Op.PressHome, Op.Reboot, Op.DebugOff, is Op.CurtainCue, is Op.TrimCaches -> null
     }
 
     override fun check(op: Op, verifyOutput: String, prior: Prior?): VerifyResult {
@@ -255,6 +264,10 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
         fun mismatch(expected: String) = VerifyResult.Mismatch(expected, verifyOutput.take(200))
         return when (op) {
             is Op.Disable -> if (("package:" + op.pkg.value) in lines) VerifyResult.Ok else mismatch("package:${op.pkg.value} listed by pm list packages -d")
+            // RFC-TRIM-1: the trim is done when `df /data` answers with a /data row after it.
+            // The row's free space is the number the engine compares with the one it read before
+            // the line; the check here only proves the read worked, never a freed amount.
+            is Op.TrimCaches -> if (dfFreeMb(verifyOutput) != null) VerifyResult.Ok else mismatch("a /data row with free space in df /data")
             is Op.Enable -> if (("package:" + op.pkg.value) !in lines) VerifyResult.Ok else mismatch("package:${op.pkg.value} not listed by pm list packages -d")
             is Op.DefaultState -> if (PackageDump.enabledSetting(verifyOutput) == 0) VerifyResult.Ok else mismatch("enabled=0 in dumpsys package ${op.pkg.value}")
             is Op.Install -> installed(op.pkg, op.versionCode, verifyOutput)
@@ -306,6 +319,17 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
     }
 
     private fun settingOf(lines: List<String>, key: String): String? = lines.firstOrNull { it.startsWith("$key=") }?.removePrefix("$key=")
+
+    // RFC-TRIM-1: the free MB of `df /data` output, or null when it has no readable /data row.
+    // The strict parser is FreeDataParser (:core:probe); this one only answers the check's
+    // question, so it is tolerant of the row's shape and never guesses a number.
+    private fun dfFreeMb(output: String): Int? {
+        val rows = output.lines().map { it.trim() }.filter { it.isNotEmpty() }
+        val row = rows.map { it.split(Regex("\\s+")) }.lastOrNull { it.size >= 5 && it.last() == "/data" } ?: return null
+        val available = row[row.size - 3]
+        if (!Regex("^[0-9]{1,15}$").matches(available)) return null
+        return (available.toLong() / 1024).coerceIn(0L, Int.MAX_VALUE.toLong()).toInt()
+    }
 
     private fun installed(pkg: PackageName, versionCode: Long, dump: String): VerifyResult {
         val found = PackageDump.versionCode(dump)
@@ -390,6 +414,9 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
         // Timeouts (SECURITY 3.5, ARCHITECTURE 3.3) and output caps (SECURITY 3.5, ARCHITECTURE 3.7).
         const val T_DEFAULT = 30_000L
         const val T_PM = 30_000L
+        // RFC-TRIM-1: clearing caches can take a while on a TV with a lot of them; 60 s, and the
+        // plan's CONTINUE policy means a slow trim never stops the clean.
+        const val T_TRIM = 60_000L
         const val T_DUMPSYS = 20_000L
         const val T_INSTALL = 120_000L
         const val T_START_WAIT = 180_000L

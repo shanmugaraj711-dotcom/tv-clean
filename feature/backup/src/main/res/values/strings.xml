@@ -29,6 +29,7 @@
     <string name="restore_row_undo_sub">Put the TV back to how it was on {date}</string>
     <string name="restore_row_save">Save a copy</string>
     <string name="restore_row_save_sub">Saves a zip file to a place you choose.</string>
+    <string name="restore_uninstall_note">Uninstalling this app deletes the restore point on this phone. The TV keeps its own copy, and the zip from Save a copy is the backup to keep. Save it before you uninstall.</string>
     <string name="restore_row_factory">Before a factory reset</string>
     <string name="restore_row_factory_sub">Switches the setup wizard back on, so the TV can start up properly after a reset.</string>
 

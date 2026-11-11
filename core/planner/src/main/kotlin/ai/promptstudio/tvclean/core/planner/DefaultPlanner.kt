@@ -320,6 +320,17 @@ class DefaultPlanner(
             // the switched-off apps before anything is installed or HOME changes.
             val launcherNeeded = choices.installLauncher && !pinInstalled(req.launcher)
             val needsHome = choices.takeover && snapshot.home.resolved != launcher
+            // RFC-TRIM-1 (0.5.0, issues #3221/#3101/#2851): the old caches go before the settle and
+            // the launcher install, so a TV low on storage can install the new home screen at all —
+            // and so a clean actually frees space. One shell line, CONTINUE on failure: a TV that
+            // refuses it still gets the rest. Only when the plan changes something else: a plan
+            // against an already-clean TV must stay empty (ARCHITECTURE 6.3), and a cache clear
+            // with nothing else to do is a run the wizard never offers. Its own group, not
+            // GROUP_LAUNCHER: weaveCurtain takes the first non-Settle GROUP_LAUNCHER step for its
+            // INSTALL cue.
+            if (disabled > 0 || launcherNeeded || needsHome) {
+                step(Op.TrimCaches(TRIM_CACHES_BYTES), null, GROUP_CLEAN, NARRATION_TRIM_CACHES, FailurePolicy.CONTINUE)
+            }
             if (disabled > 0 && (launcherNeeded || needsHome)) {
                 step(Op.Settle(settleSeconds), null, GROUP_LAUNCHER, "Giving the TV $settleSeconds seconds to settle", FailurePolicy.CONTINUE)
             }
@@ -1055,7 +1066,11 @@ class DefaultPlanner(
         const val REASON_HELPER_LOOK = "the Home button helper needs the look that names the TV's own home screen, and it could not be made"
         const val APK_NAME_HEX = 40
         const val GROUP_CUSTOM = "custom"
+        const val GROUP_CLEAN = "clean"      // RFC-TRIM-1: the cache-clear step's group
         const val GROUP_LAUNCHER = "launcher"
+        // RFC-TRIM-1: `pm trim-caches` is asked to free 1 GiB of cached data.
+        const val TRIM_CACHES_BYTES = 1_073_741_824L
+        const val NARRATION_TRIM_CACHES = "Clearing old caches to free storage"
         const val GROUP_HOME = "home"
         const val GROUP_PUT_BACK = "put_back"
         const val GROUP_SWITCH_OFF = "switch_off"

@@ -12,6 +12,7 @@ data class LookInfo(val id: String, val until: LocalDate? = null, val sky: Boole
 object Looks {
     private val table = listOf(
         LookInfo("horizon", sky = true),
+        LookInfo("dawn", sky = true),
         LookInfo("diwali", until = LocalDate.of(2026, 11, 10)),
     ).associateBy { it.id }
 

@@ -52,7 +52,9 @@ object UndoOrder {
         is Op.AccessibilityRemove -> Target.Helper(op.component.pkg)
         is Op.ArmHelperWatchdog,
         is Op.VerifyHome, is Op.ArmHomeWatchdog, is Op.ConfirmHome, is Op.KillWatchdog, Op.PressHome, is Op.Mkdir,
-        is Op.RestartHome, is Op.StartActivity, is Op.Read, is Op.Settle, Op.Reboot, Op.DebugOff, is Op.CurtainCue -> null
+        is Op.RestartHome, is Op.StartActivity, is Op.Read, is Op.Settle, Op.Reboot, Op.DebugOff, is Op.CurtainCue,
+        // RFC-TRIM-1: clearing caches has no undo target (the caches come back as apps run).
+        is Op.TrimCaches -> null
     }
 
     // The earliest record of every item, chronological by first touch.

@@ -184,6 +184,7 @@ data class SetupExtras(
     // 0.4.7: this TV's report was sent before (SentReports), for the careful mode line on S3.
     val reportSentAtMs: Long? = null,
     val restorePointPushed: Boolean = false,     // D44
+    val restorePointPushFailed: Boolean = false, // 0.5.0: the D44 push to the TV was tried this run and failed
     val dock: List<AppChoice> = emptyList(),     // D4 row and the dock sheet (S3b): the dock, then Row 2 and Row 3
     val apps: List<AppChoice> = emptyList(),     // installed apps for the dock sheet
     val dockColumns: Int = DockLayers.DEFAULT_COLUMNS,   // apps per row for the chosen look (DockLayers)
@@ -1573,8 +1574,29 @@ class SetupMachine(
         if (lookFailed) deps.log.line("setup: the look did not reach the TV; the choice is kept for the Look sheet")
         mutableExtras.update { it.copy(doneLines = skippedNames, doneKept = keptNames, doneNothing = off == 0 && !verifiedHomeOn && !changed, doneNothingWhy = why,
             keepsDebugging = keepsDebugging(tvId), doneHomeKept = homeKept, doneLookFailed = lookFailed) }
-        send(Ev.ShowDone(tvId, DoneSummary(off, verifiedHomeOn, restorePointAt, skippedNames, recommended, restorePointEarlier)))
-        session?.let { s -> mutableExtras.update { it.copy(restorePointPushed = deps.restorePoint.write(done, s, p)) } }
+        // RFC-TRIM-1: what the cache-clear step did, from the plan and the journal — never from
+        // the requested bytes, which say nothing about what the TV actually freed. The measured
+        // MB wins over a failure (a step that failed once and finished on resume); a step that
+        // never ran (no Done, no Failed) gets no line at all, since the run cleared nothing.
+        val trimIndex = plan?.steps?.indexOfFirst { it.op is Op.TrimCaches }?.takeIf { it >= 0 }
+        val trimFreed = trimIndex?.let { plan?.let { p -> deps.ledger.freedMb(p.id) } }
+        val trimDone = trimIndex != null && plan != null && deps.ledger.doneAt(plan.id, trimIndex)
+        val trimFailed = trimIndex != null && plan != null && deps.ledger.failureAt(plan.id, trimIndex) != null
+        val trimState = when {
+            trimIndex == null || (!trimDone && !trimFailed) -> TrimState.NONE
+            trimFreed != null && trimFreed > 0 -> TrimState.FREED
+            trimFreed != null -> TrimState.EMPTY
+            trimFailed -> TrimState.FAILED
+            else -> TrimState.UNKNOWN
+        }
+        send(Ev.ShowDone(tvId, DoneSummary(off, verifiedHomeOn, restorePointAt, skippedNames, recommended, restorePointEarlier, trimState, trimFreed)))
+        // 0.5.0: the D44 push was best-effort and its failure was invisible (restorePointPushed was
+        // recorded but never read). Only a tried-and-failed push sets the flag: no session means no
+        // attempt, and the TV-side copy from the earlier run still stands.
+        session?.let { s ->
+            val pushed = deps.restorePoint.write(done, s, p)
+            mutableExtras.update { it.copy(restorePointPushed = pushed, restorePointPushFailed = !pushed) }
+        }
         session?.let { s ->
             // 0.4.8 (Restarts): the boot this Done starts from, so the restart check below (or Manage's next connect after
             // a restart) has something to count against.

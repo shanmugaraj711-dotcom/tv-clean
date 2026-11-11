@@ -37,6 +37,8 @@ object OpJson {
     fun encode(op: Op): JsonObject = buildJsonObject {
         when (op) {
             is Op.Disable -> { put("v", "disable"); put("pkg", op.pkg.value) }
+            // RFC-TRIM-1
+            is Op.TrimCaches -> { put("v", "trim_caches"); put("bytes", op.bytes) }
             is Op.Enable -> { put("v", "enable"); put("pkg", op.pkg.value) }
             is Op.DefaultState -> { put("v", "default_state"); put("pkg", op.pkg.value) }
             is Op.Install -> {
@@ -89,6 +91,7 @@ object OpJson {
 
     fun decode(o: JsonObject): Op = when (val v = o.str("v")) {
         "disable" -> Op.Disable(pkg(o.str("pkg")))
+        "trim_caches" -> Op.TrimCaches(o.long("bytes"))
         "enable" -> Op.Enable(pkg(o.str("pkg")))
         "default_state" -> Op.DefaultState(pkg(o.str("pkg")))
         "install" -> Op.Install(path(o.obj("apk")), Sha256(o.str("sha256")), pkg(o.str("pkg")), o.long("versionCode"), Sha256(o.str("signer")),

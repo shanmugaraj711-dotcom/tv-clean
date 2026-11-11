@@ -31,7 +31,7 @@ object JournalJson {
         when (r) {
             is JournalRecord.PlanStart -> { put("t", "plan"); put("tv", r.tvId.value); put("base", r.base.hex); put("steps", r.steps); put("hash", r.hash.hex); put("app", r.app); put("at", r.atMs) }
             is JournalRecord.Begin -> { put("t", "begin"); put("i", r.i); put("op", OpJson.encode(r.op)); put("lines", OpJson.strings(r.lines)); r.prior?.let { put("prior", OpJson.encodePrior(it)) }; put("at", r.atMs) }
-            is JournalRecord.Done -> { put("t", "done"); put("i", r.i); put("exit", r.exit); put("verified", r.verified); put("ms", r.ms); if (r.resumed) put("resumed", true) }
+            is JournalRecord.Done -> { put("t", "done"); put("i", r.i); put("exit", r.exit); put("verified", r.verified); put("ms", r.ms); if (r.resumed) put("resumed", true); if (r.freedMb != null) put("freedMb", r.freedMb) }
             is JournalRecord.Failed -> { put("t", "failed"); put("i", r.i); r.exit?.let { put("exit", it) }; put("error", r.error); put("stderr", r.stderrHead) }
             is JournalRecord.Section -> { put("t", "section"); put("name", r.name); put("token", r.token.value); put("state", r.state.name); put("deadlineWall", r.deadlineWallMs) }
             is JournalRecord.Rollback -> { put("t", "rollback"); put("from", r.from) }
@@ -46,7 +46,7 @@ object JournalJson {
             "plan" -> JournalRecord.PlanStart(planId, TvId(o.str("tv")), Sha256(o.str("base")), o.int("steps"), Sha256(o.str("hash")), o.str("app"), o.long("at"))
             "begin" -> JournalRecord.Begin(planId, o.int("i"), OpJson.decode(o.obj("op")), o.arr("lines").map { it.jsonPrimitive.content },
                 o.optObj("prior")?.let { OpJson.decodePrior(it) }, o.long("at"))
-            "done" -> JournalRecord.Done(planId, o.int("i"), o.int("exit"), o.str("verified").toBooleanStrict(), o.long("ms"), o.optStr("resumed")?.toBooleanStrict() ?: false)
+            "done" -> JournalRecord.Done(planId, o.int("i"), o.int("exit"), o.str("verified").toBooleanStrict(), o.long("ms"), o.optStr("resumed")?.toBooleanStrict() ?: false, o.optLong("freedMb")?.toInt())
             "failed" -> JournalRecord.Failed(planId, o.int("i"), o.optLong("exit")?.toInt(), o.str("error"), o.str("stderr"))
             "section" -> JournalRecord.Section(planId, o.str("name"), RunToken(o.str("token")), SectionState.valueOf(o.str("state")), o.long("deadlineWall"))
             "rollback" -> JournalRecord.Rollback(planId, o.int("from"))

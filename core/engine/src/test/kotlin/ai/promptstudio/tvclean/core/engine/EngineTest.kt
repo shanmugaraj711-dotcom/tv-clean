@@ -211,7 +211,8 @@ class EngineTest {
         val h = Harness(this)
         val engine = h.engine()
         val plan = h.setupPlan(takeover = false, installLauncher = false)
-        assertEquals(h.debloat.size, plan.steps.size)
+        // RFC-TRIM-1: the five switch-offs plus the cache clear.
+        assertEquals(h.debloat.size + 1, plan.steps.size)
         assertEquals(StartResult.Started, engine.start(plan, h.tv, plan.hash, h.pass()))
         val running = engine.runState(h.tv.tvId).value
         assertIs<RunState.Running>(running)
@@ -359,7 +360,8 @@ class EngineTest {
         engine.continueRun(h.tv.tvId, h.pass())
         h.settle(engine)
         assertEquals(RunStatus.COMPLETED, (engine.runState(h.tv.tvId).value as RunState.Finished).status)
-        assertEquals(h.debloat.size, ChangeRecords.fromJournal(h.records(plan)).size)
+        // RFC-TRIM-1: the five switch-offs and the cache clear.
+        assertEquals(h.debloat.size + 1, ChangeRecords.fromJournal(h.records(plan)).size)
     }
 
     @Test fun aLostConnectionPausesAndContinueResumesTheSameStep() = runTest(timeout = TEST_TIMEOUT) {

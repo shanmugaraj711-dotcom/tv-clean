@@ -154,6 +154,12 @@ class BundledThemeSource : ThemeSource, PictureSource {
             Entry("library", "Library", "Every app on one calm page, no dock band, warm lamp light.", LOOKS),
             Entry("arcade", "Arcade", "A neon sun over a glowing grid, and tiles that bounce.", LOOKS),
             Entry("mist", "Mist", "Soft out of focus light in indigo, teal and peach.", LOOKS),
+            // 0.5.0: four more looks, each a different colour and feel from the ones above, with
+            // its own wallpaper and its own keys (no look copies another's config).
+            Entry("ember", "Ember", "Warm ember reds and a low glow, five tiles a row.", LOOKS),
+            Entry("lagoon", "Lagoon", "Calm teal water, six tiles a row, gentle motion.", LOOKS),
+            Entry("midnight", "Midnight", "Deep navy night with stars, four big tiles, no dock band.", LOOKS),
+            Entry("dawn", "Dawn", "Soft peach sunrise, with a sky that brightens with the hour.", LOOKS),
         )
 
         val themes: List<Theme> by lazy {
@@ -188,6 +194,12 @@ class BundledThemeSource : ThemeSource, PictureSource {
             GalleryEntry("lamp", "Lamp light", "$LOOKS/library/wallpaper.jpg", 0xFF141210.toInt()),
             GalleryEntry("neon", "Neon", "$LOOKS/arcade/wallpaper.jpg", 0xFF0B0614.toInt()),
             GalleryEntry("cobalt", "Cobalt", "$LOOKS/console/wallpaper.jpg", 0xFF020611.toInt()),
+            // 0.5.0: the pictures of the four new looks, so look2 can pick them too. Dawn keeps
+            // its sky, like Mountains (sky 55).
+            GalleryEntry("ember", "Ember", "$LOOKS/ember/wallpaper.jpg", 0xFF1A0B06.toInt()),
+            GalleryEntry("lagoon", "Lagoon", "$LOOKS/lagoon/wallpaper.jpg", 0xFF06201E.toInt()),
+            GalleryEntry("midnight", "Midnight", "$LOOKS/midnight/wallpaper.jpg", 0xFF04060F.toInt()),
+            GalleryEntry("dawn", "Dawn", "$LOOKS/dawn/wallpaper.jpg", 0xFF2A1408.toInt(), sky = 40),
         )
 
         val gallery: List<Picture> by lazy {

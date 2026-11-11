@@ -421,6 +421,12 @@ internal object LegacyLooks {
         "library" to Entry(StyleId.ALL_APPS, "lamp", 5, Movement.QUICK, details = LookDetails(ring = false)),
         "arcade" to Entry(StyleId.CLASSIC, "neon", 6),
         "mist" to Entry(StyleId.CLASSIC, "mist", 5, lift = true),
+        // 0.5.0: the four new looks, so a saved choice of one migrates to the look2 form
+        // instead of falling back to the Default look.
+        "ember" to Entry(StyleId.CLASSIC, "ember", 5, lift = true),
+        "lagoon" to Entry(StyleId.CALM, "lagoon", 6, Movement.SMOOTH),
+        "midnight" to Entry(StyleId.CLASSIC, "midnight", 4),
+        "dawn" to Entry(StyleId.CALM, "dawn", 5, details = LookDetails(sky = true)),
     )
 
     fun of(id: String?): Entry = table[id] ?: table.getValue("default")

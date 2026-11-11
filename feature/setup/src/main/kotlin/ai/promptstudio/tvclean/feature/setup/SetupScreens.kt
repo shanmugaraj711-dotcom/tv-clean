@@ -66,6 +66,7 @@ import ai.promptstudio.tvclean.core.flows.SetupState
 import ai.promptstudio.tvclean.core.flows.Sheet
 import ai.promptstudio.tvclean.core.flows.StopAction
 import ai.promptstudio.tvclean.core.flows.StopCase
+import ai.promptstudio.tvclean.core.flows.TrimState
 import ai.promptstudio.tvclean.core.model.Level
 import ai.promptstudio.tvclean.core.model.PackageName
 import ai.promptstudio.tvclean.core.planner.GroupSummary
@@ -909,6 +910,17 @@ fun DoneScreen(state: SetupState.Done, extras: SetupExtras, actions: SetupAction
         }
         // UX finding 18 (issues #1279, #1649): the look did not reach the TV; the Look sheet opens on the choice.
         if (extras.doneLookFailed) Body(stringResource(R.string.done_look_failed), Modifier.padding(top = 8.dp))
+        // RFC-TRIM-1: what the cache-clear step did; nothing when the plan had no trim step (or it never ran).
+        when (s.trimState) {
+            TrimState.FREED -> Body(msg(R.string.done_trim_freed, "freed" to (s.freedMb ?: 0)), Modifier.padding(top = 8.dp))
+            TrimState.EMPTY -> Body(stringResource(R.string.done_trim_empty), Modifier.padding(top = 8.dp))
+            TrimState.UNKNOWN -> Body(stringResource(R.string.done_trim_unknown), Modifier.padding(top = 8.dp))
+            TrimState.FAILED -> Body(stringResource(R.string.done_trim_failed), Modifier.padding(top = 8.dp))
+            TrimState.NONE -> {}
+        }
+        // 0.5.0: the restore point did not reach the TV this run, so the TV-side copy is stale or
+        // missing and an uninstall would leave nothing to go back to. The zip is the backup.
+        if (extras.restorePointPushFailed) Body(stringResource(R.string.done_restore_push_failed), Modifier.padding(top = 8.dp))
         Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             // beta3 QA: a later run names the restore point Undo everything goes back to, the first one.
             CheckLine(msg(if (s.restorePointEarlier) R.string.done_restore_earlier else R.string.done_restore_saved, "date" to dateTime(s.restorePointAtMs, locale)))

@@ -62,7 +62,7 @@ class PlannerTest {
         assertTrue(disables.all { it.onFailure == FailurePolicy.SKIP_IF_REFUSED && it.prior == Prior(packageState = EnabledState.ENABLED) })
         val tail = ops(p).drop(disables.size)
         assertEquals(
-            listOf("Settle", "InstallStream", "StartActivity", "Mkdir", "ArmHomeWatchdog", "Disable", "SetHome", "VerifyHome", "ConfirmHome", "KillWatchdog"),
+            listOf("TrimCaches", "Settle", "InstallStream", "StartActivity", "Mkdir", "ArmHomeWatchdog", "Disable", "SetHome", "VerifyHome", "ConfirmHome", "KillWatchdog"),
             tail.map { it::class.simpleName },
         )
         val arm = p.find<Op.ArmHomeWatchdog>()
@@ -97,6 +97,32 @@ class PlannerTest {
         assertTrue(p.steps.mapIndexed { i, s -> i == s.index }.all { it })
         assertEquals(p.steps.indices.toList(), p.steps.map { it.index })
         assertTrue(p.steps.any { it.rendered.privilege == Privilege.TAKEOVER })
+    }
+
+    // RFC-TRIM-1: the cache clear runs after the switch-offs and before the launcher install, in
+    // its own `clean` group, asking for 1 GiB and never stopping the run.
+    @Test fun setupClearsTheOldCachesBeforeTheLauncherInstall() {
+        val p = plan(setup())
+        val trim = p.find<Op.TrimCaches>()
+        assertEquals(DefaultPlanner.TRIM_CACHES_BYTES, trim.bytes)
+        assertEquals(1_073_741_824L, trim.bytes)
+        val step = p.steps.single { it.op is Op.TrimCaches }
+        assertEquals(DefaultPlanner.GROUP_CLEAN, step.group)
+        assertEquals("Clearing old caches to free storage", step.narration)
+        assertEquals(FailurePolicy.CONTINUE, step.onFailure)
+        val trimAt = p.steps.indexOfFirst { it.op is Op.TrimCaches }
+        val installAt = p.steps.indexOfFirst { it.op is Op.InstallStream || it.op is Op.Install }
+        assertTrue(trimAt < installAt, "the caches go before the install")
+        assertTrue(p.steps.take(trimAt).all { it.op is Op.Disable }, "nothing but switch-offs before it")
+    }
+
+    // RFC-TRIM-1: a plan against an already-clean TV carries no cache clear — the trim only rides
+    // along when the plan changes something else, so re-planning an applied TV stays empty
+    // (ARCHITECTURE 6.3).
+    @Test fun aPlanWithNothingToDoHasNoCacheClearStep() {
+        val snap = snapshot(disabled = debloatList.map { it.value }.toSet(), home = launcher, claimants = listOf(launcher, stock), extra = mapOf(installedLauncher()))
+        val p = plan(setup(choices = choices(takeover = false)), snapshot = snap)
+        assertTrue(ops(p).none { it is Op.TrimCaches }, "nothing to change, nothing to clear: ${ops(p)}")
     }
 
     @Test fun keptAndExtraOffChangeExactlyThoseOps() {
@@ -171,7 +197,7 @@ class PlannerTest {
         val snap = Samples.snapshot(facts = facts, packages = Samples.miTvPackages(emptySet())).withSettings(emptyMap())
         val p = plan(setup(choices = choices(takeover = false)), snapshot = snap)
         val tail = ops(p).dropWhile { it is Op.Disable }
-        assertEquals(listOf("Settle", "Mkdir", "PushAsset", "Install", "RemoveFile"), tail.map { it::class.simpleName })
+        assertEquals(listOf("TrimCaches", "Settle", "Mkdir", "PushAsset", "Install", "RemoveFile"), tail.map { it::class.simpleName })
         val push = p.find<Op.PushAsset>(); val install = p.find<Op.Install>()
         assertEquals(RemoteDir.TMP, push.dest.dir); assertEquals(push.dest, install.apk)
         assertEquals(artifact().sha256, install.sha256); assertTrue(install.flags.isEmpty())
@@ -185,7 +211,7 @@ class PlannerTest {
         assertTrue(refused(setup(), snapshot = snap).single().contains("different key"))
         val p = plan(setup(choices = choices(replaceSigner = true)), snapshot = snap)
         val tail = ops(p).dropWhile { it is Op.Disable }
-        assertEquals(listOf("Settle", "Uninstall", "InstallStream"), tail.take(3).map { it::class.simpleName })
+        assertEquals(listOf("TrimCaches", "Settle", "Uninstall", "InstallStream"), tail.take(4).map { it::class.simpleName })
         assertTrue(p.summary.replacesLauncher)
         // Launcher v2.4.0 plan, finding 4: the uninstall erases the other launcher's look, order, app list and settings too.
         assertEquals("Replace the home screen app (its look, order, app list, settings and card answers on the TV are reset)", p.steps.first { it.op is Op.Uninstall }.narration)

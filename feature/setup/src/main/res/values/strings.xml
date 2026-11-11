@@ -330,9 +330,11 @@
     <string name="stop_resume_change_body">It stopped before it finished. Carry on with the rest, or undo what we did?</string>
     <string name="stop_reconnect_home_body">Reconnect to the TV to put its own home screen back. We\'ll do it as soon as {tv} answers.</string>
 
-    <!-- Stop: install failure (UX 4.14) -->
+    <!-- Stop: install failure (UX 4.14). The body used to say "We cleared caches and tried
+         again", but no step of the app clears caches — the clean only switches apps off — so
+         a TV low on storage stays low. The copy no longer claims the clear. -->
     <string name="stop_install_failed_title">The new home screen couldn\'t be installed</string>
-    <string name="stop_install_failed_body">The TV is out of space: {free, plural, other {# MB}} free, {needed, plural, other {# MB}} needed. We cleared caches and tried again. Still no. The clean-up is done; to try the home screen later, free space in Settings > Storage, then run Setup again.</string>
+    <string name="stop_install_failed_body">The TV is out of space: {free, plural, other {# MB}} free, {needed, plural, other {# MB}} needed. The clean-up is done; to try the home screen later, free space in Settings > Storage, then run Setup again.</string>
     <string name="stop_install_failed_generic_body">The TV wouldn\'t accept the new home screen. The clean-up is done; you can run Setup again later to try the home screen once more.</string>
     <string name="stop_install_failed_primary">OK</string>
     <string name="stop_install_failed_secondary">Show details</string>
@@ -367,6 +369,12 @@
     <!-- 0.4.7 (UX finding 18, issues #1279, #1649): the look's send (a sync push or the launcher's ThemeProvider) did not reach the TV while the switch held -->
     <string name="done_look_failed">Your look didn\'t reach the TV. Send it again from Home screen.</string>
     <string name="done_restore_saved">Restore point saved on this phone ({date})</string>
+    <!-- RFC-TRIM-1 (0.5.0): what the cache-clear step did -->
+    <string name="done_trim_freed">Freed {freed} MB of old cache.</string>
+    <string name="done_trim_empty">There was no old cache to clear.</string>
+    <string name="done_trim_unknown">Old caches cleared.</string>
+    <string name="done_trim_failed">Could not clear old caches. Free space in the TV\'s Settings &gt; Storage and run Setup again.</string>
+    <string name="done_restore_push_failed">The restore point could not be saved on the TV. Save a copy from Restore before you uninstall this app.</string>
     <!-- beta3: a later run; the restore point is the one from the first Setup, which Undo everything goes back to -->
     <string name="done_restore_earlier">Restore point on this phone (from {date})</string>
     <string name="done_debug_note">Debugging on the TV switches off when you tap Finish. Next time, switch it on again with the remote.</string>

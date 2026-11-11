@@ -174,6 +174,9 @@ class RestoreCommands(private val renderer: OpRenderer) {
 
         fun describeChange(op: Op): String = when (op) {
             is Op.Disable -> "Switched off ${op.pkg.value}"
+            // RFC-TRIM-1: no undo (the deleted caches come back as apps run); describeInverse
+            // falls through to this line, and cannotUndo says it has no undo.
+            is Op.TrimCaches -> "Cleared old caches"
             is Op.Enable -> "Switched on ${op.pkg.value}"
             is Op.DefaultState -> "Reset ${op.pkg.value} to its default state"
             is Op.Install -> "Installed ${op.pkg.value}"

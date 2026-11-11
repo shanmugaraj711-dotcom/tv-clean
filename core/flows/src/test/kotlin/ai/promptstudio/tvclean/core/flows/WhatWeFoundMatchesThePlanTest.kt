@@ -173,11 +173,13 @@ class WhatWeFoundMatchesThePlanTest {
                 "StartActivity", "Mkdir", "ArmHomeWatchdog", "Disable", "SetHome", "VerifyHome", "ConfirmHome", "KillWatchdog"),
             tail.map { it.op::class.simpleName },
         )
-        assertTrue(steps.take(steps.size - tail.size).all { it.op is Op.Disable }, "the debloat comes first")
+        assertTrue(steps.take(steps.size - tail.size).all { it.op is Op.Disable || it.op is Op.TrimCaches }, "the debloat comes first")
+        // RFC-TRIM-1: the cache clear is the last step before the settle, after the last switch-off.
+        assertIs<Op.TrimCaches>(steps[steps.size - tail.size - 1].op)
         // RFC-CURTAIN-1: the curtain's start and cues around that body; the final order for this TV.
         val curtainOrder = plan.steps.map { s -> (s.op as? Op.CurtainCue)?.stage?.name ?: s.op::class.simpleName }
         assertEquals(listOf("InstallStream", "StartActivity", "SCAN", "RESTORE_SAVED"), curtainOrder.take(4))
-        val cleaning = curtainOrder.subList(4, curtainOrder.indexOf("Settle")).filter { it != "GROUP_DONE" }
+        val cleaning = curtainOrder.subList(4, curtainOrder.indexOf("Settle")).filter { it != "GROUP_DONE" && it != "TrimCaches" }
         assertEquals(cleaning.indices.map { if (it % 2 == 0) "Disable" else "OFF" }, cleaning, "one OFF cue after each switch-off")
         assertEquals(plan.summary.groups.count { g -> g.id != DefaultPlanner.GROUP_HOME && g.off > 0 }, curtainOrder.count { it == "GROUP_DONE" })
         val end = curtainOrder.drop(curtainOrder.indexOf("Settle"))
@@ -246,21 +248,22 @@ class WhatWeFoundMatchesThePlanTest {
         assertTrue(res !is ProfileResolution.Exact, "the emulator is an unknown model")
         assertS3AgreesWithThePlan(plan)
 
-        // The plan log's "9 steps, 1 to switch off" of round 3, now 14 (RFC-DOCK-1): the streamed
-        // launcher install, the five steps that send the dock and look, then the eight steps of the
-        // home screen switch, whose one switch-off is the TV's own home screen. RFC-CURTAIN-1 adds
-        // nine around them: the curtain's install and start, SCAN and RESTORE_SAVED (nothing to
-        // switch off outside the switch), INSTALL and INSTALLED, FINALE and its settle before the
-        // launcher's first start, and the curtain's removal last.
-        assertEquals(14, body(plan).size)
+        // The plan log's "9 steps, 1 to switch off" of round 3, now 15 (RFC-DOCK-1's 14 plus
+        // RFC-TRIM-1's cache clear): the streamed launcher install, the five steps that send the
+        // dock and look, then the eight steps of the home screen switch, whose one switch-off is
+        // the TV's own home screen. RFC-CURTAIN-1 adds nine around them: the curtain's install and
+        // start, SCAN and RESTORE_SAVED (nothing to switch off outside the switch), INSTALL and
+        // INSTALLED, FINALE and its settle before the launcher's first start, and the curtain's
+        // removal last.
+        assertEquals(15, body(plan).size)
         assertEquals(
-            listOf("InstallStream", "StartActivity", "Mkdir", "PushAsset", "RemoveFile", "RestartHome",
+            listOf("TrimCaches", "InstallStream", "StartActivity", "Mkdir", "PushAsset", "RemoveFile", "RestartHome",
                 "StartActivity", "Mkdir", "ArmHomeWatchdog", "Disable", "SetHome", "VerifyHome", "ConfirmHome", "KillWatchdog"),
             body(plan).map { it.op::class.simpleName },
         )
-        assertEquals(23, plan.steps.size)
+        assertEquals(24, plan.steps.size)
         assertEquals(
-            listOf("InstallStream", "StartActivity", "SCAN 0/0", "RESTORE_SAVED 0/0", "INSTALL 0/0", "InstallStream", "INSTALLED 0/0", "FINALE 0/0", "Settle",
+            listOf("InstallStream", "StartActivity", "SCAN 0/0", "RESTORE_SAVED 0/0", "TrimCaches", "INSTALL 0/0", "InstallStream", "INSTALLED 0/0", "FINALE 0/0", "Settle",
                 "StartActivity", "Mkdir", "PushAsset", "RemoveFile", "RestartHome",
                 "StartActivity", "Mkdir", "ArmHomeWatchdog", "Disable", "SetHome", "VerifyHome", "ConfirmHome", "KillWatchdog", "Uninstall"),
             plan.steps.map { s -> (s.op as? Op.CurtainCue)?.let { "${it.stage} ${it.count}/${it.total}" } ?: s.op::class.simpleName },

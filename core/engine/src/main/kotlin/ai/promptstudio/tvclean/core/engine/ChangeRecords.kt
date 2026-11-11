@@ -9,8 +9,9 @@ import ai.promptstudio.tvclean.core.ops.UndoOrder
 object ChangeRecords {
     // The ops that change the TV. Reads, waits, the watchdog and process starts are not changes.
     fun isChange(op: Op): Boolean = when (op) {
+        // RFC-TRIM-1: the trim writes to the TV (it deletes cached data), so it is a change.
         is Op.Disable, is Op.Enable, is Op.DefaultState, is Op.Install, is Op.InstallStream, is Op.Uninstall,
-        is Op.SettingsPut, is Op.SetHome, is Op.PushAsset, is Op.RemoveFile -> true
+        is Op.SettingsPut, is Op.SetHome, is Op.PushAsset, is Op.RemoveFile, is Op.TrimCaches -> true
         else -> false
     }
 

@@ -80,6 +80,8 @@ object ChangeJson {
         put("type", typeOf(op))
         when (op) {
             is Op.Disable -> put("pkg", op.pkg.value)
+            // RFC-TRIM-1
+            is Op.TrimCaches -> put("bytes", op.bytes)
             is Op.Enable -> put("pkg", op.pkg.value)
             is Op.DefaultState -> put("pkg", op.pkg.value)
             is Op.Install -> {
@@ -122,6 +124,7 @@ object ChangeJson {
 
     fun decodeOp(o: JsonObject): Op = when (val type = o.str("type")) {
         "disable" -> Op.Disable(o.pkg("pkg"))
+        "trim_caches" -> Op.TrimCaches(o.long("bytes"))
         "enable" -> Op.Enable(o.pkg("pkg"))
         "default_state" -> Op.DefaultState(o.pkg("pkg"))
         "install" -> Op.Install(
@@ -158,6 +161,7 @@ object ChangeJson {
 
     fun typeOf(op: Op): String = when (op) {
         is Op.Disable -> "disable"
+        is Op.TrimCaches -> "trim_caches"
         is Op.Enable -> "enable"
         is Op.DefaultState -> "default_state"
         is Op.Install -> "install"

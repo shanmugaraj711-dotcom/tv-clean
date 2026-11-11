@@ -36,6 +36,19 @@ data class Prior(val packageState: EnabledState? = null, val settingValue: Strin
 
 sealed interface Op {
     data class Disable(val pkg: PackageName) : Op
+    // RFC-TRIM-1 (0.5.0): ask the TV to free cached data, up to `bytes` of free space. One
+    // `pm trim-caches` line; the TV frees what it can and keeps the rest. The clean used to
+    // only switch apps off, which frees no storage at all, so a TV low on storage stayed low
+    // and the launcher install failed for it (issues #3221/#3101/#2851). bytes is 1 byte to
+    // 16 GiB: 0 would ask for nothing, more than the TV can ever hold is nonsense.
+    data class TrimCaches(val bytes: Long) : Op {
+        init { require(bytes in 1..MAX_TRIM_CACHES_BYTES) { "trim-caches bytes must be 1 to $MAX_TRIM_CACHES_BYTES" } }
+
+        companion object {
+            // 16 GiB: more than any TV's /data, so the ask is "as much as the TV can give".
+            const val MAX_TRIM_CACHES_BYTES = 16L * 1024 * 1024 * 1024
+        }
+    }
     data class Enable(val pkg: PackageName) : Op
     data class DefaultState(val pkg: PackageName) : Op
     data class Install(val apk: RemotePath, val sha256: Sha256, val pkg: PackageName, val versionCode: Long, val signer: Sha256, val flags: Set<InstallFlag>) : Op   // apk.dir must be TMP

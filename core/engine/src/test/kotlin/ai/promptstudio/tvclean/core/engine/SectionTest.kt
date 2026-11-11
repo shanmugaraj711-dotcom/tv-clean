@@ -127,7 +127,7 @@ class SectionTest {
         assertEquals(listOf("begin-1", "done-1", "begin-1", "done-1", "begin${section.from + 1}", "done${section.from + 1}", "begin${section.to - 1}", "done${section.to - 1}", "begin-1", "done-1", "begin-1", "done-1", "section:ROLLED_BACK", "end:COMPLETED_WITH_SKIPS"), types.drop(r + 1))
         // Change records: the debloat stays, the section's changes were undone.
         val changes = ChangeRecords.fromJournal(h.records(plan))
-        assertEquals(h.debloat.size + 1, changes.size, "five disables and the install")
+        assertEquals(h.debloat.size + 2, changes.size, "five disables, the install and the cache clear")
         assertTrue(changes.none { it.op is Op.SetHome || (it.op as? Op.Disable)?.pkg == h.stock.pkg })
         assertTrue(h.tv.execLog.map { ai.promptstudio.tvclean.testing.fixtures.Recording.normalize(it) }.last() == "input keyevent 3")
     }

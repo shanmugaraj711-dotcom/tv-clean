@@ -209,6 +209,12 @@
     <string name="done_body_no_home">{count, plural, one {# விஷயம் அணைக்கப்பட்டது. எல்லாவற்றையும் திரும்பப் பெறலாம்.} other {# விஷயங்கள் அணைக்கப்பட்டன. எல்லாவற்றையும் திரும்பப் பெறலாம்.}}</string>
     <string name="done_body_home_kept">{count, plural, =0 {டிவி தன் சொந்த ஹோம் ஸ்கிரீனை வைத்திருக்கிறது, அதனால் அது அப்படியே தெரியும். எல்லாவற்றையும் திரும்பப் பெறலாம்.} one {# விஷயம் அணைக்கப்பட்டது. டிவி தன் சொந்த ஹோம் ஸ்கிரீனை வைத்திருக்கிறது, அதனால் அது அப்படியே தெரியும். எல்லாவற்றையும் திரும்பப் பெறலாம்.} other {# விஷயங்கள் அணைக்கப்பட்டன. டிவி தன் சொந்த ஹோம் ஸ்கிரீனை வைத்திருக்கிறது, அதனால் அது அப்படியே தெரியும். எல்லாவற்றையும் திரும்பப் பெறலாம்.}}</string>
     <string name="done_restore_saved">Restore point இந்த போனில் சேமிக்கப்பட்டது ({date})</string>
+    <!-- RFC-TRIM-1 (0.5.0): what the cache-clear step did -->
+    <string name="done_trim_freed">பழைய cache-ல் இருந்து {freed} MB காலி செய்யப்பட்டது.</string>
+    <string name="done_trim_empty">காலி செய்ய பழைய cache எதுவும் இல்லை.</string>
+    <string name="done_trim_unknown">பழைய cache-கள் காலி செய்யப்பட்டன.</string>
+    <string name="done_trim_failed">பழைய cache-களை காலி செய்ய முடியவில்லை. TV-யின் Settings &gt; Storage-ல் இடத்தை காலி செய்து Setup-ஐ மீண்டும் செய்யுங்கள்.</string>
+    <string name="done_restore_push_failed">Restore point-ஐ TV-யில் சேமிக்க முடியவில்லை. இந்த app-ஐ uninstall செய்வதற்கு முன் Restore-ல் இருந்து ஒரு copy சேமித்துக்கொள்ளுங்கள்.</string>
     <string name="done_restore_earlier">Restore point இந்த போனில் ({date} இலிருந்து)</string>
     <string name="done_debug_note">Finish ஐத் தட்டும்போது டிவியில் debugging ஆஃப் ஆகிவிடும். அடுத்த முறை, ரிமோட்டால் மீண்டும் ஆன் செய்யுங்கள்.</string>
     <string name="done_debug_kept">நீங்கள் தேர்ந்தது போல, டிவியில் debugging ஆன் இருக்கும்</string>

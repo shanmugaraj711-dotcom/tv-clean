@@ -281,3 +281,24 @@ password, encrypted PeerInfo). A TV this phone paired - a TrustRecord with `pair
 longer routes to PairingNeeded; it opens the door straight to CONNECTING and connects over
 `Endpoint.Tls` with the stored pin. The pairing half is UNVERIFIED against a real TV:
 it is grounded in BoringSSL/AOSP source and unit tests only, and the code says so.
+
+## RFC-TRIM-1: Setup clears the old caches before installing the home screen
+
+Issues #3221, #3101 and #2851: a TV low on storage fails the launcher install, and until 0.5.0 no
+step of the app freed any storage at all — the clean only switched apps off, and the out-of-space
+card's "We cleared caches" was untrue. Smallest change: `Op.TrimCaches(bytes)` (1 to 16 GiB)
+renders one line, `pm trim-caches <bytes>`, with a `df /data` verify read; the planner puts one
+such step (1 GiB, CONTINUE) in its own `clean` group after the switch-off loops and before the
+settle and the launcher install, so a low-storage TV can install at all — but only when the plan
+changes something else (a switch-off, an install, a switch): a plan against an already-clean TV
+must stay empty (ARCHITECTURE 6.3), and a cache clear with nothing else to do is a run the
+wizard never offers. The engine measures what
+the step freed — the TV's free MB after the step minus before it, read through the prober — and
+journals it on the step's Done record: `JournalRecord.Done` gains an optional `freedMb: Int? =
+null`, written to the journal only when non-null, so old journals still decode and a missing field
+is never read as zero. `RunLedger.freedMb(planId)` reads it back for the step whose Begin names
+TrimCaches, and `doneAt` tells a step that ran unmeasured from one that never ran. Done reads both
+through a `TrimState` on `DoneSummary` (NONE/FREED/EMPTY/UNKNOWN/FAILED) and names the measured
+MB, or says plainly that the caches could not be cleared or could not be measured. The op has no
+inverse (caches come back as apps run) and is a change, so Undo everything lists it and the
+restore point carries it.

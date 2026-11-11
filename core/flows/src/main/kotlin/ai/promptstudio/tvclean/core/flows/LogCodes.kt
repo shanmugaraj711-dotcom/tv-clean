@@ -89,6 +89,8 @@ object LogCodes {
     // checksum or a file the phone holds.
     fun op(op: Op): String = when (op) {
         is Op.Disable -> "Disable ${op.pkg.value}"
+        // RFC-TRIM-1: the trim's log line never carries a package, only the op.
+        is Op.TrimCaches -> "TrimCaches"
         is Op.Enable -> "Enable ${op.pkg.value}"
         is Op.DefaultState -> "DefaultState ${op.pkg.value}"
         is Op.Install -> "Install ${op.pkg.value}"

@@ -1,0 +1,11 @@
+# Clear the old caches across apps; one line, 1 GiB asked
+op: TrimCaches bytes=1073741824
+privilege: PROFILE_STEP
+timeout_ms: 60000
+stdout_cap: 65536
+line: 'pm' 'trim-caches' '1073741824'
+transfer: none
+verify: Read kind=DF_DATA
+verify_line: 'df' '/data'
+prior: none
+inverse: none

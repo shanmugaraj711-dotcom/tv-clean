@@ -14,6 +14,7 @@ import ai.promptstudio.tvclean.testing.fixtures.MemoryJournal
 import ai.promptstudio.tvclean.testing.fixtures.Samples
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -36,8 +37,39 @@ class RunLedgerTest {
     }
 
     private fun begin(i: Int, op: Op) = JournalRecord.Begin(plan, i, op, listOf("line"), null, 0)
-    private fun done(i: Int) = JournalRecord.Done(plan, i, 0, true, 1)
+    private fun done(i: Int, freedMb: Int? = null) = JournalRecord.Done(plan, i, 0, true, 1, freedMb = freedMb)
     private fun failed(i: Int, stderr: String) = JournalRecord.Failed(plan, i, 1, "exit 1", stderr)
+
+    // RFC-TRIM-1: the MB the plan's TrimCaches step freed, from that step's Done record.
+    @Test fun freedMbComesFromTheTrimCachesStepsDoneRecord() = runTest {
+        val l = ledger(
+            begin(0, Op.Disable(ad)), done(0),
+            begin(1, Op.TrimCaches(1_073_741_824L)), done(1, freedMb = 500),
+        )
+        assertEquals(500, l.freedMb(plan))
+        assertTrue(l.doneAt(plan, 1))
+    }
+
+    @Test fun freedMbIsNullWhenTheTrimNeverFinishedOrWasNeverMeasured() = runTest {
+        // Failed: no Done at all.
+        val failed = ledger(begin(1, Op.TrimCaches(1_073_741_824L)), failed(1, "exit 1"))
+        assertNull(failed.freedMb(plan))
+        assertFalse(failed.doneAt(plan, 1))
+        // Done but unmeasured: not zero, unknown.
+        val unmeasured = ledger(begin(1, Op.TrimCaches(1_073_741_824L)), done(1))
+        assertNull(unmeasured.freedMb(plan))
+        assertTrue(unmeasured.doneAt(plan, 1))
+    }
+
+    @Test fun freedMbZeroIsARealAnswerNotAMiss() = runTest {
+        val l = ledger(begin(1, Op.TrimCaches(1_073_741_824L)), done(1, freedMb = 0))
+        assertEquals(0, l.freedMb(plan))
+    }
+
+    @Test fun freedMbIgnoresOtherStepsDoneRecords() = runTest {
+        val l = ledger(begin(0, Op.Disable(ad)), done(0, freedMb = 999))
+        assertNull(l.freedMb(plan))
+    }
 
     // Issue #2's step R: ConfirmHome done, KillWatchdog refused (not a must-succeed op), the Enable
     // refused, SetHome and VerifyHome failing after it. The pause is about the Enable.

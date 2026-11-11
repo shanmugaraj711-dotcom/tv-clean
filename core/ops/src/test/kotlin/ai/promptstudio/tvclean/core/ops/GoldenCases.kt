@@ -129,6 +129,9 @@ object GoldenCases {
             Op.AccessibilityRemove(null, HelperLines.SERVICE, offIfEmpty = true), null),
         GoldenCase("69-helper-timer", "Home button helper: the safety timer of its check",
             Op.ArmHelperWatchdog(HelperLines.SERVICE, 150, token, offIfEmpty = true), null),
+        // RFC-TRIM-1: the cache-clear step, 1 GiB asked, as the Setup plan sends it.
+        GoldenCase("70-trim-caches", "Clear the old caches across apps; one line, 1 GiB asked",
+            Op.TrimCaches(1_073_741_824L), null),
     )
     const val READER = "com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService"
 }
@@ -168,6 +171,8 @@ object GoldenText {
         is Op.AccessibilityAdd -> "AccessibilityAdd expected=${op.expected ?: "null"} component=${op.component.flat}"
         is Op.AccessibilityRemove -> "AccessibilityRemove expected=${op.expected ?: "null"} component=${op.component.flat} offIfEmpty=${op.offIfEmpty}"
         is Op.ArmHelperWatchdog -> "ArmHelperWatchdog component=${op.component.flat} seconds=${op.seconds} token=${op.token.value} offIfEmpty=${op.offIfEmpty}"
+        // RFC-TRIM-1: one `pm trim-caches` line, asked for `bytes` of free space.
+        is Op.TrimCaches -> "TrimCaches bytes=${op.bytes}"
     }
 
     fun blob(b: BlobRef) = "${b.sha256.hex}:${b.size}:${b.path}"

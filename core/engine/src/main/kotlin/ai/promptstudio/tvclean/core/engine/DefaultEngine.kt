@@ -98,6 +98,7 @@ class DefaultEngine(
     private class Run(val plan: Plan, val session: TvSession, val fromJournalOnly: Boolean = false) {
         @Volatile var at = 0
         val done = sortedSetOf<Int>()
+        val trimFreedByStep = HashMap<Int, Int?>()   // RFC-TRIM-1: the MB each TrimCaches step freed, by step index
         val skipped = mutableListOf<Step>()
         val states = Array(plan.steps.size) { NarrationState.UPCOMING }
         var restorePoint = NarrationState.DOING
@@ -531,7 +532,7 @@ class DefaultEngine(
         journal.append(JournalRecord.Begin(run.plan.id, index, op, rendered.lines.map { it.text }, null, clock.nowMs()))
         val started = clock.monotonicMs()
         val outcome = try {
-            dispatch(run, op, rendered, null)
+            dispatch(run, index, op, rendered, null)
         } catch (e: AdbException) {
             if (e.error.isLost()) Outcome.Lost(e.error) else Outcome.Failed(e.error, e.error.toString())
         }
@@ -710,7 +711,7 @@ class DefaultEngine(
         val started = clock.monotonicMs()
         var verified = true
         val outcome = try {
-            dispatch(run, op, rendered, prior)
+            dispatch(run, index, op, rendered, prior)
         } catch (e: AdbException) {
             // debug_off: the TV closes the socket (5.2), so nothing was read back; the flows confirm
             // with a failed probe of 5555 instead (F11), and the record says it was not verified (R1 R-7).
@@ -721,7 +722,7 @@ class DefaultEngine(
         }
         val ms = clock.monotonicMs() - started
         when (outcome) {
-            Outcome.Ok -> journal.append(JournalRecord.Done(run.plan.id, index, 0, verified = verified, ms = ms))
+            Outcome.Ok -> journal.append(JournalRecord.Done(run.plan.id, index, 0, verified = verified, ms = ms, freedMb = run.trimFreedByStep[index]))
             is Outcome.Refused -> journal.append(JournalRecord.Failed(run.plan.id, index, outcome.exit, "exit ${outcome.exit}", outcome.stderr.take(4096)))
             is Outcome.Failed -> journal.append(JournalRecord.Failed(run.plan.id, index, null, outcome.detail.take(4096), ""))
             is Outcome.Lost -> {}   // in doubt: no Done, no Failed; resume re-verifies it
@@ -729,8 +730,40 @@ class DefaultEngine(
         return outcome
     }
 
-    // The dispatch table of 5.2 (R0: 7).
-    private suspend fun dispatch(run: Run, op: Op, rendered: Rendered, prior: Prior?): Outcome {
+    // The dispatch table of 5.2 (R0: 7). The index is the step's, for the trim step's measurement.
+    private suspend fun dispatch(run: Run, index: Int, op: Op, rendered: Rendered, prior: Prior?): Outcome {
+        if (op is Op.TrimCaches) return trimCaches(run, index, op, rendered, prior)
+        return dispatchStep(run, op, rendered, prior)
+    }
+
+    // RFC-TRIM-1: `pm trim-caches` frees cached data across apps, and the freed MB is the TV's
+    // free space after the step minus before it, read through the prober (the same df /data read
+    // the step's own verify uses). A read that fails on either side leaves the measurement
+    // unknown (null) instead of a guess; a step that does not finish stores nothing. The two
+    // reads bracket the step's own lines, so nothing else the run does is counted in the number.
+    private suspend fun trimCaches(run: Run, index: Int, op: Op.TrimCaches, rendered: Rendered, prior: Prior?): Outcome {
+        val before = freeMbOrNull(run.session)
+        val outcome = dispatchStep(run, op, rendered, prior)
+        if (outcome != Outcome.Ok) return outcome
+        val after = freeMbOrNull(run.session)
+        val freed = if (before != null && after != null) maxOf(0, after - before) else null
+        run.trimFreedByStep[index] = freed
+        log("engine: trim-caches freed ${freed?.let { "$it MB" } ?: "an unknown amount"} (free space ${before?.let { "$it MB" } ?: "unread"} before, ${after?.let { "$it MB" } ?: "unread"} after)")
+        return Outcome.Ok
+    }
+
+    // The TV's free MB on /data, or null when it cannot be read; a failed read never changes an outcome.
+    private suspend fun freeMbOrNull(session: TvSession): Int? = try {
+        prober.freeDataMb(session)
+    } catch (e: ProbeException) {
+        log("engine: trim-caches: the TV's free storage could not be read (${e.stage.name.lowercase()})")
+        null
+    } catch (e: AdbException) {
+        log("engine: trim-caches: the TV's free storage could not be read (no answer)")
+        null
+    }
+
+    private suspend fun dispatchStep(run: Run, op: Op, rendered: Rendered, prior: Prior?): Outcome {
         val session = run.session
         var ownOutput = ""
         when (op) {

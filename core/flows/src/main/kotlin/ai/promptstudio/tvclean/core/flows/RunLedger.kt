@@ -152,6 +152,26 @@ class RunLedger(private val store: DocumentStore, private val journal: Journal) 
         return found
     }
 
+    // RFC-TRIM-1: the MB the plan's TrimCaches step freed, from that step's Done record; null
+    // when the step never finished or the engine could not measure it, so Done says so instead
+    // of guessing. A Done record with freedMb 0 is a real answer (nothing to clear), not a miss.
+    suspend fun freedMb(planId: PlanId): Int? {
+        val begins = HashMap<Int, JournalRecord.Begin>()
+        var found: Int? = null
+        for (r in journal.read(planId)) when (r) {
+            is JournalRecord.Begin -> begins[r.i] = r
+            is JournalRecord.Done -> if (begins[r.i]?.op is Op.TrimCaches) found = r.freedMb
+            else -> {}
+        }
+        return found
+    }
+
+    // RFC-TRIM-1: whether step `i` has a Done record at all, so Done can tell a step that ran
+    // but could not be measured (unknown) from one that never ran (no line at all).
+    suspend fun doneAt(planId: PlanId, i: Int): Boolean =
+        journal.read(planId).any { it is JournalRecord.Done && it.i == i }
+
+
     // Why a home screen switch ended VERIFY_FAILED (issue #338: three tries, each "rolling back" with
     // nothing in the log to say why): the first failed step that the switch stands on, from the
     // journal. That is a step inside the guarded section before its rollback, or, when the section
@@ -209,6 +229,8 @@ class RunLedger(private val store: DocumentStore, private val journal: Journal) 
         // Step R's ops whose failure means the TV's own home screen is not back (the engine's rule).
         private fun mustSucceed(op: Op): Boolean = op is Op.Enable || op is Op.SetHome || op is Op.VerifyHome || op is Op.AccessibilityRemove
 
+        // RFC-TRIM-1: the trim writes to the TV (it deletes cached data), so it is a change:
+        // it reaches the `else -> true` arm, like every other write op.
         fun isChange(op: Op): Boolean = when (op) {
             is Op.Read, is Op.VerifyHome, is Op.Settle, Op.PressHome, is Op.CurtainCue -> false
             else -> true

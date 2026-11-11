@@ -2,6 +2,48 @@
 
 All notable changes to the app. Versions follow [semantic versioning](https://semver.org/).
 
+## 0.5.0 (unreleased)
+
+### The friend's Mi TV 4I test can finally be told apart
+- 0.4.8 shipped twice under the same version code 30 (the v2 build and the v3 bundled-launcher
+  package-identity fix, commit 81fd24b8), so the two builds could not be told apart on a phone:
+  the v3 test on the friend's Mi TV 4I still showed the v2 faults — the "another home screen app,
+  Gathin Home" dialog looping, Customise not reflecting, no storage freed — and nothing on the
+  phone could prove which build had run. 0.5.0 takes code 31, so Settings > Apps names the build
+  under test; a fix release always takes a new code from here. The v3 code itself was verified
+  fixed at the dex level (no `ai.promptstudio.tvclean.launcher` string in the shipped APK, the
+  bundled launcher asset matching its pin) and the release has served it since 2026-11-10 21:27
+  IST, so the remaining test must start from a fresh install of the file whose SHA-256 matches
+  this release, never the rolling link alone.
+- The regression test `IssueGathinHomeLoopTest` pins the friend's TV state: Home already answering
+  to our launcher (our key, or a key the probe could not read) plans with no OTHER_HOME block —
+  it is "already on" — and a launcher under our name with another key is HOME_CHANGED, never
+  OTHER_HOME.
+
+### Four more looks in Customise
+- Ember (warm ember glow), Lagoon (teal), Midnight (navy, stars) and Dawn (peach sunrise) join
+  the looks, each with its own wallpaper, colours and dock spacing. A look picked in 0.5.0 is
+  saved as a legacy choice, so it comes back as the same look on the next run instead of
+  falling back to Default.
+
+### The restore point, uninstalls and the TV's own copy
+- Uninstalling the app from the phone deletes the restore point on the phone: the app's own
+  "Put everything back" reads only the phone-side journal, which lives in the app's private
+  storage. The TV keeps its own copy (`/sdcard/tvclean/restore-point.json` and `restore.txt`,
+  pushed after every plan that changed something), and the zip from "Save a copy" on the Restore
+  screen is the backup to keep. The Restore screen now says so next to the export, and Done says
+  so when the push to the TV failed this run — the push was best-effort and its failure was
+  invisible before. Reading the TV-side copy back after a reinstall ("Take over") is still not
+  built; it is the 0.2 item the restore-point file was written for.
+
+### Fixes
+- Setup now clears the old caches: `pm trim-caches 1 GiB` runs early in every plan that changes
+  something, before the settle and the launcher install, so a TV low on storage can install the
+  new home screen at all (issues #3221/#3101/#2851). The out-of-space card's "We cleared caches
+  and tried again" was untrue before this, because no step cleared anything; the clean still only
+  switches apps off besides this, and disabling frees no storage. Done names the MB the step
+  actually freed, or says plainly when it could not clear the caches or could not measure them.
+
 ## 0.4.8 (2026-11-03)
 
 ### The new home screen reaches four more TVs in the release

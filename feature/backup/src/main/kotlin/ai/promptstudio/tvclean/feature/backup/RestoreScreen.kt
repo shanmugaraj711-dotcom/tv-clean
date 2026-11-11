@@ -103,6 +103,10 @@ fun RestoreScreen(state: RestorePointState, onIntent: (RestorePointIntent) -> Un
                 ListRow(stringResource(R.string.restore_row_factory), subtitle = stringResource(R.string.restore_row_factory_sub), onClick = { factory = true })
             }
         }
+        // 0.5.0: uninstalling the app deletes the restore point on this phone; the TV keeps its
+        // own copy, and the zip is the backup to keep. Android gives no hook to warn at uninstall
+        // time, so the warning lives here, next to the export that saves it.
+        if (baseline != null) Body(stringResource(R.string.restore_uninstall_note), Modifier.padding(top = 12.dp, start = 4.dp, end = 4.dp))
     }
     val phase = state.phase
     if (phase is RestorePhase.Previewing) CytBottomSheet({ onIntent(RestorePointIntent.Cancel) }) { PreviewLoadingContent() }

@@ -186,6 +186,11 @@ class ScriptedTv(initial: Snapshot = Samples.miTvSnapshot()) : TvSession {
             line.startsWith("pm enable --user 0 ") -> setEnabled(pkg(4), EnabledState.ENABLED)
             line.startsWith("pm default-state --user 0 ") -> setEnabled(pkg(4), EnabledState.DEFAULT)
             line == "pm list packages -d" -> ok(packages.filter { isOff(it.key) }.keys.joinToString("") { "package:${it.value}\n" })
+            // RFC-TRIM-1: the cache-clear step's line and its `df /data` verify read. The df row is
+            // a fixed one (2692256 KiB free); the freed amount is measured by the prober, not by
+            // this output — the row only has to parse.
+            line.startsWith("pm trim-caches ") -> ok()
+            line == "df /data" -> ok("Filesystem     1K-blocks    Used Available Use% Mounted on\n/dev/block/dm-1   4962512 2253872   2692256  46% /data\n")
             line == "pm list packages -f" -> ok(packages.keys.joinToString("") { "package:/data/app/${it.value}-1/base.apk=${it.value}\n" })
             line.startsWith("pm uninstall --user 0 ") -> { val p = pkg(4); if (packages.remove(p) == null) fail("Failure [not installed]") else { claimants.removeAll { it.pkg == p }; if (home?.pkg == p) home = claimants.firstOrNull(); ok("Success") } }
             line.startsWith("pm install ") -> install(tokens.last())

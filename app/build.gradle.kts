@@ -7,10 +7,15 @@ android {
     // The app's version, in one place for every store flavour and for F-Droid's checkupdates
     // (STORES-PLAN 0 and 3): GitHub, F-Droid and Google Play ship the same versionCode and versionName.
     defaultConfig {
-        // The 0.4.8 release: code 30 installs over the test builds 0.4.8-beta1 and beta2 (28, 29), 0.4.7 (27)
-        // and every earlier build with the same key.
-        versionCode = 30
-        versionName = "0.4.8"
+        // The 0.5.0 release: code 31. 0.4.8's code 30 shipped twice (the v2 build and the
+        // v3 package-identity fix), so the two could not be told apart on a phone — the
+        // friend's Mi TV 4I test of v3 could not prove which build had run. A fix release
+        // always takes a new code from here, so Settings > Apps names the build under test.
+        // The name is 0.5.0, not 0.4.9 (owner's pick): a visible jump from 0.4.8, so the
+        // friend can tell at a glance that it is the new build — the change (real cache
+        // clearing, four new looks) is big enough to earn it. Same code 31.
+        versionCode = 31
+        versionName = "0.5.0"
     }
     // STORES-PLAN 1: one codebase, two store builds, the same applicationId and signing certificate.
     // `full` (GitHub and F-Droid) checks GitHub for a newer release and offers the optional add-ons;
