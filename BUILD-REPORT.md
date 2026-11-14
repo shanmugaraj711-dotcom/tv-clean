@@ -192,3 +192,35 @@ only** (1,482 files, ~7.9 MB — inside the 2,000-file / 16 MiB snapshot limit):
   building; the goldens + store images are a later completeness job if wanted.
 - `release.yml` (v* tags only) is untested with this binary-fetch design; it builds
   from `git archive`, which has no binaries — do not tag a release until it is fixed.
+
+## v5 — suspend the stock home so the switch survives a restart (2026-11-14)
+
+- **Cause:** after v4's clean, the TV's own home comes back at every power-on. The
+  planner could not switch it off: `Protected.isProtected` refuses a package the TV
+  flags PERSISTENT, so `keepStockEnabled` stayed true and `set-home-activity` alone
+  does not survive a boot (the persistent stock home answers Home first).
+- **Fix (RFC-SUSPEND-1, CHANGELOG 0.5.0):** new `Op.Suspend` / `Op.Unsuspend`
+  (`pm suspend --user 0 <pkg>` / `pm unsuspend --user 0 <pkg>`). The planner suspends
+  the stock launcher only when the reason it cannot be disabled is exactly
+  REASON_PERSISTENT (a TV input, a protected name, a wizard, a profile
+  never_disable, or a STOCK_LAUNCHER_KEEP_ENABLED quirk still leaves it on). Step R,
+  Undo and put-back unsuspend it. Verified by `dumpsys package` (`suspended=` flag);
+  `pm list packages -s` does NOT show suspended packages (it lists system ones).
+- **Push:** commit `c7cd1281` (28 files, 2026-11-14 ~13:00 IST). Verified remote
+  content at head matches local except these edits; the 4 wallpaper commits since
+  the last sync (`35bbc096`) touch only JPGs.
+- **CI, first attempt FAILED:** build-apk run #25 failed in 54 s (exit code 1); the
+  debug release asset is still the v4 APK (50,403,726 B, 11 Nov 12:41 GMT). The
+  run log could not be read from here (no workflow-runs tool in the connector; the
+  job page would not load). The 28 changed files were re-read by hand: every
+  `when (op)` expression is exhaustive or has an `else` arm, all cross-references
+  check out, and the one suspect (a nullable `in` check in PlainRestoreNote) is
+  legal Kotlin — the same pattern already ships in HomeSwitchRisk. 54 s is too
+  fast to have reached compilation of the changed modules, so this looks like a
+  step before the build (checkout / setup / binary fetch) failing, not the code.
+  Retrying with this entry as the trigger commit; if it fails again the same way,
+  read the actual log before changing any code.
+- **pr.yml** run #24 also failed in 11 s at wrapper-validation, as on every run
+  since 2026-11-10 (pre-existing; the wrapper jar itself matches the official
+  Gradle 9.7.1 jar byte-for-byte). Until that is fixed, the new unit tests
+  (golden 71/72, planner + engine suspend tests) never run in CI.
