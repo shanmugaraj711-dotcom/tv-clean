@@ -220,6 +220,28 @@ only** (1,482 files, ~7.9 MB — inside the 2,000-file / 16 MiB snapshot limit):
   step before the build (checkout / setup / binary fetch) failing, not the code.
   Retrying with this entry as the trigger commit; if it fails again the same way,
   read the actual log before changing any code.
+- **CI, retry also FAILED:** build-apk run #26 (commit `284dc72`, a BUILD-REPORT-only
+  change) failed in 58 s; pr #25 failed in 18 s. A doc-only commit cannot break a
+  Kotlin compile, so this is now PROVEN not the code: something in the build
+  machine's early steps fails on every run since 2026-11-14 13:03 IST, after green
+  runs on 2026-11-11. The upstream binary URLs were re-checked from here and all
+  answer 200 with the right sizes, the wrapper jar matches official Gradle 9.7.1
+  byte-for-byte, and every `when (op)` in the code is exhaustive or has an `else`.
+  The failing step itself is not visible from here (no workflow-runs tool in the
+  connector; the job page would not load). Needs the owner to read it on his phone:
+  GitHub app -> tv-clean -> Actions -> build-apk #26 -> the red step's name.
+- **CI, TRUE CAUSE FOUND (2026-11-14 13:32, browser check on the owner's order):**
+  build-apk #26 failed in the "Build debug APK" step (31 s) with
+  `:core:ops:compileKotlin FAILED` — `UndoOrder.kt:40: 'when' expression must be
+  exhaustive. Add the 'is Suspend', 'is Unsuspend' branches or an 'else' branch.`
+  The local UndoOrder.kt HAS those arms; the file was simply never pushed — it was
+  the one v5 file missing from the push manifest (28 files pushed, UndoOrder left
+  out). That also explains the "doc-only" retry failing: it was built on the same
+  broken commit. The earlier "proven not the code" note above was WRONG. Fix:
+  push UndoOrder.kt (this commit). Every other Nov-14 file was verified pushed by
+  mtime check, and a second sweep of all `when (op)` sites found no other missing
+  arm (the two flags it raised were false positives: DefaultEngine's arm-when has
+  an else, ProblemReports' when is over RunState, not Op).
 - **pr.yml** run #24 also failed in 11 s at wrapper-validation, as on every run
   since 2026-11-10 (pre-existing; the wrapper jar itself matches the official
   Gradle 9.7.1 jar byte-for-byte). Until that is fixed, the new unit tests

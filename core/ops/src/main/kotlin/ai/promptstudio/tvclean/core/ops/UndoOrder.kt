@@ -40,6 +40,8 @@ object UndoOrder {
     fun target(op: Op): Target? = when (op) {
         is Op.Disable -> Target.PackageEnabled(op.pkg)
         is Op.Enable -> Target.PackageEnabled(op.pkg)
+        is Op.Suspend -> Target.PackageEnabled(op.pkg)
+        is Op.Unsuspend -> Target.PackageEnabled(op.pkg)
         is Op.DefaultState -> Target.PackageEnabled(op.pkg)
         is Op.SettingsPut -> Target.Setting(op.key)
         is Op.SetHome -> Target.Home
