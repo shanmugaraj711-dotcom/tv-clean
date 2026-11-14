@@ -197,6 +197,13 @@ class FakeShell(private val tv: FakeTv, private val faults: Faults) {
                 p.state = when (verb) { "disable-user" -> "disabled-user"; "disable" -> "disabled"; "enable" -> "enabled"; else -> "default" }
                 ExecOutcome("Package $pkg new state: ${p.state}\n")
             }
+            // v5: suspend leaves the package enabled, it only cannot launch; unsuspend wakes it.
+            "suspend", "unsuspend" -> {
+                val pkg = positional.lastOrNull() ?: return ExecOutcome("", 1, "Error: no package specified\n")
+                val p = synchronized(tv) { tv.packages[pkg] } ?: return ExecOutcome("", 1, "Error: java.lang.IllegalArgumentException: Unknown package: $pkg\n")
+                p.suspended = verb == "suspend"
+                ExecOutcome("Package $pkg ${if (verb == "suspend") "suspended" else "unsuspended"}\n")
+            }
             "path" -> {
                 val pkg = positional.lastOrNull() ?: return ExecOutcome("", 1)
                 tv.packages[pkg]?.takeIf { pkg !in tv.notForUser0 }?.let { ExecOutcome("package:${it.path}\n") } ?: ExecOutcome("", 1)
@@ -306,8 +313,8 @@ class FakeShell(private val tv: FakeTv, private val faults: Faults) {
             "Packages:\n  Package [${p.name}] (fake):\n    userId=10042\n    pkg=Package{fake ${p.name}}\n    codePath=${p.path.substringBeforeLast('/')}\n" +
                 "    versionCode=${p.versionCode} minSdk=${tv.sdk} targetSdk=${tv.sdk}\n    versionName=1.0\n    flags=$flags\n" +
                 (p.signer?.let { "    signatures=PackageSignatures{fake version:3, signatures:[$it]}\n" } ?: "") +
-                "    User 0: ceDataInode=0 installed=${p.name !in tv.notForUser0} hidden=false suspended=false stopped=false notLaunched=false enabled=$enabled instant=false virtual=false\n" +
-                (if (p.name in tv.notForUser0) "    User 10: ceDataInode=0 installed=true hidden=false suspended=false stopped=false notLaunched=false enabled=$enabled instant=false virtual=false\n" else ""),
+                "    User 0: ceDataInode=0 installed=${p.name !in tv.notForUser0} hidden=false suspended=${p.suspended} stopped=false notLaunched=false enabled=$enabled instant=false virtual=false\n" +
+                (if (p.name in tv.notForUser0) "    User 10: ceDataInode=0 installed=true hidden=false suspended=${p.suspended} stopped=false notLaunched=false enabled=$enabled instant=false virtual=false\n" else ""),
         )
     }
 

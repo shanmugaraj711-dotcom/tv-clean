@@ -15,6 +15,7 @@ import ai.promptstudio.tvclean.core.ops.UndoOrder
 // wrote. restore.txt, restore-point.json and the restore note all read it, so they always agree.
 data class ChangeSummary(
     val switchedOff: List<PackageName>,          // off now, and on (or unknown) before our first change to it; in the order we switched them off
+    val suspended: List<PackageName>,            // v5: asleep now, put to sleep by us and not woken since; in the order we suspended them
     val homeBefore: Component?,                  // the prior of our first SetHome
     val homeNow: Component?,                     // the target of our last SetHome
     val settings: List<SettingChange>,           // value before our first write and after our last, sorted by key
@@ -30,6 +31,7 @@ data class ChangeSummary(
         fun of(changes: List<ChangeRecord>): ChangeSummary {
             val firstPrior = LinkedHashMap<PackageName, EnabledState?>()
             val off = LinkedHashMap<PackageName, Boolean>()
+            val susp = LinkedHashMap<PackageName, Boolean>()
             var homeBefore: Component? = null
             var homeSeen = false
             var homeNow: Component? = null
@@ -43,7 +45,9 @@ data class ChangeSummary(
             for (c in changes.sortedWith(UndoOrder.CHRONOLOGICAL)) {
                 when (val op = c.op) {
                     is Op.Disable -> { touch(op.pkg, c); off.remove(op.pkg); off[op.pkg] = true }
+                    is Op.Suspend -> { touch(op.pkg, c); susp.remove(op.pkg); susp[op.pkg] = true }
                     is Op.Enable -> { touch(op.pkg, c); off[op.pkg] = false }
+                    is Op.Unsuspend -> { touch(op.pkg, c); susp[op.pkg] = false }
                     is Op.DefaultState -> { touch(op.pkg, c); off[op.pkg] = false }
                     is Op.Install -> if (c.prior?.present != true) installed += op.pkg
                     is Op.InstallStream -> if (c.prior?.present != true) installed += op.pkg
@@ -52,7 +56,7 @@ data class ChangeSummary(
                     // files we wrote there are gone from the TV too (QA 0.4.5-beta1: after Undo
                     // everything with the launcher removed, restore-point.json still listed them).
                     is Op.Uninstall -> {
-                        installed -= op.pkg; off.remove(op.pkg)
+                        installed -= op.pkg; off.remove(op.pkg); susp.remove(op.pkg)
                         val folder = APP_FOLDER + op.pkg.value + "/"
                         files.removeAll { it.startsWith(folder) }
                     }
@@ -76,6 +80,7 @@ data class ChangeSummary(
             val before = homeBefore?.let { h -> if (HomePlaceholder.isPlaceholder(h)) HomePlaceholder.stockFromRecords(changes) else h }
             return ChangeSummary(
                 switchedOff = off.filter { (pkg, isOff) -> isOff && firstPrior[pkg] !in wasOff }.keys.toList(),
+                suspended = susp.filter { (_, isSusp) -> isSusp }.keys.toList(),
                 homeBefore = before,
                 homeNow = homeNow,
                 settings = settingBefore.keys.sortedBy { it.name }.map { SettingChange(it, settingBefore[it], settingNow[it]) },

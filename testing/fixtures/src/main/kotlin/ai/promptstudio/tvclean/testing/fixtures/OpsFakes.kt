@@ -48,6 +48,8 @@ class FakeOpRenderer(
     override fun inverse(op: Op, prior: Prior): Op? = when (op) {
         is Op.Disable -> Op.Enable(op.pkg)
         is Op.Enable -> Op.Disable(op.pkg)
+        is Op.Suspend -> Op.Unsuspend(op.pkg)
+        is Op.Unsuspend -> Op.Suspend(op.pkg)
         is Op.SettingsPut -> Op.SettingsPut(op.key, prior.settingValue)
         is Op.SetHome -> prior.home?.let { Op.SetHome(it) }
         is Op.Install -> if (prior.present == false) Op.Uninstall(op.pkg) else null

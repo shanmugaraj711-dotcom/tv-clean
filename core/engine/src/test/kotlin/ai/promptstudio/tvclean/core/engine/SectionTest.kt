@@ -108,6 +108,33 @@ class SectionTest {
         assertEquals(DefaultEngine.KEPT_TV_INPUT, h.records(plan).filterIsInstance<JournalRecord.Failed>().single().error)
     }
 
+    // RFC-SUSPEND-1: a stock launcher the TV keeps running at all times (persistent) cannot be
+    // switched off, so the switch would not survive a restart — the old home wakes up at every
+    // boot and takes Home back. The plan puts it to sleep instead: the run completes, the stock
+    // home stays enabled but asleep, and Home stays ours.
+    @Test fun aPersistentStockLauncherIsSuspendedAndTheSwitchHolds() = runTest(timeout = TEST_TIMEOUT) {
+        val h = Harness(this)
+        val stockState = h.tv.packages[h.stock.pkg] ?: throw AssertionError("stock launcher not on the scripted TV")
+        h.tv.packages[h.stock.pkg] = stockState.copy(persistent = true)
+        val engine = h.engine()
+        val plan = h.setupPlan()
+        val sleep = plan.steps.single { it.op == Op.Suspend(h.stock.pkg) }
+        val section = plan.sections.single()
+        assertTrue(sleep.index in section.from..section.to, "the suspend is inside the section")
+        assertTrue(plan.steps.none { it.op == Op.Disable(h.stock.pkg) })
+        openCheckScreen(h, engine, plan)
+        assertTrue(h.stock.pkg in h.tv.suspendedPkgs, "the stock home is asleep")
+        assertEquals(EnabledState.ENABLED, h.tv.state(h.stock.pkg), "still enabled, only asleep")
+        assertEquals(h.launcher, h.tv.home)
+        h.tv.focus = h.launcher
+        engine.confirmHome(h.tv.tvId)
+        h.settle(engine)
+        val fin = assertIs<RunState.Finished>(engine.runState(h.tv.tvId).value)
+        assertEquals(RunStatus.COMPLETED, fin.status)
+        assertTrue(h.stock.pkg in h.tv.suspendedPkgs, "still asleep after the run")
+        assertEquals(h.launcher, h.tv.home)
+    }
+
     @Test fun noPutItBackRunsStepR() = runTest(timeout = TEST_TIMEOUT) {
         val h = Harness(this)
         val engine = h.engine()

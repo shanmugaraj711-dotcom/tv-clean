@@ -75,6 +75,8 @@ class ScriptedTv(initial: Snapshot = Samples.miTvSnapshot()) : TvSession {
     var installStreamError: AdbError? = null
     var installStreamInstallsFirst = false
     var persistentOverride: Set<PackageName> = emptySet()
+    // RFC-SUSPEND-1: the packages pm suspend put to sleep (the dump prints suspended=true for them).
+    val suspendedPkgs: MutableSet<PackageName> = mutableSetOf()
     var startFails = false
     var requestedPermissions: Map<PackageName, List<String>> = emptyMap()   // printed under "requested permissions:" in the package's dump
     var answer: ((String) -> ExecResult?)? = null              // a scripted answer for a line (normalized), before the model's own
@@ -122,7 +124,7 @@ class ScriptedTv(initial: Snapshot = Samples.miTvSnapshot()) : TvSession {
         val enabled = when (p.enabled) { EnabledState.DEFAULT -> 0; EnabledState.ENABLED -> 1; EnabledState.DISABLED -> 2; EnabledState.DISABLED_USER -> 3 }
         val requested = requestedPermissions[pkg]?.let { l -> "    requested permissions:\n" + l.joinToString("") { "      $it\n" } + "    install permissions:\n" } ?: ""
         return "Packages:\n  Package [${pkg.value}] (1a2b3c):\n    versionCode=${p.versionCode} minSdk=21 targetSdk=28\n    flags=[ ${flags.joinToString(" ")} ]\n" + requested +
-            "    User 0: ceDataInode=1 installed=true hidden=false suspended=false stopped=false notLaunched=false enabled=$enabled instant=false virtual=false\n"
+            "    User 0: ceDataInode=1 installed=true hidden=false suspended=${pkg in suspendedPkgs} stopped=false notLaunched=false enabled=$enabled instant=false virtual=false\n"
     }
 
     private fun overlay(path: String) = path.startsWith(RemoteDir.OVERLAY.path + "/")
@@ -185,6 +187,9 @@ class ScriptedTv(initial: Snapshot = Samples.miTvSnapshot()) : TvSession {
             line.startsWith("pm disable-user --user 0 ") -> setEnabled(pkg(4), EnabledState.DISABLED_USER)
             line.startsWith("pm enable --user 0 ") -> setEnabled(pkg(4), EnabledState.ENABLED)
             line.startsWith("pm default-state --user 0 ") -> setEnabled(pkg(4), EnabledState.DEFAULT)
+            // RFC-SUSPEND-1: suspend leaves the package enabled, it only cannot launch.
+            line.startsWith("pm suspend --user 0 ") -> { val p = pkg(4); if (p !in packages) fail("Error: Unknown package: ${p.value}") else { suspendedPkgs += p; ok("Package ${p.value} suspended") } }
+            line.startsWith("pm unsuspend --user 0 ") -> { val p = pkg(4); if (p !in packages) fail("Error: Unknown package: ${p.value}") else { suspendedPkgs -= p; ok("Package ${p.value} unsuspended") } }
             line == "pm list packages -d" -> ok(packages.filter { isOff(it.key) }.keys.joinToString("") { "package:${it.value}\n" })
             // RFC-TRIM-1: the cache-clear step's line and its `df /data` verify read. The df row is
             // a fixed one (2692256 KiB free); the freed amount is measured by the prober, not by

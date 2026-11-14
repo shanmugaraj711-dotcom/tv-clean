@@ -16,8 +16,9 @@ class FakePackage(
     val signer: String? = null,          // sha256 hex of the signing certificate, when known
     // Updated system apps also live under /data/app, so a capture says which are third party.
     val system: Boolean = !path.startsWith("/data/app"),
+    var suspended: Boolean = false,      // v5: pm suspend, asleep but enabled
 ) {
-    fun copy(): FakePackage = FakePackage(name, path, state, versionCode, signer, system)
+    fun copy(): FakePackage = FakePackage(name, path, state, versionCode, signer, system, suspended)
 }
 
 // The device model behind the fake adbd. The shell interpreter changes it, so what `pm list

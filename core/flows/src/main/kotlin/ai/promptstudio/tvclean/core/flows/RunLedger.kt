@@ -217,7 +217,9 @@ class RunLedger(private val store: DocumentStore, private val journal: Journal) 
         val off = LinkedHashSet<PackageName>()
         for (c in changes(tvId)) when (val op = c.op) {
             is Op.Disable -> off.add(op.pkg)
+            is Op.Suspend -> off.add(op.pkg)
             is Op.Enable -> off.remove(op.pkg)
+            is Op.Unsuspend -> off.remove(op.pkg)
             is Op.DefaultState -> off.remove(op.pkg)
             is Op.Uninstall -> off.remove(op.pkg)
             else -> {}
@@ -227,7 +229,8 @@ class RunLedger(private val store: DocumentStore, private val journal: Journal) 
 
     companion object {
         // Step R's ops whose failure means the TV's own home screen is not back (the engine's rule).
-        private fun mustSucceed(op: Op): Boolean = op is Op.Enable || op is Op.SetHome || op is Op.VerifyHome || op is Op.AccessibilityRemove
+        // Unsuspend is one: a stock home left asleep cannot answer Home even after SetHome.
+        private fun mustSucceed(op: Op): Boolean = op is Op.Enable || op is Op.Unsuspend || op is Op.SetHome || op is Op.VerifyHome || op is Op.AccessibilityRemove
 
         // RFC-TRIM-1: the trim writes to the TV (it deletes cached data), so it is a change:
         // it reaches the `else -> true` arm, like every other write op.

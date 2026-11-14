@@ -50,6 +50,13 @@ sealed interface Op {
         }
     }
     data class Enable(val pkg: PackageName) : Op
+    // v5 (reboot survival): suspend the TV's own home screen when it cannot be switched off
+    // (a persistent package, Protected.isProtected), so it cannot answer Home at boot and take
+    // the home screen back on every power cycle. Suspend is not a switch-off: the package stays
+    // installed and enabled, it only cannot launch, and Unsuspend puts it back. The home screen
+    // switch suspends the stock launcher instead of leaving it on; Step R and Undo unsuspend it.
+    data class Suspend(val pkg: PackageName) : Op
+    data class Unsuspend(val pkg: PackageName) : Op
     data class DefaultState(val pkg: PackageName) : Op
     data class Install(val apk: RemotePath, val sha256: Sha256, val pkg: PackageName, val versionCode: Long, val signer: Sha256, val flags: Set<InstallFlag>) : Op   // apk.dir must be TMP
     data class InstallStream(val blob: BlobRef, val sha256: Sha256, val pkg: PackageName, val versionCode: Long, val signer: Sha256) : Op

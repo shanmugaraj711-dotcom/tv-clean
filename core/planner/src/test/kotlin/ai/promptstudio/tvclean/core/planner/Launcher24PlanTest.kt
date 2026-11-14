@@ -1,9 +1,11 @@
 package ai.promptstudio.tvclean.core.planner
 
 import ai.promptstudio.tvclean.core.model.BlobRef
+import ai.promptstudio.tvclean.core.model.EnabledState
 import ai.promptstudio.tvclean.core.model.InstallFlag
 import ai.promptstudio.tvclean.core.model.LauncherArtifact
 import ai.promptstudio.tvclean.core.model.Op
+import ai.promptstudio.tvclean.core.model.PackageState
 import ai.promptstudio.tvclean.core.model.Quirk
 import ai.promptstudio.tvclean.core.model.SettingKey
 import ai.promptstudio.tvclean.core.model.Sha256
@@ -64,6 +66,29 @@ class Launcher24PlanTest {
         val section = p.sections.single()
         assertTrue(start.index < section.from, "before the watchdog is armed")
         assertTrue(p.steps.filter { it.op == Op.Disable(stock.pkg) }.all { it.index > start.index })
+    }
+
+    // RFC-SUSPEND-1: a stock launcher the TV keeps running at all times (persistent) cannot be
+    // switched off, so the switch would not survive a restart — the old home wakes up at every
+    // boot and takes Home back. The plan puts it to sleep instead, and Step R wakes it back up
+    // before setting Home back to it.
+    @Test fun aPersistentStockLauncherIsSuspendedNotDisabled() {
+        val snap = snapshot(extra = mapOf(stock.pkg to PackageState(EnabledState.ENABLED, true, 1, null, true, false, "Stock Home", false)))
+        val p = plan(setup(), snapshot = snap)
+        assertTrue(Op.Suspend(stock.pkg) in ops(p))
+        assertTrue(Op.Disable(stock.pkg) !in ops(p))
+        val section = p.sections.single()
+        assertTrue(Op.Unsuspend(stock.pkg) in section.rollback)
+        assertTrue(section.rollback.indexOf(Op.Unsuspend(stock.pkg)) < section.rollback.indexOf(Op.SetHome(stock)))
+    }
+
+    // RFC-SUSPEND-1: a profile quirk that keeps the stock home screen on is respected — no switch
+    // off and no suspend either, even when the stock launcher is persistent.
+    @Test fun aProfileQuirkThatKeepsTheStockHomeOnSuspendsNothing() {
+        val snap = snapshot(extra = mapOf(stock.pkg to PackageState(EnabledState.ENABLED, true, 1, null, true, false, "Stock Home", false)))
+        val p = plan(setup(profile = profile(quirks = setOf(Quirk.STOCK_LAUNCHER_KEEP_ENABLED))), snapshot = snap)
+        assertTrue(Op.Suspend(stock.pkg) !in ops(p))
+        assertTrue(Op.Disable(stock.pkg) !in ops(p))
     }
 
     // Finding 4: with the signer known, our own older launcher is updated in place, another key's is

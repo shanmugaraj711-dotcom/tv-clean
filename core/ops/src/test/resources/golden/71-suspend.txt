@@ -1,0 +1,12 @@
+# Put the TV's own home screen to sleep; it was enabled
+op: Suspend pkg=com.mitv.tvhome.atv
+privilege: TAKEOVER
+timeout_ms: 30000
+stdout_cap: 65536
+line: 'pm' 'suspend' '--user' '0' 'com.mitv.tvhome.atv'
+transfer: none
+verify: Read kind=PACKAGE_DUMP pkg=com.mitv.tvhome.atv
+verify_line: 'dumpsys' 'package' 'com.mitv.tvhome.atv'
+prior: packageState=ENABLED
+inverse: Unsuspend pkg=com.mitv.tvhome.atv
+inverse_line: 'pm' 'unsuspend' '--user' '0' 'com.mitv.tvhome.atv'

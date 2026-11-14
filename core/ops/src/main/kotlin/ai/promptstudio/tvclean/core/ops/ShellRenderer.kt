@@ -59,6 +59,10 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
         }
         is Op.Enable -> Rendered(op, lines(line(PM, "enable", USER, "0", pkg(op.pkg))), null, Privilege.PROFILE_STEP,
             Op.Read(ProbeKind.DISABLED), T_PM, CAP_DEFAULT)
+        is Op.Suspend -> Rendered(op, lines(line(PM, "suspend", USER, "0", writePkg(op.pkg))), null, Privilege.TAKEOVER,
+            Op.Read(ProbeKind.PACKAGE_DUMP, ReadArg.Pkg(op.pkg)), T_PM, CAP_DEFAULT)
+        is Op.Unsuspend -> Rendered(op, lines(line(PM, "unsuspend", USER, "0", pkg(op.pkg))), null, Privilege.TAKEOVER,
+            Op.Read(ProbeKind.PACKAGE_DUMP, ReadArg.Pkg(op.pkg)), T_PM, CAP_DEFAULT)
         is Op.DefaultState -> Rendered(op, lines(line(PM, "default-state", USER, "0", writePkg(op.pkg))), null, Privilege.PROFILE_STEP,
             Op.Read(ProbeKind.PACKAGE_DUMP, ReadArg.Pkg(op.pkg)), T_PM, CAP_DEFAULT)
         is Op.Install -> {
@@ -242,6 +246,8 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
             EnabledState.DISABLED_USER, EnabledState.DISABLED -> Op.Disable(op.pkg)
             null, EnabledState.DEFAULT -> null
         }
+        is Op.Suspend -> Op.Unsuspend(op.pkg)
+        is Op.Unsuspend -> null   // only ever a rollback/restore step; nothing undoes it
         is Op.Install -> if (prior.present == false) Op.Uninstall(op.pkg) else null   // reinstalling the previous APK needs a blob we do not keep in 0.1
         is Op.InstallStream -> if (prior.present == false) Op.Uninstall(op.pkg) else null
         is Op.SettingsPut -> if (op.key == SettingKey.ADB_ENABLED || op.key == SettingKey.ADB_WIFI_ENABLED) null   // never 1 from the app: the user turns debugging on from the TV
@@ -269,6 +275,8 @@ class ShellRenderer(private val watchdogVariant: WatchdogVariant = WatchdogVaria
             // the line; the check here only proves the read worked, never a freed amount.
             is Op.TrimCaches -> if (dfFreeMb(verifyOutput) != null) VerifyResult.Ok else mismatch("a /data row with free space in df /data")
             is Op.Enable -> if (("package:" + op.pkg.value) !in lines) VerifyResult.Ok else mismatch("package:${op.pkg.value} not listed by pm list packages -d")
+            is Op.Suspend -> if (PackageDump.isSuspended(verifyOutput) == true) VerifyResult.Ok else mismatch("suspended=true in dumpsys package ${op.pkg.value}")
+            is Op.Unsuspend -> if (PackageDump.isSuspended(verifyOutput) == false) VerifyResult.Ok else mismatch("suspended=false in dumpsys package ${op.pkg.value}")
             is Op.DefaultState -> if (PackageDump.enabledSetting(verifyOutput) == 0) VerifyResult.Ok else mismatch("enabled=0 in dumpsys package ${op.pkg.value}")
             is Op.Install -> installed(op.pkg, op.versionCode, verifyOutput)
             is Op.InstallStream -> installed(op.pkg, op.versionCode, verifyOutput)
@@ -442,11 +450,14 @@ object PackageDump {
     private val VERSION_CODE_RE = Regex("\\bversionCode=([0-9]{1,19})\\b")
     private val ENABLED_RE = Regex("\\benabled=([0-9])\\b")
     private val FLAGS_RE = Regex("\\b(?:pkgFlags|flags)=\\[([^\\]]*)\\]")
+    private val SUSPENDED_RE = Regex("\\bsuspended=(true|false)\\b")
 
     fun exists(pkg: PackageName, dump: String): Boolean = dump.contains("Package [${pkg.value}]")
     fun versionCode(dump: String): Long? = VERSION_CODE_RE.find(dump)?.groupValues?.get(1)?.toLongOrNull()
     // The per-user enabled setting (0 default, 1 enabled, 2 disabled, 3 disabled-user, 4 disabled-until-used).
     fun enabledSetting(dump: String): Int? = ENABLED_RE.find(dump)?.groupValues?.get(1)?.toIntOrNull()
+    // v5: the User 0 line's suspended flag, first match wins; null when the dump does not say.
+    fun isSuspended(dump: String): Boolean? = SUSPENDED_RE.find(dump)?.groupValues?.get(1)?.toBooleanStrictOrNull()
     fun isPersistent(dump: String): Boolean = FLAGS_RE.findAll(dump).any { m -> m.groupValues[1].split(' ').any { it == "PERSISTENT" } }
     fun isSystem(dump: String): Boolean = FLAGS_RE.findAll(dump).any { m -> m.groupValues[1].split(' ').any { it == "SYSTEM" } }
 

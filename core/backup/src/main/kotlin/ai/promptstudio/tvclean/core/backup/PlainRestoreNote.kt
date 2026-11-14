@@ -40,7 +40,10 @@ class PlainRestoreNote : RestoreNote {
             }
             if (replacedHome) {
                 appendLine()
-                appendLine("To get the old home screen back, enable \"$home\" first, then press Home on the remote.")
+                // v5: a suspended old home is asleep, not switched off — Enable in Settings does not
+                // wake it; only the app's Undo everything does, so the note points there.
+                if (sum.homeBefore?.pkg in sum.suspended) appendLine("To get the old home screen back, use the TV Clean app's Undo everything — the old home screen is asleep, and waking it up is part of putting everything back.")
+                else appendLine("To get the old home screen back, enable \"$home\" first, then press Home on the remote.")
             }
             if (addedCards) {
                 appendLine()

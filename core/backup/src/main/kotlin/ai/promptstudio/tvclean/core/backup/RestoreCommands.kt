@@ -162,6 +162,8 @@ class RestoreCommands(private val renderer: OpRenderer) {
         private fun packageOf(op: Op): PackageName? = when (op) {
             is Op.Enable -> op.pkg
             is Op.Disable -> op.pkg
+            is Op.Suspend -> op.pkg
+            is Op.Unsuspend -> op.pkg
             is Op.DefaultState -> op.pkg
             is Op.Uninstall -> op.pkg
             is Op.SetHome -> op.component.pkg
@@ -178,6 +180,8 @@ class RestoreCommands(private val renderer: OpRenderer) {
             // falls through to this line, and cannotUndo says it has no undo.
             is Op.TrimCaches -> "Cleared old caches"
             is Op.Enable -> "Switched on ${op.pkg.value}"
+            is Op.Suspend -> "Put ${op.pkg.value} to sleep"
+            is Op.Unsuspend -> "Woke ${op.pkg.value} up"
             is Op.DefaultState -> "Reset ${op.pkg.value} to its default state"
             is Op.Install -> "Installed ${op.pkg.value}"
             is Op.InstallStream -> "Installed ${op.pkg.value}"
@@ -194,6 +198,8 @@ class RestoreCommands(private val renderer: OpRenderer) {
         fun describeInverse(op: Op): String = when (op) {
             is Op.Enable -> "Switch back on: ${op.pkg.value}"
             is Op.Disable -> "Switch off again: ${op.pkg.value}"
+            is Op.Suspend -> "Put to sleep again: ${op.pkg.value}"
+            is Op.Unsuspend -> "Wake back up: ${op.pkg.value}"
             is Op.DefaultState -> "Back to its default state: ${op.pkg.value}"
             is Op.Uninstall -> "Remove the app: ${op.pkg.value}"
             is Op.SettingsPut -> if (op.value == null) "Setting ${op.key.key} back to not set" else "Setting ${op.key.key} back to ${op.value}"

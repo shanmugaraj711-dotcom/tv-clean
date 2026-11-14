@@ -108,7 +108,7 @@ class RestorePointMachine(
         val profile = tv?.let { d.profileOf(it) }
         val stock = profile?.stockLaunchers?.firstOrNull()?.pkg
         val wraith = profile?.setupWraith
-        val back = plan.steps.count { it.op is Op.Enable || it.op is Op.DefaultState }
+        val back = plan.steps.count { it.op is Op.Enable || it.op is Op.Unsuspend || it.op is Op.DefaultState }
         val wizard = wraith != null && plan.steps.any { (it.op as? Op.Enable)?.pkg == wraith }
         val installed = d.snapshots.latest(tvId)?.packages?.containsKey(Launcher.pkg) == true || tv?.launcher != null
         val helper = plan.steps.any { it.op is Op.AccessibilityRemove }

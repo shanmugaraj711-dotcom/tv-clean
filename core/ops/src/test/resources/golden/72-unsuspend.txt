@@ -1,0 +1,11 @@
+# Wake the TV's own home screen back up; it was enabled
+op: Unsuspend pkg=com.mitv.tvhome.atv
+privilege: TAKEOVER
+timeout_ms: 30000
+stdout_cap: 65536
+line: 'pm' 'unsuspend' '--user' '0' 'com.mitv.tvhome.atv'
+transfer: none
+verify: Read kind=PACKAGE_DUMP pkg=com.mitv.tvhome.atv
+verify_line: 'dumpsys' 'package' 'com.mitv.tvhome.atv'
+prior: packageState=ENABLED
+inverse: none

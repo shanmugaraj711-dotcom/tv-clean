@@ -4,6 +4,18 @@ All notable changes to the app. Versions follow [semantic versioning](https://se
 
 ## 0.5.0 (unreleased)
 
+### The home screen switch survives a restart (RFC-SUSPEND-1)
+- The clean worked, but every TV off/on brought the old home back: the plan set the new home
+  with `set-home-activity` but left the TV's own home enabled, because a persistent package
+  (the TV keeps it running at all times) cannot be switched off — so at every boot the
+  still-enabled stock home took Home back. The home screen switch now puts a persistent stock
+  launcher to sleep (`pm suspend`) instead of leaving it on, so it cannot answer Home at boot;
+  Step R, Undo everything and the restore point all wake it back up (`pm unsuspend`). A
+  suspended home stays installed and enabled, it only cannot open. Only the persistent reason
+  suspends: a TV input, a protected name, a wizard, a profile never_disable or a profile quirk
+  that keeps it on still leaves it on. The restore point lists suspended apps separately from
+  switched-off ones (`pm enable` does not wake a suspended app).
+
 ### The friend's Mi TV 4I test can finally be told apart
 - 0.4.8 shipped twice under the same version code 30 (the v2 build and the v3 bundled-launcher
   package-identity fix, commit 81fd24b8), so the two builds could not be told apart on a phone:

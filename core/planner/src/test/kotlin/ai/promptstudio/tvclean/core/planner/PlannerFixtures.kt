@@ -168,6 +168,8 @@ class ModelTv(snapshot: Snapshot) {
     private fun prior(op: Op): Prior = when (op) {
         is Op.Disable -> Prior(packageState = packages[op.pkg]?.enabled)
         is Op.Enable -> Prior(packageState = packages[op.pkg]?.enabled)
+        is Op.Suspend -> Prior(packageState = packages[op.pkg]?.enabled)
+        is Op.Unsuspend -> Prior(packageState = packages[op.pkg]?.enabled)
         is Op.DefaultState -> Prior(packageState = packages[op.pkg]?.enabled)
         is Op.SetHome -> Prior(home = home)
         is Op.SettingsPut -> Prior(settingValue = settings[op.key])
@@ -201,6 +203,10 @@ class ModelTv(snapshot: Snapshot) {
     fun apply(op: Op): Boolean = when (op) {
         is Op.Disable -> { packages[op.pkg]?.let { packages[op.pkg] = it.copy(enabled = EnabledState.DISABLED_USER) }; true }
         is Op.Enable -> { packages[op.pkg]?.let { packages[op.pkg] = it.copy(enabled = EnabledState.ENABLED) }; true }
+        // v5: suspend leaves the package enabled, it only cannot launch — no state to move here,
+        // but it is a change, so a record is kept, as the engine's journal does.
+        is Op.Suspend -> true
+        is Op.Unsuspend -> true
         is Op.DefaultState -> { packages[op.pkg]?.let { packages[op.pkg] = it.copy(enabled = EnabledState.DEFAULT) }; true }
         is Op.SetHome -> { home = op.component; if (op.component !in claimants) claimants += op.component; true }
         is Op.SettingsPut -> { settings[op.key] = op.value; true }

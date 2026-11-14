@@ -60,19 +60,21 @@ object PutBackAdvice {
     fun wizardHeldBack(pkg: PackageName, profile: Profile?, snapshot: Snapshot): Boolean =
         profile != null && Denylist.isWizardAllowed(pkg, profile) && snapshot.home.resolved?.pkg == SwitchOffRule.OUR_LAUNCHER
 
-    // The last change of ours to it is a Disable, and that Disable's own prior says it was on
-    // (ENABLED or DEFAULT): one that was off already, or with no prior, was not ours to offer.
+    // The last change of ours to it is a Disable or a Suspend, and that change's own prior says it
+    // was on (ENABLED or DEFAULT): one that was off already, or with no prior, was not ours to offer.
     private fun ourDisableOfAnOnPackage(pkg: PackageName, changes: List<ChangeRecord>): Boolean {
         val last = changes.filter { c ->
             when (val op = c.op) {
                 is Op.Disable -> op.pkg == pkg
+                is Op.Suspend -> op.pkg == pkg
                 is Op.Enable -> op.pkg == pkg
+                is Op.Unsuspend -> op.pkg == pkg
                 is Op.DefaultState -> op.pkg == pkg
                 is Op.Uninstall -> op.pkg == pkg
                 else -> false
             }
         }.maxWithOrNull(compareBy<ChangeRecord> { it.atMs }.thenBy { it.step })
         val before = last?.prior?.packageState
-        return last?.op is Op.Disable && (before == EnabledState.ENABLED || before == EnabledState.DEFAULT)
+        return (last?.op is Op.Disable || last?.op is Op.Suspend) && (before == EnabledState.ENABLED || before == EnabledState.DEFAULT)
     }
 }

@@ -83,6 +83,8 @@ object ChangeJson {
             // RFC-TRIM-1
             is Op.TrimCaches -> put("bytes", op.bytes)
             is Op.Enable -> put("pkg", op.pkg.value)
+            is Op.Suspend -> put("pkg", op.pkg.value)
+            is Op.Unsuspend -> put("pkg", op.pkg.value)
             is Op.DefaultState -> put("pkg", op.pkg.value)
             is Op.Install -> {
                 put("apk", path(op.apk)); put("sha256", op.sha256.hex); put("pkg", op.pkg.value)
@@ -126,6 +128,8 @@ object ChangeJson {
         "disable" -> Op.Disable(o.pkg("pkg"))
         "trim_caches" -> Op.TrimCaches(o.long("bytes"))
         "enable" -> Op.Enable(o.pkg("pkg"))
+        "suspend" -> Op.Suspend(o.pkg("pkg"))
+        "unsuspend" -> Op.Unsuspend(o.pkg("pkg"))
         "default_state" -> Op.DefaultState(o.pkg("pkg"))
         "install" -> Op.Install(
             decodePath(o.obj("apk")), o.sha("sha256"), o.pkg("pkg"), o.long("versionCode"), o.sha("signer"),
@@ -163,6 +167,8 @@ object ChangeJson {
         is Op.Disable -> "disable"
         is Op.TrimCaches -> "trim_caches"
         is Op.Enable -> "enable"
+        is Op.Suspend -> "suspend"
+        is Op.Unsuspend -> "unsuspend"
         is Op.DefaultState -> "default_state"
         is Op.Install -> "install"
         is Op.InstallStream -> "install_stream"

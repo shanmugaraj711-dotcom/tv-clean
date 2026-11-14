@@ -617,6 +617,7 @@ class DefaultEngine(
 
     private fun undoes(rollbackOp: Op, stepOp: Op): Boolean = when (rollbackOp) {
         is Op.Enable -> stepOp is Op.Disable && stepOp.pkg == rollbackOp.pkg
+        is Op.Unsuspend -> stepOp is Op.Suspend && stepOp.pkg == rollbackOp.pkg
         is Op.SetHome -> stepOp is Op.SetHome
         is Op.AccessibilityRemove -> stepOp is Op.AccessibilityAdd && stepOp.component == rollbackOp.component   // RFC-HELPER-1
         is Op.SettingsPut -> stepOp is Op.SettingsPut && stepOp.key == rollbackOp.key && rollbackOp.key == SettingKey.ACCESSIBILITY_ENABLED
@@ -634,7 +635,11 @@ class DefaultEngine(
                 return if (e.error.isLost()) Outcome.Lost(e.error) else Outcome.Failed(e.error, "dumpsys package failed")
             }
             val live = liveState(target, dump, run.snapshot)
-            val reason = if (step.op is Op.Disable) switchOffReason(run, step, target, live, dump) else Denylist.reason(target, live, run.profile, run.snapshot)
+            val reason = when (step.op) {
+                is Op.Disable -> switchOffReason(run, step, target, live, dump)
+                is Op.Suspend -> suspendReason(run, step, target, live, dump)
+                else -> Denylist.reason(target, live, run.profile, run.snapshot)
+            }
             if (reason != null) {
                 journal.append(JournalRecord.Begin(run.plan.id, step.index, step.op, step.rendered.lines.map { it.text }, step.prior, clock.nowMs()))
                 journal.append(JournalRecord.Failed(run.plan.id, step.index, null, "$PROTECTED$reason", ""))
@@ -664,6 +669,16 @@ class DefaultEngine(
     private fun switchOffReason(run: Run, step: Step, target: PackageName, live: PackageState?, dump: String): String? {
         val inSection = run.plan.sections.any { it.name in run.openSections && step.index in it.from..it.to }
         return SwitchOffRule.reason(target, live, run.profile, run.snapshot, run.stockLaunchers, inHomeSwitch = inSection,
+            requestsTvInputHardware = PackageDump.requestsTvInputHardware(dump))
+    }
+
+    // v5: the suspend rule at run time, the planner's suspendReason with the live facts. A package
+    // the TV keeps running at all times (persistent) may be suspended; a TV input, a protected
+    // name, a wizard or a profile never_disable still blocks it. Unsuspend never reaches here:
+    // writeTarget leaves it out, so putting a home screen back is never refused.
+    private fun suspendReason(run: Run, step: Step, target: PackageName, live: PackageState?, dump: String): String? {
+        val inSection = run.plan.sections.any { it.name in run.openSections && step.index in it.from..it.to }
+        return SwitchOffRule.suspendReason(target, live, run.profile, run.snapshot, run.stockLaunchers, inHomeSwitch = inSection,
             requestsTvInputHardware = PackageDump.requestsTvInputHardware(dump))
     }
 
@@ -1303,15 +1318,16 @@ internal object StepR {
         is Op.ConfirmHome -> op.token == section.token
         is Op.KillWatchdog -> op.token == section.token
         Op.PressHome -> true
-        is Op.Enable, is Op.SetHome, is Op.VerifyHome -> !isHelper(section)
+        is Op.Enable, is Op.Unsuspend, is Op.SetHome, is Op.VerifyHome -> !isHelper(section)
         is Op.AccessibilityRemove -> isHelper(section)
         is Op.SettingsPut -> isHelper(section) && op.key == SettingKey.ACCESSIBILITY_ENABLED && op.value == "0"
         else -> false
     }
 
     // The ops whose failure means the TV's own home screen is not back (with the helper: that our
-    // entry is still in the list).
-    fun mustSucceed(op: Op): Boolean = op is Op.Enable || op is Op.SetHome || op is Op.VerifyHome || op is Op.AccessibilityRemove
+    // entry is still in the list). Unsuspend is one: a stock home left asleep cannot answer Home
+    // even after SetHome.
+    fun mustSucceed(op: Op): Boolean = op is Op.Enable || op is Op.Unsuspend || op is Op.SetHome || op is Op.VerifyHome || op is Op.AccessibilityRemove
 }
 
 // RFC-HELPER-1: step R of an open helper section from the journal alone. The add's Begin gives the
@@ -1383,6 +1399,7 @@ internal object Replay {
 internal object Staleness {
     fun writeTarget(op: Op): PackageName? = when (op) {
         is Op.Disable -> op.pkg
+        is Op.Suspend -> op.pkg
         is Op.DefaultState -> op.pkg
         is Op.Uninstall -> op.pkg
         else -> null

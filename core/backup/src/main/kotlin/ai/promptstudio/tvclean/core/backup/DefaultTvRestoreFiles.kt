@@ -39,6 +39,9 @@ class DefaultTvRestoreFiles(
             put("model", TextSafety.ascii(tv.facts.model, 64))
             put("createdAtMs", clock.nowMs())
             put("switchedOff", JsonArray(sum.switchedOff.map { JsonPrimitive(it.value) }))
+            // v5: asleep, not off — put to sleep by us so the old home cannot answer Home at boot.
+            // Wake one with `pm unsuspend --user 0 <pkg>`; `pm enable` does not wake it.
+            put("suspended", JsonArray(sum.suspended.map { JsonPrimitive(it.value) }))
             put("homeBefore", sum.homeBefore?.flat)
             put("homeNow", sum.homeNow?.flat)
             put("settings", buildJsonArray {
@@ -84,6 +87,14 @@ class DefaultTvRestoreFiles(
                     val note = notes[p]?.let { TextSafety.ascii(it, 70) }?.takeIf { it.isNotEmpty() }
                     appendLine(if (note == null) p.value else p.value.padEnd(NOTE_COLUMN - 1) + " # " + note)
                 }
+            }
+            // v5: asleep, not switched off — comment lines only, so upstream restore.sh skips them.
+            // `pm enable` does not wake a suspended app; only `pm unsuspend --user 0 <pkg>` does.
+            if (sum.suspended.isNotEmpty()) {
+                appendLine()
+                appendLine("# Put to sleep (not switched off): these stay installed and on, but cannot open.")
+                appendLine("# To wake one up from a computer: pm unsuspend --user 0 <package>")
+                for (p in sum.suspended) appendLine("# ${p.value}")
             }
         }
         return text.encodeToByteArray()

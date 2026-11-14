@@ -76,6 +76,38 @@ object SwitchOffRule {
         return undecided && pkg in KnownLaunchers.byPackage
     }
 
+    // v5: the reason `pkg` may not be put to sleep, or null when it may. Like reason(), but a
+    // package the TV keeps running at all times (persistent) MAY be suspended: suspend leaves it
+    // installed and enabled, it only cannot launch, so it cannot answer Home at boot — the safe
+    // half of switching it off, and the reason the home screen switch survives a restart on a TV
+    // whose own home screen cannot be switched off. A TV input, a protected name, a wizard, a
+    // profile never_disable or a Fire OS home still blocks it, as reason() says.
+    fun suspendReason(
+        pkg: PackageName,
+        state: PackageState?,
+        profile: Profile?,
+        snapshot: Snapshot?,
+        stockLaunchers: List<Component>,
+        inHomeSwitch: Boolean = false,
+        requestsTvInputHardware: Boolean = false,
+    ): String? {
+        Denylist.staticReason(pkg.value)?.let { return it }
+        if (pkg.value in Denylist.setupWizards && !Denylist.isWizardAllowed(pkg, profile)) return Denylist.REASON_SETUP_WIZARD
+        if (state?.tvInput == true) return Denylist.REASON_TV_INPUT
+        if (profile != null && pkg in profile.neverDisable) return Denylist.REASON_PROFILE
+        if (requestsTvInputHardware) return Denylist.REASON_TV_INPUT
+        if (FireOs.isHome(pkg)) return DefaultPlanner.REASON_FIRE_OS_HOME
+        if (snapshot == null) return null
+        if (snapshot.ime?.pkg == pkg) return Denylist.REASON_KEYBOARD
+        if (snapshot.screensaver.any { it.pkg == pkg }) return Denylist.REASON_SCREENSAVER
+        val stock = stockLaunchers.any { it.pkg == pkg }   // the TV's own by the allowlist, whatever its system flag reads
+        if (!stock && snapshot != null && isPersonsLauncher(pkg, snapshot, state)) return REASON_YOUR_LAUNCHER
+        if (inHomeSwitch) return null
+        if (stock || (snapshot != null && isHomeScreen(pkg, snapshot))) return DefaultPlanner.REASON_HOME_SCREEN
+        if (pkg.value in Denylist.setupWizards || profile?.setupWraith == pkg) return DefaultPlanner.REASON_WIZARD_SECTION_ONLY
+        return null
+    }
+
     // A home screen app the person installed (issue #8: Projectivy, Wolf and the like): HOME or a
     // HOME claimant, not a system package, not our own new home screen, and not put there by this
     // app. A package whose system flag is not known counts as theirs, the safe side (as the TV

@@ -132,6 +132,11 @@ object GoldenCases {
         // RFC-TRIM-1: the cache-clear step, 1 GiB asked, as the Setup plan sends it.
         GoldenCase("70-trim-caches", "Clear the old caches across apps; one line, 1 GiB asked",
             Op.TrimCaches(1_073_741_824L), null),
+        // RFC-SUSPEND-1: the stock home screen put to sleep so the switch survives a restart.
+        GoldenCase("71-suspend", "Put the TV's own home screen to sleep; it was enabled",
+            Op.Suspend(p("com.mitv.tvhome.atv")), Prior(packageState = EnabledState.ENABLED)),
+        GoldenCase("72-unsuspend", "Wake the TV's own home screen back up; it was enabled",
+            Op.Unsuspend(p("com.mitv.tvhome.atv")), Prior(packageState = EnabledState.ENABLED)),
     )
     const val READER = "com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService"
 }
@@ -141,6 +146,8 @@ object GoldenText {
     fun describe(op: Op): String = when (op) {
         is Op.Disable -> "Disable pkg=${op.pkg.value}"
         is Op.Enable -> "Enable pkg=${op.pkg.value}"
+        is Op.Suspend -> "Suspend pkg=${op.pkg.value}"
+        is Op.Unsuspend -> "Unsuspend pkg=${op.pkg.value}"
         is Op.DefaultState -> "DefaultState pkg=${op.pkg.value}"
         is Op.Install -> "Install apk=${op.apk.absolute} sha256=${op.sha256.hex} pkg=${op.pkg.value} versionCode=${op.versionCode} signer=${op.signer.hex} flags=${op.flags.sortedBy { it.name }.joinToString(",") { it.name }}"
         is Op.InstallStream -> "InstallStream blob=${blob(op.blob)} sha256=${op.sha256.hex} pkg=${op.pkg.value} versionCode=${op.versionCode} signer=${op.signer.hex}"

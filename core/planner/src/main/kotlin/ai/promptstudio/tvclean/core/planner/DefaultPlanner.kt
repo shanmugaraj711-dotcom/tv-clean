@@ -185,7 +185,7 @@ class DefaultPlanner(
         // Android TV or Google TV profile keeps its own rules, as SetupMachine.homeBlock does.
         fun refusesOtherHomes(profile: Profile?): Boolean = FireOs.isFireOs(snapshot.facts, snapshot) || TclChina.applies(snapshot.facts, profile)
         fun planned(op: Op): Boolean = steps.any { it.op == op }
-        fun putBackPlanned(pkg: PackageName): Boolean = planned(Op.Enable(pkg)) || planned(Op.DefaultState(pkg))
+        fun putBackPlanned(pkg: PackageName): Boolean = planned(Op.Enable(pkg)) || planned(Op.Unsuspend(pkg)) || planned(Op.DefaultState(pkg))
 
         // WP4 (C6, G4): a package the static denylist protects now (an earlier build switched it off,
         // like TCL G10's remote mic service) only ever takes the write towards on. The renderer
@@ -237,6 +237,9 @@ class DefaultPlanner(
 
         fun disable(pkg: PackageName, group: String?, policy: FailurePolicy = FailurePolicy.SKIP_IF_REFUSED, narration: String = "Switching off ${name(pkg)}") =
             step(Op.Disable(pkg), Prior(packageState = state(pkg)?.enabled), group, narration, policy)
+
+        fun suspend(pkg: PackageName, group: String?, policy: FailurePolicy = FailurePolicy.STOP_AND_ROLLBACK, narration: String = "Putting ${name(pkg)} to sleep") =
+            step(Op.Suspend(pkg), Prior(packageState = state(pkg)?.enabled), group, narration, policy)
 
         fun enable(pkg: PackageName, group: String?, narration: String = "Switching ${name(pkg)} back on", policy: FailurePolicy = FailurePolicy.STOP_AND_ROLLBACK) =
             step(Op.Enable(pkg), Prior(packageState = state(pkg)?.enabled), group, narration, policy)
@@ -569,7 +572,16 @@ class DefaultPlanner(
             }
             // D25: the stock launcher is disabled unless the profile keeps it enabled (quirk or
             // never_disable) or the rule keeps it on for this TV's facts (persistent, an input).
-            val keepStockEnabled = (profile != null && Quirk.STOCK_LAUNCHER_KEEP_ENABLED in profile.quirks) || !mayGoOff(stock.pkg)
+            val stockOffReason = SwitchOffRule.reason(stock.pkg, state(stock.pkg), profile, snapshot, stockLaunchers, inHomeSwitch = true)
+            val keepStockEnabled = (profile != null && Quirk.STOCK_LAUNCHER_KEEP_ENABLED in profile.quirks) || stockOffReason != null
+            // v5: a stock launcher the TV keeps running at all times (persistent) cannot be switched
+            // off, so the switch would not survive a restart — the old home wakes up at every boot
+            // and takes Home back. Put it to sleep instead: it stays installed and enabled, it only
+            // cannot launch, so it cannot answer Home at boot. Only the persistent reason suspends;
+            // a TV input, a profile never_disable or a protected name stays on, as the rule says.
+            // A profile quirk that keeps it enabled is respected: no suspend either.
+            val suspendStock = stockOffReason == Denylist.REASON_PERSISTENT &&
+                !(profile != null && Quirk.STOCK_LAUNCHER_KEEP_ENABLED in profile.quirks)
             // Issue #1944: a factory test app that answers Home and that a tested list switches off
             // (HomePlaceholder.FACTORY_HOMES_OFF) goes off before the TV's own home screen, as the
             // MOOQ0 list's header says, unless the clean-up above already does it. At priority 0 it
@@ -589,6 +601,7 @@ class DefaultPlanner(
             val from = step(Op.ArmHomeWatchdog(stock, watchdogSeconds, token), null, GROUP_HOME, "Arming the safety timer", FailurePolicy.STOP_AND_ROLLBACK)
             for (pkg in factoryHomes) disable(pkg, GROUP_HOME, FailurePolicy.STOP_AND_ROLLBACK, "Switching off ${name(pkg)}, which also answers the Home button")
             if (!keepStockEnabled) disable(stock.pkg, GROUP_HOME, FailurePolicy.STOP_AND_ROLLBACK, "Switching off the TV's own home screen")
+            else if (suspendStock) suspend(stock.pkg, GROUP_HOME, FailurePolicy.STOP_AND_ROLLBACK, "Putting the TV's own home screen to sleep so it stays off after a restart")
             if (wizard != null) disable(wizard, GROUP_HOME, FailurePolicy.STOP_AND_ROLLBACK, NARRATION_WIZARD)
             // WP4 (B5): the prior is the home screen the TV goes back to; never the chooser or a placeholder.
             step(Op.SetHome(launcher), Prior(home = StockHome.recorded(snapshot, stock)), GROUP_HOME, "Making the new home screen the default", FailurePolicy.STOP_AND_ROLLBACK)
@@ -600,7 +613,9 @@ class DefaultPlanner(
             // Step R (section 3.4): defuse both layers first, then the TV's own home screen back.
             val rollback: List<Op> = listOfNotNull(
                 Op.ConfirmHome(token), Op.KillWatchdog(token),
-                if (keepStockEnabled) null else Op.Enable(stock.pkg), wizard?.let { Op.Enable(it) },
+                if (keepStockEnabled) null else Op.Enable(stock.pkg),
+                if (suspendStock) Op.Unsuspend(stock.pkg) else null,
+                wizard?.let { Op.Enable(it) },
             ) + factoryHomes.map { Op.Enable(it) } + listOf(Op.SetHome(stock), Op.VerifyHome(stock), Op.PressHome)
             // Focus on any of these after the HOME key means the takeover did not hold: the TV's
             // own home screens, the setup wizard, the resolver (package android, admitted by
@@ -690,7 +705,10 @@ class DefaultPlanner(
 
         fun putBack(pkg: PackageName) {
             if (!installed(pkg)) { refuse("${pkg.value} is not on this TV"); return }
-            if (!isOff(pkg)) return   // already on
+            // v5: a package we put to sleep is not "off" by its enabled state, so isOff alone would
+            // skip it; a suspended stock home screen must be woken back up by this same path.
+            val suspended = suspendedByUs(pkg)
+            if (!isOff(pkg) && !suspended) return   // already on
             // The wizard quirk (R1 R-3): on a TV whose wizard takes the Home button back (issue #49),
             // the wizard comes back on only with the TV's own home screen, never under the new one.
             val profile = managedProfile
@@ -704,7 +722,7 @@ class DefaultPlanner(
                     refuse("${name(pkg)} cannot be switched back on while ${name(feed)} stays off: $REASON_PATCHWALL_FEED_BACK"); return
                 }
             }
-            putBackStep(pkg, "Switching ${name(pkg)} back on")
+            putBackStep(pkg, if (suspended) "Waking ${name(pkg)} up" else "Switching ${name(pkg)} back on")
             // 0.4.6: a home screen switched back on under the new one can take the Home button. On the
             // maintainer's Mi TV, tvlauncher back on answered Home at once (its filter's priority 2
             // beats an installed app's 0, and the resolver then never asks the preferred activity), and
@@ -718,13 +736,23 @@ class DefaultPlanner(
             }
         }
 
-        // The step that switches a package back on: the inverse of this app's last Disable of it, else
-        // Enable, through protectedInverse. False when there is none to make.
+        // The step that switches a package back on: the inverse of this app's last Disable or
+        // Suspend of it, else Enable, through protectedInverse. False when there is none to make.
         fun putBackStep(pkg: PackageName, narration: String): Boolean {
-            val change = journals.filter { it.op is Op.Disable && (it.op as Op.Disable).pkg == pkg }.maxByOrNull { it.atMs }
+            val change = journals.filter {
+                (it.op is Op.Disable && (it.op as Op.Disable).pkg == pkg) || (it.op is Op.Suspend && (it.op as Op.Suspend).pkg == pkg)
+            }.maxByOrNull { it.atMs }
             val inverse = change?.let { renderer.inverse(it.op, it.prior ?: Prior()) } ?: Op.Enable(pkg)
             val op = protectedInverse(pkg, inverse) ?: return false
             return step(op, Prior(packageState = state(pkg)?.enabled), GROUP_PUT_BACK, narration, FailurePolicy.STOP_AND_ROLLBACK) >= 0
+        }
+
+        // v5: the last change of ours to this package put it to sleep and nothing woke it since.
+        fun suspendedByUs(pkg: PackageName): Boolean {
+            val last = journals.filter {
+                (it.op is Op.Suspend && (it.op as Op.Suspend).pkg == pkg) || (it.op is Op.Unsuspend && (it.op as Op.Unsuspend).pkg == pkg)
+            }.maxByOrNull { it.atMs }
+            return last?.op is Op.Suspend
         }
 
         // 0.4.6: a package that may answer Home once it is on again (a switched off package is no
@@ -1124,6 +1152,8 @@ class DefaultPlanner(
         fun packageOf(op: Op): PackageName? = when (op) {
             is Op.Disable -> op.pkg
             is Op.Enable -> op.pkg
+            is Op.Suspend -> op.pkg
+            is Op.Unsuspend -> op.pkg
             is Op.DefaultState -> op.pkg
             is Op.Uninstall -> op.pkg
             is Op.Install -> op.pkg

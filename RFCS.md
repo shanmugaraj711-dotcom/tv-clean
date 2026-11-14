@@ -302,3 +302,25 @@ through a `TrimState` on `DoneSummary` (NONE/FREED/EMPTY/UNKNOWN/FAILED) and nam
 MB, or says plainly that the caches could not be cleared or could not be measured. The op has no
 inverse (caches come back as apps run) and is a change, so Undo everything lists it and the
 restore point carries it.
+
+## RFC-SUSPEND-1: put the TV's own home screen to sleep so the switch survives a restart (0.5.0)
+
+The home screen switch did not survive a power cycle on TVs whose own home screen the TV keeps
+running at all times (a persistent package, Mitsun CloudTV518 and the friend's Xiaomi Mi TV 4I):
+the plan set the new home with `set-home-activity` but left the stock launcher enabled, because
+Protected.isProtected refuses to switch a persistent package off, so at every boot the
+still-enabled stock home took Home back and the clean looked gone. Smallest change: two new ops,
+`Op.Suspend(pkg)` and `Op.Unsuspend(pkg)`, rendering `pm suspend --user 0 <pkg>` and
+`pm unsuspend --user 0 <pkg>`, each verified by a `dumpsys package <pkg>` read of the User 0
+line's `suspended` flag (`pm list packages -s` lists system packages, not suspended ones, so it
+cannot verify). The planner suspends the stock launcher in the home switch only when the reason
+it cannot be switched off is exactly the persistent one; a TV input, a protected name, a wizard,
+a profile never_disable or a profile quirk that keeps it enabled still leaves it on. The engine
+checks a Suspend with a new `SwitchOffRule.suspendReason` — like the switch-off rule but
+allowing persistent — and never refuses an Unsuspend, so putting a home screen back can never be
+blocked. Step R unsuspends the stock launcher before setting Home back to it; Undo everything,
+the per-package put-back and the restore point all treat a suspend as a change with Unsuspend as
+its inverse, and the restore point lists suspended packages separately from switched-off ones
+(`pm enable` does not wake a suspended app). A suspended package stays installed and enabled, it
+only cannot launch, so it cannot answer Home at boot; if our home screen is ever gone and the
+stock one is still asleep, Undo everything or the restore point wakes it back up.

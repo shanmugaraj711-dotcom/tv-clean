@@ -40,6 +40,8 @@ object OpJson {
             // RFC-TRIM-1
             is Op.TrimCaches -> { put("v", "trim_caches"); put("bytes", op.bytes) }
             is Op.Enable -> { put("v", "enable"); put("pkg", op.pkg.value) }
+            is Op.Suspend -> { put("v", "suspend"); put("pkg", op.pkg.value) }
+            is Op.Unsuspend -> { put("v", "unsuspend"); put("pkg", op.pkg.value) }
             is Op.DefaultState -> { put("v", "default_state"); put("pkg", op.pkg.value) }
             is Op.Install -> {
                 put("v", "install"); put("apk", path(op.apk)); put("sha256", op.sha256.hex); put("pkg", op.pkg.value)
@@ -93,6 +95,8 @@ object OpJson {
         "disable" -> Op.Disable(pkg(o.str("pkg")))
         "trim_caches" -> Op.TrimCaches(o.long("bytes"))
         "enable" -> Op.Enable(pkg(o.str("pkg")))
+        "suspend" -> Op.Suspend(pkg(o.str("pkg")))
+        "unsuspend" -> Op.Unsuspend(pkg(o.str("pkg")))
         "default_state" -> Op.DefaultState(pkg(o.str("pkg")))
         "install" -> Op.Install(path(o.obj("apk")), Sha256(o.str("sha256")), pkg(o.str("pkg")), o.long("versionCode"), Sha256(o.str("signer")),
             o.arr("flags").map { InstallFlag.valueOf(it.jsonPrimitive.content) }.toSet())

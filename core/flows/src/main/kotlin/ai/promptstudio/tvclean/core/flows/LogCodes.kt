@@ -92,6 +92,8 @@ object LogCodes {
         // RFC-TRIM-1: the trim's log line never carries a package, only the op.
         is Op.TrimCaches -> "TrimCaches"
         is Op.Enable -> "Enable ${op.pkg.value}"
+        is Op.Suspend -> "Suspend ${op.pkg.value}"
+        is Op.Unsuspend -> "Unsuspend ${op.pkg.value}"
         is Op.DefaultState -> "DefaultState ${op.pkg.value}"
         is Op.Install -> "Install ${op.pkg.value}"
         is Op.InstallStream -> "Install ${op.pkg.value}"
